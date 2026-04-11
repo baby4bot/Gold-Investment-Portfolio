@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.13 (Hide Admin & Sim Mode)</title>
+    <title>พอร์ตทองคำ V6.13 (Purple Sim & Layout Fix)</title>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -20,14 +20,14 @@
         body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "Segoe UI Symbol", sans-serif !important; }
         
-        input[type="text"], input[type="number"], input[type="date"], input[type="password"], select { 
-            background-color: #1e293b; color: #ffffff; border: 1px solid #334155; border-radius: 1rem; padding: 0.75rem 1rem; width: 100%; outline: none; transition: border-color 0.2s;
-        }
+        input[type="text"], input[type="number"], input[type="date"], input[type="password"], select { background-color: #1e293b; color: #ffffff; border: 1px solid #334155; border-radius: 1rem; padding: 0.75rem 1rem; width: 100%; outline: none; transition: border-color 0.2s; }
         input:focus, select:focus { border-color: #eab308; box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.2); }
         input[readonly] { opacity: 0.6; cursor: not-allowed; }
-        
         input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
+
+        /* ซ่อนแถบ Selection สีฟ้า ให้ดูเนียนตาเวลา Auto-select */
+        #sim-price-input::selection { background-color: rgba(255, 255, 255, 0.1); color: #facc15; }
 
         .app-card { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .app-card:active { transform: scale(0.97); }
@@ -55,7 +55,6 @@
         
         .form-collapse { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease; opacity: 0; }
         .form-expand { max-height: 2000px; opacity: 1; }
-        
         .pin-dot, .s-pin-dot { transition: all 0.2s ease-in-out; }
     </style>
 </head>
@@ -167,16 +166,22 @@
                 </div>
             </div>
 
-            <div class="flex justify-between items-center mb-4 px-1" id="portfolio-title-sec">
+            <div class="flex justify-between items-center mb-4 px-1 relative" id="portfolio-title-sec">
                 <div class="flex items-center gap-2">
-                    <h3 class="text-xl font-black text-white">รายการลงทุน <span id="current-user-title"></span></h3>
-                    <button onclick="openSimModal()" class="bg-indigo-600/30 text-indigo-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" title="จำลองราคาทอง">
-                        <span class="emoji text-sm">🪄</span>
-                    </button>
-                    <button id="btn-hide-admin" onclick="toggleAdminPort()" class="bg-gray-700/50 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-600 transition border border-gray-600 shadow-md hidden" title="ซ่อนพอร์ต Admin">
-                        <svg id="icon-eye-admin" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    <h3 class="text-xl font-black text-white flex items-center gap-2">
+                        รายการลงทุน <span id="current-user-title"></span>
+                        <button id="btn-hide-admin" onclick="toggleAdminPort()" class="bg-gray-700/50 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-600 transition border border-gray-600 shadow-md hidden" title="ซ่อนพอร์ต Admin">
+                            <svg id="icon-eye-admin" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </button>
+                    </h3>
+                </div>
+                
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <button onclick="openSimModal()" class="bg-indigo-600/30 text-indigo-400 w-9 h-9 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" title="จำลองราคาทอง">
+                        <span class="emoji text-base">🪄</span>
                     </button>
                 </div>
+
                 <span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full whitespace-nowrap" id="total-items-count">0 รายการ</span>
             </div>
 
@@ -260,7 +265,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     <div id="sim-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[400] justify-center items-center px-4 hidden">
@@ -269,7 +273,7 @@
             <h2 class="text-xl font-black mb-2 text-indigo-300 text-center"><span class="emoji">🪄</span> โหมดจำลองราคา</h2>
             <p class="text-xs text-gray-400 text-center mb-6">ใส่ราคาทองที่ต้องการ เพื่อดูยอดกำไร/ขาดทุนล่วงหน้า</p>
             
-            <input id="sim-price-input" type="number" placeholder="เช่น 45000" class="text-center text-3xl font-black text-yellow-400 py-4 mb-6 bg-black/40 border-indigo-500/50 rounded-2xl" />
+            <input id="sim-price-input" type="number" placeholder="เช่น 45000" class="text-center text-3xl font-black text-yellow-400 py-4 mb-6 bg-black/40 border-indigo-500/50 rounded-2xl focus:border-yellow-400" />
             
             <div class="flex gap-3">
                 <button onclick="applySim()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(79,70,229,0.4)]">จำลองราคา</button>
@@ -365,18 +369,8 @@
                     <div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto text-white">
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('1')">1</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('2')">2</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('3')">3</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('4')">4</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('5')">5</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('6')">6</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('7')">7</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('8')">8</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('9')">9</button>
-                    <div class="w-14 h-14"></div>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('0')">0</button>
-                    <button class="w-14 h-14 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deleteSettingPin()">⌫</button>
+                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('1')">1</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('2')">2</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('3')">3</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('4')">4</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('5')">5</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('6')">6</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('7')">7</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('8')">8</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('9')">9</button>
+                    <div class="w-14 h-14"></div><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('0')">0</button><button class="w-14 h-14 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deleteSettingPin()">⌫</button>
                 </div>
                 <button class="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-black transition mt-4" type="button" onclick="showAdminSetting('main')">ยกเลิก</button>
             </div>
@@ -390,7 +384,6 @@
     </div>
 
     <script>
-        // --- 1. CONFIG & GLOBALS ---
         const firebaseConfig = {
             apiKey: "AIzaSyA65eXLv2Ro_XY1S7_r8YsCVUp-1l22ZG0", authDomain: "gold-portfolio-db.firebaseapp.com",
             databaseURL: "https://gold-portfolio-db-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -399,413 +392,178 @@
         };
         
         let db; 
-        try { 
-            firebase.initializeApp(firebaseConfig); 
-            db = firebase.database(); 
-        } catch (error) { console.error("Firebase error", error); }
+        try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch (error) {}
 
-        let currentRole = 'guest'; 
-        let currentUser = null; 
-        let currentView = 'dashboard';
-        let currentGoldBuyPrice = 70300; 
-        let simulatedGoldPrice = null; 
-        
-        let transactionsData = []; 
-        let userProfiles = {}; 
-        let currentViewList = []; 
-        let activeModalIndex = -1;
+        let currentRole = 'guest'; let currentUser = null; let currentView = 'dashboard';
+        let currentGoldBuyPrice = 70300; let simulatedGoldPrice = null; 
+        let transactionsData = []; let userProfiles = {}; let currentViewList = []; let activeModalIndex = -1;
         let appUsers = {}; 
 
-        let adminPass = '060421'; 
-        let adminPin = '135790'; 
-        let currentPinInput = '';
+        let adminPass = '060421'; let adminPin = '135790'; let currentPinInput = '';
         let adminDisplayName = 'Master Admin'; 
-        let isHideAdminPort = false; // ตัวแปรสถานะการซ่อนพอร์ตแอดมิน
+        let isHideAdminPort = false;
         
-        let sortableInstance = null; 
-        let isDraggingUser = false; 
+        let sortableInstance = null; let isDraggingUser = false;
 
-        // --- 2. INITIALIZATION ---
-        window.addEventListener('load', () => { 
-            initApp(); 
-            setupSwipeGestures(); 
-        });
+        window.addEventListener('load', () => { initApp(); setupSwipeGestures(); });
 
         function initApp() { 
             const session = localStorage.getItem('goldAppSession');
             if (session) { 
-                try { 
-                    currentUser = JSON.parse(session); 
-                    currentRole = currentUser.role; 
-                } catch(e) { 
-                    currentRole = 'guest'; currentUser = null; 
-                }
-            } else { 
-                currentRole = 'guest'; currentUser = null; 
-            }
+                try { currentUser = JSON.parse(session); currentRole = currentUser.role; } 
+                catch(e) { currentRole = 'guest'; currentUser = null; }
+            } else { currentRole = 'guest'; currentUser = null; }
             
-            updateUIRole(); 
-            loadAdminSettings(); 
-            loadUsers(); 
-            loadProfiles(); 
-            
+            updateUIRole(); loadAdminSettings(); loadUsers(); loadProfiles(); 
             if(db) loadData(); 
-            fetchGoldFromSheet(); 
-            setInterval(fetchGoldFromSheet, 1000); 
+            fetchGoldFromSheet(); setInterval(fetchGoldFromSheet, 1000); 
         }
 
-        // --- 3. UI & MENU ---
         function openMenu() { document.getElementById('side-menu').classList.remove('pointer-events-none'); document.getElementById('side-menu-bg').classList.remove('opacity-0'); document.getElementById('side-menu-content').classList.remove('translate-x-full'); }
         function closeMenu() { document.getElementById('side-menu-bg').classList.add('opacity-0'); document.getElementById('side-menu-content').classList.add('translate-x-full'); setTimeout(() => { document.getElementById('side-menu').classList.add('pointer-events-none'); }, 300); }
         
         function switchView(viewName) { 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); 
             document.getElementById('view-' + viewName).classList.add('active'); 
-            currentView = viewName; 
-            closeMenu(); 
-            window.scrollTo({ top: 0, behavior: 'smooth' }); 
-            
-            if(viewName === 'dashboard') { renderData(); }
-            if(viewName === 'manage-tx') { toggleAddTxForm(false); }
-            if(viewName === 'manage-users') { renderUsersCards(); }
+            currentView = viewName; closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            if(viewName === 'dashboard') renderData(); 
+            if(viewName === 'manage-tx') toggleAddTxForm(false); 
+            if(viewName === 'manage-users') renderUsersCards(); 
         }
 
         function updateUIRole() {
-            const btnHamburger = document.getElementById('btn-hamburger'); 
-            const titleSec = document.getElementById('current-user-title'); 
-            const sideMenuHeader = document.getElementById('side-menu-header-profile');
-            const btnHideAdmin = document.getElementById('btn-hide-admin');
+            const btnHamburger = document.getElementById('btn-hamburger'); const titleSec = document.getElementById('current-user-title'); const sideMenuHeader = document.getElementById('side-menu-header-profile'); const btnHideAdmin = document.getElementById('btn-hide-admin');
             
             if (currentRole === 'admin' || currentRole === 'user') {
-                btnHamburger.style.display = 'block'; 
-                document.getElementById('login-modal').style.display = 'none'; 
-                
+                btnHamburger.style.display = 'block'; document.getElementById('login-modal').style.display = 'none'; 
                 let profImg = getProfileImg(currentUser.name);
-                sideMenuHeader.innerHTML = `
-                    <img src="${profImg}" class="w-12 h-12 rounded-full border-2 border-yellow-500 object-cover shadow-md bg-gray-800">
-                    <div class="flex flex-col">
-                        <span class="text-white font-black text-lg leading-tight">${currentUser.name}</span>
-                        <span class="text-xs text-gray-400 font-bold">${currentUser.username}</span>
-                    </div>
-                `;
+                sideMenuHeader.innerHTML = `<img src="${profImg}" class="w-12 h-12 rounded-full border-2 border-yellow-500 object-cover shadow-md bg-gray-800"><div class="flex flex-col"><span class="text-white font-black text-lg leading-tight">${currentUser.name}</span><span class="text-xs text-gray-400 font-bold">${currentUser.username}</span></div>`;
             }
 
             if (currentRole === 'admin') {
-                document.getElementById('menu-manage-users').style.display = 'flex'; 
-                document.getElementById('menu-admin-settings').style.display = 'flex'; 
-                document.getElementById('admin-only-checkbox-sec').style.display = 'flex'; 
-                document.getElementById('f_buyer').readOnly = false; 
-                btnHideAdmin.classList.remove('hidden');
-                titleSec.innerHTML = '';
+                document.getElementById('menu-manage-users').style.display = 'flex'; document.getElementById('menu-admin-settings').style.display = 'flex'; document.getElementById('admin-only-checkbox-sec').style.display = 'flex'; document.getElementById('f_buyer').readOnly = false; btnHideAdmin.classList.remove('hidden'); titleSec.innerHTML = '';
             } else if (currentRole === 'user') {
-                document.getElementById('menu-manage-users').style.display = 'none'; 
-                document.getElementById('menu-admin-settings').style.display = 'none'; 
-                document.getElementById('admin-only-checkbox-sec').style.display = 'none';
-                document.getElementById('f_buyer').value = currentUser.name; 
-                document.getElementById('f_buyer').readOnly = true; 
-                btnHideAdmin.classList.add('hidden');
-                checkExistingProfile(currentUser.name);
-                titleSec.innerHTML = `ของคุณ <span class="text-yellow-400">(${currentUser.name})</span>`;
+                document.getElementById('menu-manage-users').style.display = 'none'; document.getElementById('menu-admin-settings').style.display = 'none'; document.getElementById('admin-only-checkbox-sec').style.display = 'none';
+                document.getElementById('f_buyer').value = currentUser.name; document.getElementById('f_buyer').readOnly = true; btnHideAdmin.classList.add('hidden'); checkExistingProfile(currentUser.name); titleSec.innerHTML = `ของคุณ <span class="text-yellow-400">(${currentUser.name})</span>`;
             } else {
-                btnHamburger.style.display = 'none'; 
-                btnHideAdmin.classList.add('hidden');
-                showLoginModal(); 
-                titleSec.innerHTML = `<span class="text-gray-400 text-sm block mt-1">(กรุณาล็อกอินเพื่อดูข้อมูล)</span>`;
+                btnHamburger.style.display = 'none'; btnHideAdmin.classList.add('hidden'); showLoginModal(); titleSec.innerHTML = `<span class="text-gray-400 text-sm block mt-1">(กรุณาล็อกอินเพื่อดูข้อมูล)</span>`;
             }
         }
 
-        // โหมดจำลองราคา
         function openSimModal() {
-            document.getElementById('sim-price-input').value = simulatedGoldPrice || currentGoldBuyPrice;
+            let input = document.getElementById('sim-price-input');
+            input.value = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice;
             document.getElementById('sim-modal').style.display = 'flex';
+            setTimeout(() => { input.focus(); input.select(); }, 100);
         }
-        function closeSimModal() {
-            document.getElementById('sim-modal').style.display = 'none';
-        }
-        function applySim() {
-            let val = parseFloat(document.getElementById('sim-price-input').value);
-            if(isNaN(val) || val <= 0) { showWarningToast('กรุณาระบุราคาให้ถูกต้อง!'); return; }
-            simulatedGoldPrice = val;
-            closeSimModal();
-            renderData();
-            showWarningToast('🪄 เปิดโหมดจำลองราคาสำเร็จ!');
-        }
-        function resetSim() {
-            simulatedGoldPrice = null;
-            closeSimModal();
-            renderData();
-            showWarningToast('ปิดโหมดจำลองราคาแล้ว');
-        }
+        function closeSimModal() { document.getElementById('sim-modal').style.display = 'none'; }
+        function applySim() { let val = parseFloat(document.getElementById('sim-price-input').value); if(isNaN(val) || val <= 0) { showWarningToast('กรุณาระบุราคาให้ถูกต้อง!'); return; } simulatedGoldPrice = val; closeSimModal(); renderData(); showWarningToast('🪄 เปิดโหมดจำลองราคาสำเร็จ!'); }
+        function resetSim() { simulatedGoldPrice = null; closeSimModal(); renderData(); showWarningToast('ปิดโหมดจำลองราคาแล้ว'); }
 
-        // ซ่อนพอร์ตแอดมิน
         function toggleAdminPort() {
-            isHideAdminPort = !isHideAdminPort;
-            const icon = document.getElementById('icon-eye-admin');
-            if(isHideAdminPort) {
-                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`;
-                icon.classList.add('text-rose-400');
-                icon.classList.remove('text-gray-400');
-                showWarningToast('👁️ ซ่อนพอร์ต Admin จากหน้าแรกแล้ว');
-            } else {
-                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
-                icon.classList.remove('text-rose-400');
-                icon.classList.add('text-gray-400');
-                showWarningToast('👁️ แสดงพอร์ต Admin ตามปกติ');
-            }
+            isHideAdminPort = !isHideAdminPort; const icon = document.getElementById('icon-eye-admin');
+            if(isHideAdminPort) { icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`; icon.classList.add('text-rose-400'); icon.classList.remove('text-gray-400'); showWarningToast('👁️ ซ่อนพอร์ต Admin จากหน้าแรกแล้ว'); } 
+            else { icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`; icon.classList.remove('text-rose-400'); icon.classList.add('text-gray-400'); showWarningToast('👁️ แสดงพอร์ต Admin ตามปกติ'); }
             renderData();
         }
 
-        function toggleAddTxForm(show) {
-            const container = document.getElementById('add-tx-form-container'); const btn = document.getElementById('btn-show-add-tx');
-            if(show) { 
-                container.classList.remove('form-collapse'); container.classList.add('form-expand'); btn.classList.add('hidden'); 
-                document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; document.getElementById('btn-submit').innerText = "บันทึกข้อมูล"; 
-            } else { 
-                container.classList.remove('form-expand'); container.classList.add('form-collapse'); btn.classList.remove('hidden'); 
-                document.getElementById('edit_id').value = ""; document.getElementById('addForm').reset(); document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; 
-                if(currentRole === 'user') document.getElementById('f_buyer').value = currentUser.name; 
-            }
-        }
+        function toggleAddTxForm(show) { const container = document.getElementById('add-tx-form-container'); const btn = document.getElementById('btn-show-add-tx'); if(show) { container.classList.remove('form-collapse'); container.classList.add('form-expand'); btn.classList.add('hidden'); document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; document.getElementById('btn-submit').innerText = "บันทึกข้อมูล"; } else { container.classList.remove('form-expand'); container.classList.add('form-collapse'); btn.classList.remove('hidden'); document.getElementById('edit_id').value = ""; document.getElementById('addForm').reset(); document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; if(currentRole === 'user') document.getElementById('f_buyer').value = currentUser.name; } }
 
-        // --- 4. LOGIN LOGIC ---
         function showLoginModal() { document.getElementById('login-modal').style.display = 'flex'; switchLoginTab('pass'); }
         function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; document.getElementById('login-error').classList.add('hidden'); currentPinInput = ''; updatePinUI(); document.getElementById('password').value = ''; document.getElementById('username').value = ''; }
-        
-        function switchLoginTab(tab) { 
-            const tabPin = document.getElementById('tab-pin'); const tabPass = document.getElementById('tab-pass'); 
-            const secPin = document.getElementById('login-pin-section'); const secPass = document.getElementById('login-pass-section'); 
-            document.getElementById('login-error').classList.add('hidden'); 
-            if(tab === 'pin') { 
-                tabPin.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; tabPass.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; secPin.style.display = 'block'; secPass.style.display = 'none'; currentPinInput = ''; updatePinUI(); 
-            } else { 
-                tabPass.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; tabPin.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; secPass.style.display = 'block'; secPin.style.display = 'none'; 
-            } 
-        }
-        
+        function switchLoginTab(tab) { const tabPin = document.getElementById('tab-pin'); const tabPass = document.getElementById('tab-pass'); const secPin = document.getElementById('login-pin-section'); const secPass = document.getElementById('login-pass-section'); document.getElementById('login-error').classList.add('hidden'); if(tab === 'pin') { tabPin.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; tabPass.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; secPin.style.display = 'block'; secPass.style.display = 'none'; currentPinInput = ''; updatePinUI(); } else { tabPass.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; tabPin.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; secPass.style.display = 'block'; secPin.style.display = 'none'; } }
         function enterPin(num) { if(currentPinInput.length < 6) { currentPinInput += num; updatePinUI(); if(currentPinInput.length === 6) setTimeout(checkPinLogin, 50); } }
         function deletePin() { currentPinInput = currentPinInput.slice(0, -1); updatePinUI(); }
         function updatePinUI() { const dots = document.querySelectorAll('.pin-dot'); dots.forEach((dot, index) => { if(index < currentPinInput.length) { dot.classList.remove('bg-gray-700'); dot.classList.add('bg-yellow-400'); } else { dot.classList.add('bg-gray-700'); dot.classList.remove('bg-yellow-400'); } }); }
 
-        function loginPass() {
-            const userStr = document.getElementById('username').value.trim(); const passStr = document.getElementById('password').value;
-            if (userStr.toLowerCase() === 'admin' && passStr === adminPass) {
-                currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' };
-                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
-            } else if (appUsers[userStr] && appUsers[userStr].password === passStr) {
-                currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' };
-                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
-            } else {
-                document.getElementById('login-error').innerText = 'Username หรือ Password ไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden');
-            }
-        }
-        
-        function checkPinLogin() {
-            if (currentPinInput === adminPin) { 
-                currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' };
-                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
-            } else { 
-                document.getElementById('login-error').innerText = 'รหัส PIN ไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); currentPinInput = ''; updatePinUI(); if (navigator.vibrate) navigator.vibrate(200);
-            }
-        }
-        
+        function loginPass() { const userStr = document.getElementById('username').value.trim(); const passStr = document.getElementById('password').value; if (userStr.toLowerCase() === 'admin' && passStr === adminPass) { currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); } else if (appUsers[userStr] && appUsers[userStr].password === passStr) { currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); } else { document.getElementById('login-error').innerText = 'Username หรือ Password ไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); } }
+        function checkPinLogin() { if (currentPinInput === adminPin) { currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); } else { document.getElementById('login-error').innerText = 'รหัส PIN ไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); currentPinInput = ''; updatePinUI(); if (navigator.vibrate) navigator.vibrate(200); } }
         function logout() { localStorage.removeItem('goldAppSession'); location.reload(); }
 
-        // --- 5. DB LOAD & DATA RENDER ---
-        function loadUsers() { 
-            if(!db) return; 
-            db.ref('app_users').on('value', snap => { 
-                if(isDraggingUser) return; 
-                appUsers = snap.val() || {}; 
-                if (currentView === 'manage-users') renderUsersCards(); 
-                if (currentView === 'dashboard') renderData(); 
-            }); 
-        }
+        function loadUsers() { if(!db) return; db.ref('app_users').on('value', snap => { if(isDraggingUser) return; appUsers = snap.val() || {}; if (currentView === 'manage-users') renderUsersCards(); if (currentView === 'dashboard') renderData(); }); }
+        function loadData() { if(!db) return; db.ref('gold_portfolio').on('value', (snapshot) => { transactionsData = []; snapshot.forEach(child => { transactionsData.push({ id: child.key, ...child.val() }); }); updateAutocomplete(); renderData(); }); }
 
-        function loadData() { 
-            if(!db) return;
-            db.ref('gold_portfolio').on('value', (snapshot) => { 
-                transactionsData = []; snapshot.forEach(child => { transactionsData.push({ id: child.key, ...child.val() }); }); 
-                updateAutocomplete(); renderData(); 
-            }); 
-        }
-
-        function toggleFav(username) {
-            if(!db || !appUsers[username]) return;
-            let isF = appUsers[username].isFavorite ? false : true;
-            db.ref('app_users/' + username).update({ isFavorite: isF });
-        }
-
-        function toggleVis(username) {
-            if(!db || !appUsers[username]) return;
-            let isH = appUsers[username].isHidden ? false : true;
-            db.ref('app_users/' + username).update({ isHidden: isH });
-        }
+        function toggleFav(username) { if(!db || !appUsers[username]) return; let isF = appUsers[username].isFavorite ? false : true; db.ref('app_users/' + username).update({ isFavorite: isF }); }
+        function toggleVis(username) { if(!db || !appUsers[username]) return; let isH = appUsers[username].isHidden ? false : true; db.ref('app_users/' + username).update({ isHidden: isH }); }
 
         function renderUsersCards() {
             const container = document.getElementById('users-cards-container'); if(!container) return; container.innerHTML = '';
-            const sortedUsers = Object.entries(appUsers).map(([username, data]) => ({ username, ...data }))
-                .sort((a, b) => {
-                    if (a.isFavorite && !b.isFavorite) return -1;
-                    if (!a.isFavorite && b.isFavorite) return 1;
-                    let oA = (typeof a.order === 'number') ? a.order : 999; let oB = (typeof b.order === 'number') ? b.order : 999;
-                    return oA - oB;
-                });
-
+            const sortedUsers = Object.entries(appUsers).map(([username, data]) => ({ username, ...data })).sort((a, b) => { if (a.isFavorite && !b.isFavorite) return -1; if (!a.isFavorite && b.isFavorite) return 1; let oA = (typeof a.order === 'number') ? a.order : 999; let oB = (typeof b.order === 'number') ? b.order : 999; return oA - oB; });
             sortedUsers.forEach((u, index) => {
-                const profImg = getProfileImg(u.name);
-                const isOnline = (currentUser && currentUser.username === u.username) || false;
-                const statusColor = isOnline ? '#22c55e' : '#6b7280';
-                const statusText = isOnline ? 'ออนไลน์' : 'ออฟไลน์';
-                
-                let starSvg = u.isFavorite
-                    ? `<svg class="w-6 h-6 text-yellow-400 fill-current drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>`
-                    : `<svg class="w-6 h-6 text-gray-600 hover:text-gray-400" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>`;
-
-                let eyeSvg = u.isHidden
-                    ? `<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg>`
-                    : `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
-
+                const profImg = getProfileImg(u.name); const isOnline = (currentUser && currentUser.username === u.username) || false; const statusColor = isOnline ? '#22c55e' : '#6b7280'; const statusText = isOnline ? 'ออนไลน์' : 'ออฟไลน์';
+                let starSvg = u.isFavorite ? `<svg class="w-6 h-6 text-yellow-400 fill-current drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>` : `<svg class="w-6 h-6 text-gray-600 hover:text-gray-400" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>`;
+                let eyeSvg = u.isHidden ? `<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg>` : `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
                 container.innerHTML += `
                     <div data-username="${u.username}" class="user-drag-item bg-[#1a1c23] rounded-[1.5rem] p-4 flex items-center justify-between shadow-lg border border-gray-800/50 cursor-grab active:cursor-grabbing">
                         <div class="flex items-center gap-3">
-                            <div class="drag-handle text-gray-500 hover:text-yellow-400 p-2 flex flex-col gap-1 w-8 h-8 items-center justify-center bg-gray-800 rounded-lg transition">
-                                <div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
-                                <div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
-                                <div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
-                            </div>
-                            
+                            <div class="drag-handle text-gray-500 hover:text-yellow-400 p-2 flex flex-col gap-1 w-8 h-8 items-center justify-center bg-gray-800 rounded-lg transition"><div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div><div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div><div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div></div>
                             <img src="${profImg}" class="w-14 h-14 rounded-full object-cover border border-gray-700 shadow-inner pointer-events-none">
-                            
                             <div class="flex flex-col justify-center">
-                                <h3 class="text-white font-black text-lg leading-none flex items-center gap-2">
-                                    ${u.name}
-                                    <button onclick="toggleFav('${u.username}')" class="focus:outline-none transition-transform active:scale-90" title="ติดดาว">${starSvg}</button>
-                                </h3>
+                                <h3 class="text-white font-black text-lg leading-none flex items-center gap-2">${u.name} <button onclick="toggleFav('${u.username}')" class="focus:outline-none transition-transform active:scale-90" title="ติดดาว">${starSvg}</button></h3>
                                 <p class="text-gray-400 text-xs font-bold mt-1">User: <span class="text-gray-200">${u.username}</span></p>
-                                <div class="flex items-center gap-1.5 mt-1 pointer-events-none">
-                                    <div class="w-2.5 h-2.5 rounded-full" style="background-color: ${statusColor};"></div>
-                                    <span class="text-xs font-bold" style="color: ${statusColor};">${statusText}</span>
-                                </div>
+                                <div class="flex items-center gap-1.5 mt-1 pointer-events-none"><div class="w-2.5 h-2.5 rounded-full" style="background-color: ${statusColor};"></div><span class="text-xs font-bold" style="color: ${statusColor};">${statusText}</span></div>
                             </div>
                         </div>
-
                         <div class="flex items-center gap-2 ml-2">
-                            <button onclick="toggleVis('${u.username}')" class="p-2 hover:scale-110 transition ${u.isHidden ? 'bg-red-500/10' : 'bg-green-500/10'} rounded-full" title="แสดง/ซ่อนพอร์ตในหน้าแรก">
-                                ${eyeSvg}
-                            </button>
+                            <button onclick="toggleVis('${u.username}')" class="p-2 hover:scale-110 transition ${u.isHidden ? 'bg-red-500/10' : 'bg-green-500/10'} rounded-full" title="แสดง/ซ่อนพอร์ตในหน้าแรก">${eyeSvg}</button>
                             <button onclick="editUser('${u.username}')" class="p-2 hover:scale-110 transition bg-blue-500/10 rounded-full"><svg class="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
                             <button onclick="deleteUser('${u.username}')" class="p-2 hover:scale-110 transition bg-red-500/10 rounded-full"><svg class="w-5 h-5 text-[#ef4444]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>
                         </div>
                     </div>
                 `;
             });
-            
-            if(sortableInstance) sortableInstance.destroy();
-            sortableInstance = new Sortable(container, {
-                animation: 150, 
-                handle: '.drag-handle', 
-                ghostClass: 'sortable-ghost', 
-                dragClass: 'sortable-drag',
-                onStart: function () { isDraggingUser = true; },
-                onEnd: function () { 
-                    updateOrderInDB(); 
-                    setTimeout(() => { isDraggingUser = false; }, 500); 
-                }
-            });
+            if(sortableInstance) sortableInstance.destroy(); sortableInstance = new Sortable(container, { animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', onStart: function () { isDraggingUser = true; }, onEnd: function () { updateOrderInDB(); setTimeout(() => { isDraggingUser = false; }, 500); } });
         }
 
-        function updateOrderInDB() {
-            if(!db) return;
-            const items = document.querySelectorAll('.user-drag-item');
-            let updates = {};
-            items.forEach((item, index) => {
-                let uname = item.getAttribute('data-username');
-                if(uname) { updates[uname + '/order'] = parseInt(index); }
-            });
-            db.ref('app_users').update(updates).then(() => { showWarningToast('✅ บันทึกการจัดเรียงสำเร็จ!'); });
-        }
+        function updateOrderInDB() { if(!db) return; const items = document.querySelectorAll('.user-drag-item'); let updates = {}; items.forEach((item, index) => { let uname = item.getAttribute('data-username'); if(uname) { updates[uname + '/order'] = parseInt(index); } }); db.ref('app_users').update(updates); }
 
         function renderData() {
             transactionsData.sort((a, b) => { 
                 let aAdmin = a.isAdminOwner ? 1 : 0; let bAdmin = b.isAdminOwner ? 1 : 0; 
-                if (aAdmin !== bAdmin) return bAdmin - aAdmin;
-
+                if (aAdmin !== bAdmin) return bAdmin - aAdmin; 
                 if (!a.isAdminOwner && !b.isAdminOwner) { 
                     let userA = null; let userB = null;
-                    for(let key in appUsers) {
-                        if(appUsers[key].name === a.buyer) userA = appUsers[key];
-                        if(appUsers[key].name === b.buyer) userB = appUsers[key];
-                    }
-                    
-                    let favA = (userA && userA.isFavorite) ? 1 : 0;
-                    let favB = (userB && userB.isFavorite) ? 1 : 0;
+                    for(let key in appUsers) { if(appUsers[key].name === a.buyer) userA = appUsers[key]; if(appUsers[key].name === b.buyer) userB = appUsers[key]; }
+                    let favA = (userA && userA.isFavorite) ? 1 : 0; let favB = (userB && userB.isFavorite) ? 1 : 0;
                     if (favA !== favB) return favB - favA;
-
-                    let orderA = (userA && typeof userA.order === 'number') ? userA.order : 999;
-                    let orderB = (userB && typeof userB.order === 'number') ? userB.order : 999;
+                    let orderA = (userA && typeof userA.order === 'number') ? userA.order : 999; let orderB = (userB && typeof userB.order === 'number') ? userB.order : 999;
                     if (orderA !== orderB) return orderA - orderB;
-                    
                     return new Date(b.date) - new Date(a.date); 
                 } 
                 return new Date(b.date) - new Date(a.date); 
             }); 
 
-            const dashboardContainer = document.getElementById('guest-cards-container'); 
-            const txContainer = document.getElementById('tx-cards-container'); 
-            const alertContainer = document.getElementById('sim-alert-container');
-            if(!dashboardContainer || !txContainer) return; 
+            const dashboardContainer = document.getElementById('guest-cards-container'); const txContainer = document.getElementById('tx-cards-container'); const alertContainer = document.getElementById('sim-alert-container'); if(!dashboardContainer || !txContainer) return; 
+            dashboardContainer.innerHTML = ''; txContainer.innerHTML = ''; 
             
-            dashboardContainer.innerHTML = ''; 
-            txContainer.innerHTML = ''; 
-            
-            // แสดงสถานะจำลองราคา
             if (simulatedGoldPrice !== null && currentView === 'dashboard') {
-                alertContainer.innerHTML = `
-                    <div class="col-span-full bg-indigo-900/40 border border-indigo-500/50 rounded-xl p-3 text-center mb-4 animate-pulse">
-                        <p class="text-yellow-400 font-black text-sm">⚠️ กำลังแสดงผลด้วยราคาจำลอง: <span class="text-lg">${simulatedGoldPrice.toLocaleString()}</span> บาท</p>
-                    </div>
-                `;
-            } else {
-                alertContainer.innerHTML = '';
-            }
+                alertContainer.innerHTML = `<div class="col-span-full bg-purple-900/40 border border-purple-500/50 rounded-xl p-3 text-center mb-4 animate-pulse"><p class="text-yellow-400 font-black text-sm">⚠️ โหมดจำลองราคา: <span class="text-lg">${simulatedGoldPrice.toLocaleString()}</span> บาท</p></div>`;
+            } else { alertContainer.innerHTML = ''; }
 
             const effectivePrice = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice; 
             currentViewList = [];
             
             transactionsData.forEach((tx) => {
-                if (currentRole === 'guest') return; 
-                if (currentRole === 'user' && tx.buyer !== currentUser.name) return; 
-
-                // Hide Port Logic
+                if (currentRole === 'guest') return; if (currentRole === 'user' && tx.buyer !== currentUser.name) return; 
                 let shouldHideOnDashboard = false;
                 if (currentRole === 'admin') {
-                    if (isHideAdminPort && tx.isAdminOwner) {
-                        shouldHideOnDashboard = true;
-                    }
-                    if (!tx.isAdminOwner) {
-                        let userTx = null;
-                        for(let key in appUsers) {
-                            if(appUsers[key].name === tx.buyer) userTx = appUsers[key];
-                        }
-                        if (userTx && userTx.isHidden) shouldHideOnDashboard = true;
-                    }
+                    if (isHideAdminPort && tx.isAdminOwner) shouldHideOnDashboard = true;
+                    if (!tx.isAdminOwner) { let userTx = null; for(let key in appUsers) { if(appUsers[key].name === tx.buyer) userTx = appUsers[key]; } if (userTx && userTx.isHidden) shouldHideOnDashboard = true; }
                 }
-
-                tx.totalWeight = tx.weight * tx.qty; 
-                tx.totalCost = (tx.buyprice * tx.totalWeight) + (tx.blockfee * tx.totalWeight); 
-                tx.currentValue = effectivePrice * tx.totalWeight; 
-                tx.profitPerBaht = effectivePrice - tx.buyprice; 
-                tx.totalProfit = tx.currentValue - tx.totalCost; 
-                tx.profImg = getProfileImg(tx.buyer);
-                let isAdmin = tx.isAdminOwner === true; 
+                tx.totalWeight = tx.weight * tx.qty; tx.totalCost = (tx.buyprice * tx.totalWeight) + (tx.blockfee * tx.totalWeight); tx.currentValue = effectivePrice * tx.totalWeight; tx.profitPerBaht = effectivePrice - tx.buyprice; tx.totalProfit = tx.currentValue - tx.totalCost; tx.profImg = getProfileImg(tx.buyer);
+                let isAdmin = tx.isAdminOwner === true; let isSim = simulatedGoldPrice !== null;
                 
                 if (!shouldHideOnDashboard) {
-                    currentViewList.push(tx); 
-                    let index = currentViewList.length - 1; 
-                    let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-br from-emerald-600 to-green-900 border-green-400' : 'bg-gradient-to-br from-rose-600 to-red-900 border-red-400'; 
-                    let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; 
-                    let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400';
+                    currentViewList.push(tx); let index = currentViewList.length - 1; 
                     
+                    // สลับเป็นสีม่วงถ้าเป็นการจำลองราคา
+                    let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-br from-emerald-600 to-green-900 border-green-400' : 'bg-gradient-to-br from-rose-600 to-red-900 border-red-400'; 
+                    if (isSim) bgTheme = 'bg-gradient-to-br from-purple-800 to-indigo-900 border-purple-500';
+
+                    let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400';
+                    if (isSim && tx.totalProfit >= 0) pCol = 'text-yellow-300';
+                    if (isSim && tx.currentValue >= tx.totalCost) valCol = 'text-yellow-300';
+
                     let dashCard = `
                         <div onclick="openModal(${index})" class="app-card ${bgTheme} rounded-3xl p-5 border relative overflow-hidden text-white group">
                             <div class="flex items-center justify-between mb-4 relative z-10 mt-1">
@@ -813,19 +571,18 @@
                                     <div class="relative inline-block shrink-0"><img src="${tx.profImg}" class="w-14 h-14 rounded-full border-2 border-white object-cover shadow-lg bg-gray-800">${isAdmin ? '<div class="absolute -bottom-1 -right-1 text-lg drop-shadow-md emoji z-20">👑</div>' : ''}</div>
                                     <div><p class="font-black text-xl tracking-tight">${tx.buyer}</p><span class="bg-black/30 px-2 py-0.5 rounded text-[10px] font-bold emoji">📅 ${tx.date}</span></div>
                                 </div>
-                                <div class="text-right"><p class="text-[9px] text-yellow-500/90 font-bold uppercase tracking-widest mb-0.5">ราคาตลาด/บ.</p><p class="font-black text-yellow-400 text-sm">${effectivePrice.toLocaleString()}</p></div>
+                                <div class="text-right"><p class="text-[9px] text-yellow-500/90 font-bold uppercase tracking-widest mb-0.5">${isSim ? 'ราคาจำลอง/บ.' : 'ราคาตลาด/บ.'}</p><p class="font-black text-yellow-400 text-sm">${effectivePrice.toLocaleString()}</p></div>
                             </div>
                             <div class="grid grid-cols-2 gap-3 mb-4 relative z-10">
                                 <div class="bg-black/20 rounded-xl p-2 border border-white/10"><p class="text-[9px] text-white/70 uppercase font-bold mb-0.5">ทอง (บ.) x ก้อน</p><p class="font-bold text-sm">${tx.weight} x ${tx.qty} = <span class="text-yellow-300">${tx.totalWeight} บ.</span></p></div>
                                 <div class="bg-black/20 rounded-xl p-2 border border-white/10 text-right"><p class="text-[9px] text-white/70 uppercase font-bold mb-0.5">ราคาซื้อ/บาท</p><p class="font-bold text-yellow-300 text-sm">${tx.buyprice.toLocaleString()}</p></div>
                             </div>
                             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/20 shadow-inner flex justify-between items-center relative z-10">
-                                <div><p class="text-[9px] text-white/80 uppercase font-bold mb-0.5">ต้นทุนทั้งหมด</p><p class="font-black text-base text-green-400">${tx.totalCost.toLocaleString()}</p></div>
+                                <div><p class="text-[9px] text-white/80 uppercase font-bold mb-0.5">ต้นทุนทั้งหมด</p><p class="font-black text-base text-white">${tx.totalCost.toLocaleString()}</p></div>
                                 <div class="text-right"><p class="text-[9px] text-white/80 uppercase font-bold mb-0.5">กำไรสุทธิ</p><p class="font-black text-xl md:text-2xl drop-shadow-md ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</p></div>
                             </div>
                         </div>
-                    `; 
-                    dashboardContainer.innerHTML += dashCard;
+                    `; dashboardContainer.innerHTML += dashCard;
                 }
 
                 let txCard = `
@@ -845,8 +602,7 @@
                             <button onclick="deleteTx('${tx.id}')" class="flex-1 bg-red-600/20 text-red-400 py-2.5 rounded-xl text-xs font-black hover:bg-red-600/40 transition flex justify-center items-center gap-1"><span class="emoji">🗑️</span> ลบ</button>
                         </div>
                     </div>
-                `; 
-                txContainer.innerHTML += txCard; 
+                `; txContainer.innerHTML += txCard; 
             });
             document.getElementById('total-items-count').innerText = `${currentViewList.length} รายการ`;
         }
@@ -855,28 +611,7 @@
         function openUserModal() { document.getElementById('u_original_username').value = ''; document.getElementById('u_username').value = ''; document.getElementById('u_password').value = ''; document.getElementById('u_name').value = ''; document.getElementById('u_prof_base64').value = ''; document.getElementById('u_prof_file').value = ''; document.getElementById('u_prof_preview').src = `https://ui-avatars.com/api/?name=U&background=334155&color=fff`; document.getElementById('user-modal-title').innerText = 'เพิ่มผู้ใช้งานใหม่'; document.getElementById('user-btn-submit').innerText = 'สร้างผู้ใช้'; document.getElementById('user-form-modal').style.display = 'flex'; }
         function editUser(username) { const u = appUsers[username]; if(!u) return; document.getElementById('u_original_username').value = username; document.getElementById('u_username').value = username; document.getElementById('u_password').value = u.password; document.getElementById('u_name').value = u.name; document.getElementById('u_prof_base64').value = ''; document.getElementById('u_prof_file').value = ''; document.getElementById('u_prof_preview').src = getProfileImg(u.name); document.getElementById('user-modal-title').innerText = 'แก้ไขข้อมูลผู้ใช้'; document.getElementById('user-btn-submit').innerText = 'อัปเดตข้อมูล'; document.getElementById('user-form-modal').style.display = 'flex'; }
         function closeUserModal() { document.getElementById('user-form-modal').style.display = 'none'; }
-        
-        function saveUser(e) {
-            e.preventDefault(); const origUser = document.getElementById('u_original_username').value;
-            const username = document.getElementById('u_username').value.trim(); const password = document.getElementById('u_password').value.trim(); const name = document.getElementById('u_name').value.trim();
-            const base64Img = document.getElementById('u_prof_base64').value;
-            if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
-
-            if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
-            
-            let userOrder = 999; let isFav = false; let isHid = false;
-
-            if (origUser && appUsers[origUser]) { 
-                if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; 
-                isFav = appUsers[origUser].isFavorite || false; isHid = appUsers[origUser].isHidden || false;
-            } else { 
-                let maxOrder = -1; for(let k in appUsers) { if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } 
-                userOrder = maxOrder + 1; 
-            }
-
-            if(origUser && origUser !== username) { db.ref('app_users/' + origUser).remove(); }
-            db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder, isFavorite: isFav, isHidden: isHid }).then(() => { showWarningToast('✅ บันทึกข้อมูลสำเร็จ!'); closeUserModal(); });
-        }
+        function saveUser(e) { e.preventDefault(); const origUser = document.getElementById('u_original_username').value; const username = document.getElementById('u_username').value.trim(); const password = document.getElementById('u_password').value.trim(); const name = document.getElementById('u_name').value.trim(); const base64Img = document.getElementById('u_prof_base64').value; if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; } if (base64Img) db.ref('user_profiles/' + name).set(base64Img); let userOrder = 999; let isFav = false; let isHid = false; if (origUser && appUsers[origUser]) { if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; isFav = appUsers[origUser].isFavorite || false; isHid = appUsers[origUser].isHidden || false; } else { let maxOrder = -1; for(let k in appUsers) { if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } userOrder = maxOrder + 1; } if(origUser && origUser !== username) { db.ref('app_users/' + origUser).remove(); } db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder, isFavorite: isFav, isHidden: isHid }).then(() => { showWarningToast('✅ บันทึกข้อมูลสำเร็จ!'); closeUserModal(); }); }
         function deleteUser(username) { if(confirm(`ยืนยันการลบผู้ใช้ ${username} ถาวร?`)) db.ref('app_users/' + username).remove(); }
 
         // --- 7. TRANSACTION HELPERS ---
@@ -884,42 +619,8 @@
         function prepareEdit(id) { const item = transactionsData.find(tx => tx.id === id); if(item) { document.getElementById('edit_id').value = item.id; document.getElementById('f_date').value = item.date; document.getElementById('f_shop').value = item.shop; document.getElementById('f_buyer').value = item.buyer; document.getElementById('f_weight').value = item.weight; document.getElementById('f_qty').value = item.qty; document.getElementById('f_buyprice').value = item.buyprice; document.getElementById('f_blockfee').value = item.blockfee; document.getElementById('f_is_admin').checked = item.isAdminOwner || false; document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; checkExistingProfile(item.buyer); document.getElementById('form-title').innerText = `แก้ไขรายการ`; document.getElementById('btn-submit').innerText = "อัปเดตข้อมูล"; toggleAddTxForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
         function deleteTx(id) { if(confirm("ลบรายการนี้ถาวร?")) db.ref('gold_portfolio/' + id).remove(); }
 
-
         // --- 8. API & OTHER HELPERS ---
-        async function fetchGoldFromSheet() { 
-            const sheetId = '1Edz3ycTQofuWH9KvV7mKWNh9yzDjDFmCYglD5MSyn3E'; 
-            const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0&t=${new Date().getTime()}`; 
-            try { 
-                const response = await fetch(csvUrl); 
-                if (!response.ok) return; 
-                const data = await response.text(); 
-                const parseCSV = (str) => { let res = [], cur = '', inQ = false; for (let i = 0; i < str.length; i++) { let c = str[i]; if (c === '"') inQ = !inQ; else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; } else cur += c; } res.push(cur.trim()); return res; }; 
-                const rows = data.split('\n').map(parseCSV); 
-                const cleanNum = (str) => str ? parseFloat(str.replace(/[^0-9.-]+/g, '')) : 0; 
-                
-                document.getElementById('api-date').innerText = rows[2] ? rows[2][17] : '--'; 
-                document.getElementById('api-time').innerText = rows[2] ? rows[2][19] : '--'; 
-                let bBuyStr = rows[4] ? rows[4][18] : ''; 
-                let bSellStr = rows[4] ? rows[4][19] : ''; 
-                let oBuyStr = rows[6] ? rows[6][18] : ''; 
-                let oSellStr = rows[6] ? rows[6][19] : ''; 
-                let chgStr = rows[3] && rows[3][20] ? rows[3][20].trim() : (rows[4] && rows[4][20] ? rows[4][20].trim() : (rows[2] && rows[2][20] ? rows[2][20].trim() : '')); 
-                let newPrice = cleanNum(bBuyStr); 
-                let priceChanged = (newPrice !== currentGoldBuyPrice); 
-                if (newPrice > 0) currentGoldBuyPrice = newPrice; 
-                let priceColorClass = 'text-white'; 
-                if (chgStr) { 
-                    let cel = document.getElementById('api-change'); 
-                    let chgNum = parseFloat(chgStr.replace(/,/g, '')); 
-                    if(chgNum > 0) { priceColorClass = 'text-green-400'; cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; } 
-                    else if(chgNum < 0) { priceColorClass = 'text-red-400'; cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; } 
-                    else { cel.innerText = chgStr; } 
-                } 
-                [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { let el = document.getElementById(item.id); if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; } }); 
-                if(priceChanged && transactionsData.length > 0) renderData(); 
-            } catch (error) {} 
-        }
-        
+        async function fetchGoldFromSheet() { const sheetId = '1Edz3ycTQofuWH9KvV7mKWNh9yzDjDFmCYglD5MSyn3E'; const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0&t=${new Date().getTime()}`; try { const response = await fetch(csvUrl); if (!response.ok) return; const data = await response.text(); const parseCSV = (str) => { let res = [], cur = '', inQ = false; for (let i = 0; i < str.length; i++) { let c = str[i]; if (c === '"') inQ = !inQ; else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; } else cur += c; } res.push(cur.trim()); return res; }; const rows = data.split('\n').map(parseCSV); const cleanNum = (str) => str ? parseFloat(str.replace(/[^0-9.-]+/g, '')) : 0; document.getElementById('api-date').innerText = rows[2] ? rows[2][17] : '--'; document.getElementById('api-time').innerText = rows[2] ? rows[2][19] : '--'; let bBuyStr = rows[4] ? rows[4][18] : ''; let bSellStr = rows[4] ? rows[4][19] : ''; let oBuyStr = rows[6] ? rows[6][18] : ''; let oSellStr = rows[6] ? rows[6][19] : ''; let chgStr = rows[3] && rows[3][20] ? rows[3][20].trim() : (rows[4] && rows[4][20] ? rows[4][20].trim() : (rows[2] && rows[2][20] ? rows[2][20].trim() : '')); let newPrice = cleanNum(bBuyStr); let priceChanged = (newPrice !== currentGoldBuyPrice); if (newPrice > 0) currentGoldBuyPrice = newPrice; let priceColorClass = 'text-white'; if (chgStr) { let cel = document.getElementById('api-change'); let chgNum = parseFloat(chgStr.replace(/,/g, '')); if(chgNum > 0) { priceColorClass = 'text-green-400'; cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; } else if(chgNum < 0) { priceColorClass = 'text-red-400'; cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; } else { cel.innerText = chgStr; } } [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { let el = document.getElementById(item.id); if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; } }); if(priceChanged && transactionsData.length > 0) renderData(); } catch (error) {} }
         function loadProfiles() { db.ref('user_profiles').on('value', snap => { userProfiles = snap.val() || {}; updateUIRole(); if(transactionsData.length > 0) renderData(); if(currentView === 'manage-users') renderUsersCards(); }); }
         function getProfileImg(name) { return userProfiles[name] || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=facc15&color=000&rounded=true&bold=true`; }
         function checkExistingProfile(name) { if(name && userProfiles[name]) document.getElementById('form_prof_preview').src = userProfiles[name]; else document.getElementById('form_prof_preview').src = `https://ui-avatars.com/api/?name=${name || 'User'}&background=334155&color=fff`; }
@@ -945,8 +646,7 @@
         function deleteSettingPin() { if(settingPinStep === 1) sOldPin = sOldPin.slice(0,-1); else if(settingPinStep === 2) sNewPin = sNewPin.slice(0,-1); else if(settingPinStep === 3) sConfPin = sConfPin.slice(0,-1); updateSettingPinUI(); }
 
         // --- 10. MODAL SWIPE CONTROLS ---
-        let touchStartX = 0; let touchEndX = 0; 
-        function setupSwipeGestures() { const itemModal = document.getElementById('item-modal'); itemModal.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true}); itemModal.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; const SWIPE_THRESHOLD = 50; if (touchStartX - touchEndX > SWIPE_THRESHOLD) nextItem(); if (touchEndX - touchStartX > SWIPE_THRESHOLD) prevItem(); }, {passive: true}); }
+        let touchStartX = 0; let touchEndX = 0; function setupSwipeGestures() { const itemModal = document.getElementById('item-modal'); itemModal.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true}); itemModal.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; const SWIPE_THRESHOLD = 50; if (touchStartX - touchEndX > SWIPE_THRESHOLD) nextItem(); if (touchEndX - touchStartX > SWIPE_THRESHOLD) prevItem(); }, {passive: true}); }
         function openModal(index) { if(index < 0 || index >= currentViewList.length) return; activeModalIndex = index; updateModalUI(); document.getElementById('item-modal').classList.remove('opacity-0', 'pointer-events-none'); document.getElementById('modal-content').classList.add('modal-enter'); document.body.style.overflow = 'hidden'; }
         function closeModal() { document.getElementById('item-modal').classList.add('opacity-0', 'pointer-events-none'); document.getElementById('modal-content').classList.remove('modal-enter'); document.body.style.overflow = 'auto'; activeModalIndex = -1; }
         function nextItem() { if(activeModalIndex < currentViewList.length - 1) { document.getElementById('modal-content').classList.remove('modal-enter'); void document.getElementById('modal-content').offsetWidth; activeModalIndex++; updateModalUI(); document.getElementById('modal-content').classList.add('modal-enter'); } }
@@ -955,8 +655,16 @@
         function updateModalUI() { 
             if(activeModalIndex === -1 || currentViewList.length === 0) return; let tx = currentViewList[activeModalIndex]; 
             document.getElementById('prev-btn').style.display = activeModalIndex > 0 ? 'flex' : 'none'; document.getElementById('next-btn').style.display = activeModalIndex < currentViewList.length - 1 ? 'flex' : 'none'; 
-            let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400'; let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-b from-gray-800 to-gray-900 border-green-500/30' : 'bg-gradient-to-b from-gray-800 to-gray-900 border-red-500/30'; 
             
+            let isSim = simulatedGoldPrice !== null;
+            let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-b from-gray-800 to-gray-900 border-green-500/30' : 'bg-gradient-to-b from-gray-800 to-gray-900 border-red-500/30'; 
+            if (isSim) bgTheme = 'bg-gradient-to-b from-purple-900 to-indigo-900 border-purple-500/50';
+
+            let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; 
+            let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400'; 
+            if (isSim && tx.totalProfit >= 0) pCol = 'text-yellow-300';
+            if (isSim && tx.currentValue >= tx.totalCost) valCol = 'text-yellow-300';
+
             document.getElementById('modal-content').innerHTML = ` 
                 <div class="relative w-full max-w-md mx-auto mt-8 h-[85vh] flex flex-col justify-center"> 
                     <button class="absolute -top-4 -right-2 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-12 h-12 flex items-center justify-center transition shadow-2xl text-2xl font-black z-[400] border border-gray-600 cursor-pointer" onclick="closeModal()">✕</button> 
@@ -968,7 +676,7 @@
                         <div class="bg-black/50 rounded-3xl p-5 mb-5 shadow-inner border border-white/10 text-center"><p class="text-gray-400 text-sm uppercase font-bold tracking-widest mb-1">น้ำหนัก</p><p class="text-3xl font-black text-yellow-400">${tx.totalWeight} <span class="text-xl text-gray-400">บ.</span></p><p class="text-sm text-yellow-200 mt-2 font-bold bg-gray-800/80 inline-block px-4 py-2 rounded-xl border border-gray-600">ก้อนละ ${tx.weight} บ. x ${tx.qty} ก้อน</p></div> 
                         <div class="grid grid-cols-2 gap-3 text-center mb-6"><div class="bg-gray-800/90 rounded-2xl p-3 border border-gray-600"><p class="text-[11px] text-gray-400 uppercase font-bold mb-1">ราคาซื้อ/บาท</p><p class="font-black text-yellow-400 text-2xl">${tx.buyprice.toLocaleString()}</p></div><div class="bg-gray-800/90 rounded-2xl p-3 border border-gray-600"><p class="text-[11px] text-gray-400 uppercase font-bold mb-1">ค่าบล็อกรวม</p><p class="font-black text-white text-2xl">${(tx.blockfee * tx.totalWeight).toLocaleString()}</p></div></div> 
                         <div class="border-t border-gray-700 pt-5 text-center pb-4"> 
-                            <div class="bg-gray-800/80 p-3 rounded-2xl flex flex-col items-center mb-4 border border-gray-700"><p class="text-xs text-gray-300 font-bold uppercase mb-1">ต้นทุนทั้งหมด</p><p class="text-3xl font-black text-green-400">${tx.totalCost.toLocaleString()}</p></div> 
+                            <div class="bg-gray-800/80 p-3 rounded-2xl flex flex-col items-center mb-4 border border-gray-700"><p class="text-xs text-gray-300 font-bold uppercase mb-1">ต้นทุนทั้งหมด</p><p class="text-3xl font-black text-white">${tx.totalCost.toLocaleString()}</p></div> 
                             <div class="bg-black/70 p-4 rounded-3xl flex flex-col gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10"><div><span class="block text-xs text-gray-400 font-bold uppercase mb-1">มูลค่าปัจจุบัน</span><span class="text-3xl font-black ${valCol}">${tx.currentValue.toLocaleString()}</span></div><div class="border-t border-gray-700 pt-3"><span class="block text-xs text-gray-400 font-bold uppercase mb-1">กำไร/ขาดทุนสุทธิ</span><div class="bg-black/50 px-4 py-2 rounded-2xl inline-block mt-1"><span class="text-3xl font-black ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div></div></div> 
                         </div> 
                     </div> 
