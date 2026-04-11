@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.16 (Locked Profile Pic & Smart Dropdown)</title>
+    <title>พอร์ตทองคำ V6.17 (Clean & Full Screen Modal Fixed)</title>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -61,7 +61,7 @@
     <datalist id="shop-list"></datalist>
     <datalist id="buyer-list"></datalist>
 
-    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[500] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
+    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[800] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
 
     <div id="btn-hamburger" class="fixed top-6 right-6 z-[200] cursor-pointer p-2 hidden" onclick="openMenu()">
         <div class="hamburger-line w-7 h-1 bg-yellow-400 rounded-full mb-1.5 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
@@ -78,7 +78,7 @@
             </div>
             <div class="flex flex-col p-4 gap-2 mt-2">
                 <button onclick="switchView('dashboard')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3"><span class="emoji">📊</span> หน้าแรก</button>
-                <button id="menu-manage-tx" onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/อัปเดตข้อมูลทอง</button>
+                <button onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/อัปเดตข้อมูลทอง</button>
                 <button id="menu-manage-users" onclick="switchView('manage-users')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-pink-400 transition flex items-center gap-3 hidden"><span class="emoji">👥</span> จัดการบัญชีผู้ใช้งาน</button>
                 <button id="menu-admin-settings" onclick="openAdminSettingsModal()" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-emerald-400 transition flex items-center gap-3 hidden"><span class="emoji">⚙️</span> ตั้งค่าระบบ Admin</button>
             </div>
@@ -112,8 +112,18 @@
                     <div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto text-white">
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('1')">1</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('2')">2</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('3')">3</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('4')">4</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('5')">5</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('6')">6</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('7')">7</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('8')">8</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('9')">9</button>
-                    <div class="w-14 h-14 md:w-16 md:h-16"></div><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('0')">0</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deletePin()">⌫</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('1')">1</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('2')">2</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('3')">3</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('4')">4</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('5')">5</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('6')">6</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('7')">7</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('8')">8</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('9')">9</button>
+                    <div class="w-14 h-14 md:w-16 md:h-16"></div>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('0')">0</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deletePin()">⌫</button>
                 </div>
             </div>
         </div>
@@ -220,9 +230,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start mb-6">
                         <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">วันที่ซื้อ</label><input required id="f_date" type="date" /></div>
                         <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อร้านทอง</label><input placeholder="ระบุชื่อร้าน" required id="f_shop" type="text" list="shop-list" /></div>
-                        
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อผู้ซื้อ (เจ้าของพอร์ต)</label><input placeholder="เช่น อนาวิล" required id="f_buyer" type="text" list="buyer-list" onkeyup="checkExistingProfile(this.value)" onchange="checkExistingProfile(this.value)" /></div>
-                        
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อผู้ซื้อ (เจ้าของพอร์ต)</label><input placeholder="เช่น อนาวิล" required id="f_buyer" type="text" list="buyer-list" onchange="checkExistingProfile(this.value)" /></div>
                         <div class="grid grid-cols-2 gap-3">
                             <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">น.น./ก้อน (บ.)</label><input required id="f_weight" step="0.25" type="number" placeholder="เช่น 5" /></div>
                             <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">จำนวน (ก้อน)</label><input required id="f_qty" type="number" placeholder="เช่น 2" /></div>
@@ -379,9 +387,10 @@
         </div>
     </div>
 
-    <div id="item-modal" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[400] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300 overflow-hidden">
-        <div id="modal-content" class="w-full h-full relative z-[400]"></div>
-        <div id="floating-close-btn" class="fixed w-14 h-14 bg-gray-800 hover:bg-gray-700 text-white rounded-full flex items-center justify-center text-2xl font-black shadow-[0_0_20px_rgba(0,0,0,0.8)] cursor-grab active:cursor-grabbing z-[600] border-2 border-white/20 transition-transform active:scale-95 touch-none hidden" style="bottom: 2rem; left: calc(50% - 1.75rem);">
+    <div id="item-modal" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[600] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300 overflow-hidden">
+        <div id="modal-content" class="w-full h-full relative z-[610]"></div>
+        
+        <div id="floating-close-btn" class="fixed w-14 h-14 bg-gray-800 hover:bg-gray-700 text-white rounded-full flex items-center justify-center text-2xl font-black shadow-[0_0_20px_rgba(0,0,0,0.8)] cursor-grab active:cursor-grabbing z-[650] border-2 border-white/20 transition-transform active:scale-95 touch-none hidden" style="bottom: 2rem; left: calc(50% - 1.75rem);">
             ✕
         </div>
     </div>
@@ -491,17 +500,7 @@
         function logout() { localStorage.removeItem('goldAppSession'); location.reload(); }
 
         // --- 5. DB LOAD & DATA RENDER ---
-        function loadUsers() { 
-            if(!db) return; 
-            db.ref('app_users').on('value', snap => { 
-                if(isDraggingUser) return; 
-                appUsers = snap.val() || {}; 
-                updateAutocomplete(); // ดึงรายชื่ออัปเดตลง Dropdown
-                if (currentView === 'manage-users') renderUsersCards(); 
-                if (currentView === 'dashboard') renderData(); 
-            }); 
-        }
-
+        function loadUsers() { if(!db) return; db.ref('app_users').on('value', snap => { if(isDraggingUser) return; appUsers = snap.val() || {}; updateAutocomplete(); if (currentView === 'manage-users') renderUsersCards(); if (currentView === 'dashboard') renderData(); }); }
         function loadData() { if(!db) return; db.ref('gold_portfolio').on('value', (snapshot) => { transactionsData = []; snapshot.forEach(child => { transactionsData.push({ id: child.key, ...child.val() }); }); updateAutocomplete(); renderData(); }); }
 
         function toggleFav(username) { if(!db || !appUsers[username]) return; let isF = appUsers[username].isFavorite ? false : true; db.ref('app_users/' + username).update({ isFavorite: isF }); }
@@ -540,29 +539,12 @@
 
         // --- 6. USER FORM HELPERS ---
         function openUserModal() { document.getElementById('u_original_username').value = ''; document.getElementById('u_username').value = ''; document.getElementById('u_password').value = ''; document.getElementById('u_name').value = ''; document.getElementById('u_prof_base64').value = ''; document.getElementById('u_prof_file').value = ''; document.getElementById('u_prof_preview').src = `https://ui-avatars.com/api/?name=U&background=334155&color=fff`; document.getElementById('user-modal-title').innerText = 'เพิ่มผู้ใช้งานใหม่'; document.getElementById('user-btn-submit').innerText = 'สร้างผู้ใช้'; document.getElementById('user-form-modal').style.display = 'flex'; }
-        function editUser(username) { 
-            const u = appUsers[username]; if(!u) return; 
-            document.getElementById('u_original_username').value = username; 
-            document.getElementById('u_username').value = username; 
-            document.getElementById('u_password').value = u.password; 
-            document.getElementById('u_name').value = u.name; 
-            
-            // ดึงรูปเดิมมาเป็น Base64 แอบซ่อนไว้ ถ้าไม่เปลี่ยนรูปใหม่ก็จะเซฟรูปเดิมให้ชื่อใหม่
-            document.getElementById('u_prof_base64').value = userProfiles[u.name] || ''; 
-            document.getElementById('u_prof_file').value = ''; 
-            document.getElementById('u_prof_preview').src = getProfileImg(u.name); 
-            
-            document.getElementById('user-modal-title').innerText = 'แก้ไขข้อมูลผู้ใช้'; 
-            document.getElementById('user-btn-submit').innerText = 'อัปเดตข้อมูล'; 
-            document.getElementById('user-form-modal').style.display = 'flex'; 
-        }
+        function editUser(username) { const u = appUsers[username]; if(!u) return; document.getElementById('u_original_username').value = username; document.getElementById('u_username').value = username; document.getElementById('u_password').value = u.password; document.getElementById('u_name').value = u.name; document.getElementById('u_prof_base64').value = userProfiles[u.name] || ''; document.getElementById('u_prof_file').value = ''; document.getElementById('u_prof_preview').src = getProfileImg(u.name); document.getElementById('user-modal-title').innerText = 'แก้ไขข้อมูลผู้ใช้'; document.getElementById('user-btn-submit').innerText = 'อัปเดตข้อมูล'; document.getElementById('user-form-modal').style.display = 'flex'; }
         function closeUserModal() { document.getElementById('user-form-modal').style.display = 'none'; }
         
         function saveUser(e) {
             e.preventDefault(); const origUser = document.getElementById('u_original_username').value; const username = document.getElementById('u_username').value.trim(); const password = document.getElementById('u_password').value.trim(); const name = document.getElementById('u_name').value.trim(); const base64Img = document.getElementById('u_prof_base64').value;
             if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
-            
-            // เซฟรูปลงฐานข้อมูล ผูกกับชื่อใหม่
             if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
             
             let userOrder = 999; let isFav = false; let isHid = false;
@@ -677,8 +659,8 @@
                         <div class="grid grid-cols-2 gap-2 text-sm bg-black/30 p-3 rounded-xl border border-white/5">
                             <div><span class="text-gray-500 text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div>
                             <div class="text-right"><span class="text-gray-500 text-xs block">น้ำหนัก (ก้อน)</span> <span class="font-bold text-white">${tx.weight} บ. <span class="text-gray-500 text-xs">(x${tx.qty})</span></span></div>
-                            <div><span class="text-gray-500 text-xs block">ต้นทุนรวม</span> <span class="font-bold text-white">${tx.totalCost.toLocaleString()}</span></div>
-                            <div class="text-right"><span class="text-gray-500 text-xs block">กำไร/ขาดทุน</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div>
+                            <div><span class="text-gray-500 text-xs block">ต้นทุนรวม</span> <span class="font-bold text-green-400">${tx.totalCost.toLocaleString()}</span></div>
+                            <div class="text-right"><span class="text-gray-500 text-xs block">${tx.totalProfit >= 0 ? 'กำไร' : 'ขาดทุน'}</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div>
                         </div>
                         <div class="flex gap-2 mt-1">
                             <button onclick="prepareEdit('${tx.id}')" class="flex-1 bg-blue-600/20 text-blue-400 py-2.5 rounded-xl text-xs font-black hover:bg-blue-600/40 transition flex justify-center items-center gap-1"><span class="emoji">✏️</span> แก้ไข</button>
@@ -695,6 +677,7 @@
         function loadProfiles() { db.ref('user_profiles').on('value', snap => { userProfiles = snap.val() || {}; updateUIRole(); if(transactionsData.length > 0) renderData(); if(currentView === 'manage-users') renderUsersCards(); }); }
         function getProfileImg(name) { return userProfiles[name] || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=facc15&color=000&rounded=true&bold=true`; }
         function checkExistingProfile(name) { if(name && userProfiles[name]) document.getElementById('form_prof_preview').src = userProfiles[name]; else document.getElementById('form_prof_preview').src = `https://ui-avatars.com/api/?name=${name || 'User'}&background=334155&color=fff`; }
+        function checkExistingUserProf(name) { if(name && userProfiles[name]) document.getElementById('u_prof_preview').src = userProfiles[name]; else document.getElementById('u_prof_preview').src = `https://ui-avatars.com/api/?name=${name || 'U'}&background=334155&color=fff`; }
         function updateAutocomplete() { const shops = [...new Set(transactionsData.map(tx => tx.shop))]; const txBuyers = transactionsData.map(tx => tx.buyer); const appUserNames = Object.values(appUsers).map(u => u.name); const buyers = [...new Set([...txBuyers, ...appUserNames, adminDisplayName])].filter(Boolean); document.getElementById('shop-list').innerHTML = shops.map(s => `<option value="${s}">`).join(''); document.getElementById('buyer-list').innerHTML = buyers.map(b => `<option value="${b}">`).join(''); }
         function handleFormImageUpload(event) { handleImgBase(event, base64Data => { document.getElementById('form_prof_base64').value = base64Data; document.getElementById('form_prof_preview').src = base64Data; }); }
         function handleUserImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('u_prof_base64').value = base64Data; document.getElementById('u_prof_preview').src = base64Data; }); }
