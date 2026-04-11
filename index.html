@@ -10,6 +10,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
+    <link rel="apple-touch-icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
+    <link rel="icon" sizes="192x192" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
+    <link rel="icon" sizes="512x512" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
+    <link rel="shortcut icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
+     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -38,9 +43,11 @@
         .hamburger-line:nth-child(3) { animation-delay: 0.4s; }
         @keyframes floatMenu { 0%, 100% { transform: translateX(0); opacity: 0.8; } 50% { transform: translateX(-2px); opacity: 1; } }
 
-        .modal-enter { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards; }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-        
+        .modal-enter { animation: zoomExpand 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes zoomExpand { 
+            0% { opacity: 0; transform: scale(0.6) translateY(30px); } 
+            100% { opacity: 1; transform: scale(1) translateY(0); } 
+}        
         .view-section { display: none; animation: fadeIn 0.3s ease forwards; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -770,8 +777,8 @@
             let profitPerBahtLabel = tx.profitPerBaht >= 0 ? 'กำไรเฉลี่ยต่อบาท' : 'ขาดทุนเฉลี่ยต่อบาท';
 
             document.getElementById('modal-content').innerHTML = ` 
-                <div class="relative w-full h-[100dvh] md:max-w-md mx-auto md:h-[85vh] md:mt-8 flex flex-col justify-center"> 
-                    <div class="${bgTheme} rounded-none md:rounded-[2rem] p-5 pt-12 md:p-6 md:border relative text-center text-white overflow-y-auto w-full h-full md:max-h-full hide-scroll flex flex-col"> 
+                <div class="modal-enter relative w-full h-[100dvh] md:max-w-md mx-auto md:h-[85vh] md:mt-8 flex flex-col justify-center"> 
+                    <div class="${bgTheme} rounded-none md:rounded-[2rem] p-5 pt-12 md:p-6 md:border relative text-center text-white overflow-y-auto w-full h-full md:max-h-full hide-scroll flex flex-col">
                         <div class="absolute top-6 left-6 bg-black/60 px-4 py-1.5 rounded-full text-sm font-bold border border-gray-600">${activeModalIndex + 1} / ${currentViewList.length}</div> 
                         <div class="relative inline-block mx-auto mb-2 mt-4"><img src="${tx.profImg}" class="w-32 h-32 rounded-full object-cover border-4 border-gray-700 shadow-2xl relative z-10 bg-gray-800">${tx.isAdminOwner ? '<div class="absolute bottom-1 right-1 text-4xl drop-shadow-lg emoji z-20">👑</div>' : ''}</div> 
                         <h2 class="text-4xl font-black text-white mt-2 tracking-tight">${tx.buyer}</h2> 
