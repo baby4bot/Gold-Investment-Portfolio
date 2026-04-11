@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.12 (Stable UI & Full Sync)</title>
+    <title>พอร์ตทองคำ V6.13 (Hide Admin & Sim Mode)</title>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -74,12 +74,10 @@
     <div id="side-menu" class="fixed inset-0 z-[250] pointer-events-none">
         <div id="side-menu-bg" class="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-none" onclick="closeMenu()"></div>
         <div id="side-menu-content" class="absolute top-0 right-0 h-full w-4/5 max-w-sm bg-gray-900 border-l border-gray-700 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col pointer-events-auto">
-            
             <div class="p-6 flex justify-between items-center border-b border-gray-800 bg-gray-800/50">
                 <div class="flex items-center gap-3" id="side-menu-header-profile"></div>
                 <button onclick="closeMenu()" class="text-gray-400 hover:text-white text-2xl font-bold w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 shadow-inner">✕</button>
             </div>
-            
             <div class="flex flex-col p-4 gap-2 mt-2">
                 <button onclick="switchView('dashboard')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3"><span class="emoji">📊</span> หน้าแรก</button>
                 <button id="menu-manage-tx" onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/อัปเดตข้อมูลทอง</button>
@@ -116,18 +114,8 @@
                     <div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto text-white">
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('1')">1</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('2')">2</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('3')">3</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('4')">4</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('5')">5</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('6')">6</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('7')">7</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('8')">8</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('9')">9</button>
-                    <div class="w-14 h-14 md:w-16 md:h-16"></div>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('0')">0</button>
-                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deletePin()">⌫</button>
+                    <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('1')">1</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('2')">2</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('3')">3</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('4')">4</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('5')">5</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('6')">6</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('7')">7</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('8')">8</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('9')">9</button>
+                    <div class="w-14 h-14 md:w-16 md:h-16"></div><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('0')">0</button><button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deletePin()">⌫</button>
                 </div>
             </div>
         </div>
@@ -154,12 +142,10 @@
                     <h3 class="text-yellow-500 font-bold text-lg mb-3 text-center">ทองคำแท่ง 96.5%</h3>
                     <div class="grid grid-cols-2 gap-3 max-w-xl mx-auto">
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">รับซื้อ</div>
-                            <p id="bar-buy" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">รับซื้อ</div><p id="bar-buy" class="text-2xl font-black">--</p>
                         </div>
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div>
-                            <p id="bar-sell" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div><p id="bar-sell" class="text-2xl font-black">--</p>
                         </div>
                     </div>
                 </div>
@@ -168,12 +154,10 @@
                     <h3 class="text-yellow-500 font-bold text-lg mb-3 text-center">ทองรูปพรรณ 96.5%</h3>
                     <div class="grid grid-cols-2 gap-3 max-w-xl mx-auto">
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ฐานภาษี</div>
-                            <p id="ornament-buy" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ฐานภาษี</div><p id="ornament-buy" class="text-2xl font-black">--</p>
                         </div>
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div>
-                            <p id="ornament-sell" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div><p id="ornament-sell" class="text-2xl font-black">--</p>
                         </div>
                     </div>
                 </div>
@@ -183,10 +167,20 @@
                 </div>
             </div>
 
-            <div class="flex justify-between items-end mb-4 px-1" id="portfolio-title-sec">
-                <h3 class="text-xl font-black text-white">รายการลงทุน <span id="current-user-title"></span></h3>
-                <span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full" id="total-items-count">0 รายการ</span>
+            <div class="flex justify-between items-center mb-4 px-1" id="portfolio-title-sec">
+                <div class="flex items-center gap-2">
+                    <h3 class="text-xl font-black text-white">รายการลงทุน <span id="current-user-title"></span></h3>
+                    <button onclick="openSimModal()" class="bg-indigo-600/30 text-indigo-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" title="จำลองราคาทอง">
+                        <span class="emoji text-sm">🪄</span>
+                    </button>
+                    <button id="btn-hide-admin" onclick="toggleAdminPort()" class="bg-gray-700/50 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-600 transition border border-gray-600 shadow-md hidden" title="ซ่อนพอร์ต Admin">
+                        <svg id="icon-eye-admin" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </button>
+                </div>
+                <span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full whitespace-nowrap" id="total-items-count">0 รายการ</span>
             </div>
+
+            <div id="sim-alert-container"></div>
 
             <div id="guest-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
             <div id="overall-summary-container" class="mt-12"></div>
@@ -267,6 +261,21 @@
             </div>
         </div>
 
+    </div>
+
+    <div id="sim-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[400] justify-center items-center px-4 hidden">
+        <div class="bg-gradient-to-br from-indigo-900 to-gray-900 p-6 rounded-[2rem] shadow-2xl w-full max-w-sm border border-indigo-500/50 relative">
+            <button type="button" onclick="closeSimModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full font-bold">✕</button>
+            <h2 class="text-xl font-black mb-2 text-indigo-300 text-center"><span class="emoji">🪄</span> โหมดจำลองราคา</h2>
+            <p class="text-xs text-gray-400 text-center mb-6">ใส่ราคาทองที่ต้องการ เพื่อดูยอดกำไร/ขาดทุนล่วงหน้า</p>
+            
+            <input id="sim-price-input" type="number" placeholder="เช่น 45000" class="text-center text-3xl font-black text-yellow-400 py-4 mb-6 bg-black/40 border-indigo-500/50 rounded-2xl" />
+            
+            <div class="flex gap-3">
+                <button onclick="applySim()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(79,70,229,0.4)]">จำลองราคา</button>
+                <button onclick="resetSim()" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(225,29,72,0.4)]">เลิกจำลอง</button>
+            </div>
+        </div>
     </div>
 
     <div id="user-form-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[300] justify-center items-center px-4 hidden">
@@ -411,9 +420,10 @@
         let adminPin = '135790'; 
         let currentPinInput = '';
         let adminDisplayName = 'Master Admin'; 
+        let isHideAdminPort = false; // ตัวแปรสถานะการซ่อนพอร์ตแอดมิน
         
         let sortableInstance = null; 
-        let isDraggingUser = false; // กันบั๊กโหลดทับตอนลาก
+        let isDraggingUser = false; 
 
         // --- 2. INITIALIZATION ---
         window.addEventListener('load', () => { 
@@ -445,17 +455,8 @@
         }
 
         // --- 3. UI & MENU ---
-        function openMenu() { 
-            document.getElementById('side-menu').classList.remove('pointer-events-none'); 
-            document.getElementById('side-menu-bg').classList.remove('opacity-0'); 
-            document.getElementById('side-menu-content').classList.remove('translate-x-full'); 
-        }
-        
-        function closeMenu() { 
-            document.getElementById('side-menu-bg').classList.add('opacity-0'); 
-            document.getElementById('side-menu-content').classList.add('translate-x-full'); 
-            setTimeout(() => { document.getElementById('side-menu').classList.add('pointer-events-none'); }, 300); 
-        }
+        function openMenu() { document.getElementById('side-menu').classList.remove('pointer-events-none'); document.getElementById('side-menu-bg').classList.remove('opacity-0'); document.getElementById('side-menu-content').classList.remove('translate-x-full'); }
+        function closeMenu() { document.getElementById('side-menu-bg').classList.add('opacity-0'); document.getElementById('side-menu-content').classList.add('translate-x-full'); setTimeout(() => { document.getElementById('side-menu').classList.add('pointer-events-none'); }, 300); }
         
         function switchView(viewName) { 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); 
@@ -464,21 +465,16 @@
             closeMenu(); 
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
             
-            if(viewName === 'dashboard') {
-                renderData(); 
-            }
-            if(viewName === 'manage-tx') {
-                toggleAddTxForm(false); 
-            }
-            if(viewName === 'manage-users') {
-                renderUsersCards(); 
-            }
+            if(viewName === 'dashboard') { renderData(); }
+            if(viewName === 'manage-tx') { toggleAddTxForm(false); }
+            if(viewName === 'manage-users') { renderUsersCards(); }
         }
 
         function updateUIRole() {
             const btnHamburger = document.getElementById('btn-hamburger'); 
             const titleSec = document.getElementById('current-user-title'); 
             const sideMenuHeader = document.getElementById('side-menu-header-profile');
+            const btnHideAdmin = document.getElementById('btn-hide-admin');
             
             if (currentRole === 'admin' || currentRole === 'user') {
                 btnHamburger.style.display = 'block'; 
@@ -499,6 +495,7 @@
                 document.getElementById('menu-admin-settings').style.display = 'flex'; 
                 document.getElementById('admin-only-checkbox-sec').style.display = 'flex'; 
                 document.getElementById('f_buyer').readOnly = false; 
+                btnHideAdmin.classList.remove('hidden');
                 titleSec.innerHTML = '';
             } else if (currentRole === 'user') {
                 document.getElementById('menu-manage-users').style.display = 'none'; 
@@ -506,136 +503,118 @@
                 document.getElementById('admin-only-checkbox-sec').style.display = 'none';
                 document.getElementById('f_buyer').value = currentUser.name; 
                 document.getElementById('f_buyer').readOnly = true; 
+                btnHideAdmin.classList.add('hidden');
                 checkExistingProfile(currentUser.name);
                 titleSec.innerHTML = `ของคุณ <span class="text-yellow-400">(${currentUser.name})</span>`;
             } else {
                 btnHamburger.style.display = 'none'; 
+                btnHideAdmin.classList.add('hidden');
                 showLoginModal(); 
                 titleSec.innerHTML = `<span class="text-gray-400 text-sm block mt-1">(กรุณาล็อกอินเพื่อดูข้อมูล)</span>`;
             }
         }
 
+        // โหมดจำลองราคา
+        function openSimModal() {
+            document.getElementById('sim-price-input').value = simulatedGoldPrice || currentGoldBuyPrice;
+            document.getElementById('sim-modal').style.display = 'flex';
+        }
+        function closeSimModal() {
+            document.getElementById('sim-modal').style.display = 'none';
+        }
+        function applySim() {
+            let val = parseFloat(document.getElementById('sim-price-input').value);
+            if(isNaN(val) || val <= 0) { showWarningToast('กรุณาระบุราคาให้ถูกต้อง!'); return; }
+            simulatedGoldPrice = val;
+            closeSimModal();
+            renderData();
+            showWarningToast('🪄 เปิดโหมดจำลองราคาสำเร็จ!');
+        }
+        function resetSim() {
+            simulatedGoldPrice = null;
+            closeSimModal();
+            renderData();
+            showWarningToast('ปิดโหมดจำลองราคาแล้ว');
+        }
+
+        // ซ่อนพอร์ตแอดมิน
+        function toggleAdminPort() {
+            isHideAdminPort = !isHideAdminPort;
+            const icon = document.getElementById('icon-eye-admin');
+            if(isHideAdminPort) {
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`;
+                icon.classList.add('text-rose-400');
+                icon.classList.remove('text-gray-400');
+                showWarningToast('👁️ ซ่อนพอร์ต Admin จากหน้าแรกแล้ว');
+            } else {
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
+                icon.classList.remove('text-rose-400');
+                icon.classList.add('text-gray-400');
+                showWarningToast('👁️ แสดงพอร์ต Admin ตามปกติ');
+            }
+            renderData();
+        }
+
         function toggleAddTxForm(show) {
-            const container = document.getElementById('add-tx-form-container'); 
-            const btn = document.getElementById('btn-show-add-tx');
+            const container = document.getElementById('add-tx-form-container'); const btn = document.getElementById('btn-show-add-tx');
             if(show) { 
-                container.classList.remove('form-collapse'); 
-                container.classList.add('form-expand'); 
-                btn.classList.add('hidden'); 
-                document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; 
-                document.getElementById('btn-submit').innerText = "บันทึกข้อมูล"; 
+                container.classList.remove('form-collapse'); container.classList.add('form-expand'); btn.classList.add('hidden'); 
+                document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; document.getElementById('btn-submit').innerText = "บันทึกข้อมูล"; 
             } else { 
-                container.classList.remove('form-expand'); 
-                container.classList.add('form-collapse'); 
-                btn.classList.remove('hidden'); 
-                document.getElementById('edit_id').value = ""; 
-                document.getElementById('addForm').reset(); 
-                document.getElementById('form_prof_base64').value = ""; 
-                document.getElementById('form_prof_file').value = ""; 
-                document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; 
+                container.classList.remove('form-expand'); container.classList.add('form-collapse'); btn.classList.remove('hidden'); 
+                document.getElementById('edit_id').value = ""; document.getElementById('addForm').reset(); document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; 
                 if(currentRole === 'user') document.getElementById('f_buyer').value = currentUser.name; 
             }
         }
 
         // --- 4. LOGIN LOGIC ---
-        function showLoginModal() { 
-            document.getElementById('login-modal').style.display = 'flex'; 
-            switchLoginTab('pass'); 
-        }
-        function closeLoginModal() { 
-            document.getElementById('login-modal').style.display = 'none'; 
-            document.getElementById('login-error').classList.add('hidden'); 
-            currentPinInput = ''; updatePinUI(); 
-            document.getElementById('password').value = ''; 
-            document.getElementById('username').value = ''; 
-        }
+        function showLoginModal() { document.getElementById('login-modal').style.display = 'flex'; switchLoginTab('pass'); }
+        function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; document.getElementById('login-error').classList.add('hidden'); currentPinInput = ''; updatePinUI(); document.getElementById('password').value = ''; document.getElementById('username').value = ''; }
         
         function switchLoginTab(tab) { 
             const tabPin = document.getElementById('tab-pin'); const tabPass = document.getElementById('tab-pass'); 
             const secPin = document.getElementById('login-pin-section'); const secPass = document.getElementById('login-pass-section'); 
             document.getElementById('login-error').classList.add('hidden'); 
-            
             if(tab === 'pin') { 
-                tabPin.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; 
-                tabPass.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; 
-                secPin.style.display = 'block'; secPass.style.display = 'none'; 
-                currentPinInput = ''; updatePinUI(); 
+                tabPin.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; tabPass.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; secPin.style.display = 'block'; secPass.style.display = 'none'; currentPinInput = ''; updatePinUI(); 
             } else { 
-                tabPass.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; 
-                tabPin.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; 
-                secPass.style.display = 'block'; secPin.style.display = 'none'; 
+                tabPass.className = "flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition"; tabPin.className = "flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition"; secPass.style.display = 'block'; secPin.style.display = 'none'; 
             } 
         }
         
-        function enterPin(num) { 
-            if(currentPinInput.length < 6) { 
-                currentPinInput += num; 
-                updatePinUI(); 
-                if(currentPinInput.length === 6) setTimeout(checkPinLogin, 50); 
-            } 
-        }
-        
-        function deletePin() { 
-            currentPinInput = currentPinInput.slice(0, -1); 
-            updatePinUI(); 
-        }
-        
-        function updatePinUI() { 
-            const dots = document.querySelectorAll('.pin-dot'); 
-            dots.forEach((dot, index) => { 
-                if(index < currentPinInput.length) { 
-                    dot.classList.remove('bg-gray-700'); dot.classList.add('bg-yellow-400'); 
-                } else { 
-                    dot.classList.add('bg-gray-700'); dot.classList.remove('bg-yellow-400'); 
-                } 
-            }); 
-        }
+        function enterPin(num) { if(currentPinInput.length < 6) { currentPinInput += num; updatePinUI(); if(currentPinInput.length === 6) setTimeout(checkPinLogin, 50); } }
+        function deletePin() { currentPinInput = currentPinInput.slice(0, -1); updatePinUI(); }
+        function updatePinUI() { const dots = document.querySelectorAll('.pin-dot'); dots.forEach((dot, index) => { if(index < currentPinInput.length) { dot.classList.remove('bg-gray-700'); dot.classList.add('bg-yellow-400'); } else { dot.classList.add('bg-gray-700'); dot.classList.remove('bg-yellow-400'); } }); }
 
         function loginPass() {
-            const userStr = document.getElementById('username').value.trim(); 
-            const passStr = document.getElementById('password').value;
-            
+            const userStr = document.getElementById('username').value.trim(); const passStr = document.getElementById('password').value;
             if (userStr.toLowerCase() === 'admin' && passStr === adminPass) {
-                currentRole = 'admin'; 
-                currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' };
-                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); 
-                closeLoginModal(); updateUIRole(); renderData();
+                currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' };
+                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
             } else if (appUsers[userStr] && appUsers[userStr].password === passStr) {
-                currentRole = 'user'; 
-                currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' };
-                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); 
-                closeLoginModal(); updateUIRole(); renderData();
+                currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' };
+                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
             } else {
-                document.getElementById('login-error').innerText = 'Username หรือ Password ไม่ถูกต้อง!'; 
-                document.getElementById('login-error').classList.remove('hidden');
+                document.getElementById('login-error').innerText = 'Username หรือ Password ไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden');
             }
         }
         
         function checkPinLogin() {
             if (currentPinInput === adminPin) { 
-                currentRole = 'admin'; 
-                currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' };
-                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); 
-                closeLoginModal(); updateUIRole(); renderData();
+                currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' };
+                localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
             } else { 
-                document.getElementById('login-error').innerText = 'รหัส PIN ไม่ถูกต้อง!'; 
-                document.getElementById('login-error').classList.remove('hidden'); 
-                currentPinInput = ''; updatePinUI(); 
-                if (navigator.vibrate) navigator.vibrate(200);
+                document.getElementById('login-error').innerText = 'รหัส PIN ไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); currentPinInput = ''; updatePinUI(); if (navigator.vibrate) navigator.vibrate(200);
             }
         }
         
-        function logout() { 
-            localStorage.removeItem('goldAppSession'); 
-            location.reload(); 
-        }
-
+        function logout() { localStorage.removeItem('goldAppSession'); location.reload(); }
 
         // --- 5. DB LOAD & DATA RENDER ---
         function loadUsers() { 
             if(!db) return; 
             db.ref('app_users').on('value', snap => { 
-                if(isDraggingUser) return; // ป้องกันการกระตุกตอนกำลังลาก
+                if(isDraggingUser) return; 
                 appUsers = snap.val() || {}; 
                 if (currentView === 'manage-users') renderUsersCards(); 
                 if (currentView === 'dashboard') renderData(); 
@@ -645,12 +624,8 @@
         function loadData() { 
             if(!db) return;
             db.ref('gold_portfolio').on('value', (snapshot) => { 
-                transactionsData = []; 
-                snapshot.forEach(child => { 
-                    transactionsData.push({ id: child.key, ...child.val() }); 
-                }); 
-                updateAutocomplete(); 
-                renderData(); 
+                transactionsData = []; snapshot.forEach(child => { transactionsData.push({ id: child.key, ...child.val() }); }); 
+                updateAutocomplete(); renderData(); 
             }); 
         }
 
@@ -667,16 +642,12 @@
         }
 
         function renderUsersCards() {
-            const container = document.getElementById('users-cards-container'); 
-            if(!container) return; 
-            container.innerHTML = '';
-            
+            const container = document.getElementById('users-cards-container'); if(!container) return; container.innerHTML = '';
             const sortedUsers = Object.entries(appUsers).map(([username, data]) => ({ username, ...data }))
                 .sort((a, b) => {
                     if (a.isFavorite && !b.isFavorite) return -1;
                     if (!a.isFavorite && b.isFavorite) return 1;
-                    let oA = (typeof a.order === 'number') ? a.order : 999;
-                    let oB = (typeof b.order === 'number') ? b.order : 999;
+                    let oA = (typeof a.order === 'number') ? a.order : 999; let oB = (typeof b.order === 'number') ? b.order : 999;
                     return oA - oB;
                 });
 
@@ -749,20 +720,15 @@
             let updates = {};
             items.forEach((item, index) => {
                 let uname = item.getAttribute('data-username');
-                if(uname) { 
-                    updates[uname + '/order'] = parseInt(index); 
-                }
+                if(uname) { updates[uname + '/order'] = parseInt(index); }
             });
-            db.ref('app_users').update(updates).then(() => { 
-                showWarningToast('✅ บันทึกการจัดเรียงสำเร็จ!'); 
-            });
+            db.ref('app_users').update(updates).then(() => { showWarningToast('✅ บันทึกการจัดเรียงสำเร็จ!'); });
         }
 
         function renderData() {
             transactionsData.sort((a, b) => { 
-                let aAdmin = a.isAdminOwner ? 1 : 0; 
-                let bAdmin = b.isAdminOwner ? 1 : 0; 
-                if (aAdmin !== bAdmin) return bAdmin - aAdmin; // พอร์ต Admin อยู่บนสุด
+                let aAdmin = a.isAdminOwner ? 1 : 0; let bAdmin = b.isAdminOwner ? 1 : 0; 
+                if (aAdmin !== bAdmin) return bAdmin - aAdmin;
 
                 if (!a.isAdminOwner && !b.isAdminOwner) { 
                     let userA = null; let userB = null;
@@ -786,10 +752,23 @@
 
             const dashboardContainer = document.getElementById('guest-cards-container'); 
             const txContainer = document.getElementById('tx-cards-container'); 
+            const alertContainer = document.getElementById('sim-alert-container');
             if(!dashboardContainer || !txContainer) return; 
             
             dashboardContainer.innerHTML = ''; 
             txContainer.innerHTML = ''; 
+            
+            // แสดงสถานะจำลองราคา
+            if (simulatedGoldPrice !== null && currentView === 'dashboard') {
+                alertContainer.innerHTML = `
+                    <div class="col-span-full bg-indigo-900/40 border border-indigo-500/50 rounded-xl p-3 text-center mb-4 animate-pulse">
+                        <p class="text-yellow-400 font-black text-sm">⚠️ กำลังแสดงผลด้วยราคาจำลอง: <span class="text-lg">${simulatedGoldPrice.toLocaleString()}</span> บาท</p>
+                    </div>
+                `;
+            } else {
+                alertContainer.innerHTML = '';
+            }
+
             const effectivePrice = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice; 
             currentViewList = [];
             
@@ -797,14 +776,19 @@
                 if (currentRole === 'guest') return; 
                 if (currentRole === 'user' && tx.buyer !== currentUser.name) return; 
 
-                // เช็กเงื่อนไขการซ่อนในหน้า Dashboard
+                // Hide Port Logic
                 let shouldHideOnDashboard = false;
-                if (currentRole === 'admin' && !tx.isAdminOwner) {
-                    let userTx = null;
-                    for(let key in appUsers) {
-                        if(appUsers[key].name === tx.buyer) userTx = appUsers[key];
+                if (currentRole === 'admin') {
+                    if (isHideAdminPort && tx.isAdminOwner) {
+                        shouldHideOnDashboard = true;
                     }
-                    if (userTx && userTx.isHidden) shouldHideOnDashboard = true;
+                    if (!tx.isAdminOwner) {
+                        let userTx = null;
+                        for(let key in appUsers) {
+                            if(appUsers[key].name === tx.buyer) userTx = appUsers[key];
+                        }
+                        if (userTx && userTx.isHidden) shouldHideOnDashboard = true;
+                    }
                 }
 
                 tx.totalWeight = tx.weight * tx.qty; 
@@ -844,7 +828,6 @@
                     dashboardContainer.innerHTML += dashCard;
                 }
 
-                // หน้า Manage TX จะเห็นทุกรายการ (ไม่โดนซ่อน)
                 let txCard = `
                     <div class="bg-gray-800 p-4 rounded-3xl border border-gray-700 shadow-md relative flex flex-col gap-3">
                         ${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50">Admin Port</div>' : ''}
@@ -869,136 +852,36 @@
         }
 
         // --- 6. USER FORM HELPERS ---
-        function openUserModal() {
-            document.getElementById('u_original_username').value = '';
-            document.getElementById('u_username').value = ''; 
-            document.getElementById('u_password').value = ''; 
-            document.getElementById('u_name').value = '';
-            document.getElementById('u_prof_base64').value = ''; 
-            document.getElementById('u_prof_file').value = '';
-            document.getElementById('u_prof_preview').src = `https://ui-avatars.com/api/?name=U&background=334155&color=fff`;
-            
-            document.getElementById('user-modal-title').innerText = 'เพิ่มผู้ใช้งานใหม่'; 
-            document.getElementById('user-btn-submit').innerText = 'สร้างผู้ใช้';
-            document.getElementById('user-form-modal').style.display = 'flex';
-        }
-
-        function editUser(username) {
-            const u = appUsers[username]; 
-            if(!u) return;
-            document.getElementById('u_original_username').value = username; 
-            document.getElementById('u_username').value = username;
-            document.getElementById('u_password').value = u.password; 
-            document.getElementById('u_name').value = u.name;
-            
-            document.getElementById('u_prof_base64').value = ''; 
-            document.getElementById('u_prof_file').value = '';
-            document.getElementById('u_prof_preview').src = getProfileImg(u.name);
-            
-            document.getElementById('user-modal-title').innerText = 'แก้ไขข้อมูลผู้ใช้'; 
-            document.getElementById('user-btn-submit').innerText = 'อัปเดตข้อมูล';
-            document.getElementById('user-form-modal').style.display = 'flex';
-        }
-
+        function openUserModal() { document.getElementById('u_original_username').value = ''; document.getElementById('u_username').value = ''; document.getElementById('u_password').value = ''; document.getElementById('u_name').value = ''; document.getElementById('u_prof_base64').value = ''; document.getElementById('u_prof_file').value = ''; document.getElementById('u_prof_preview').src = `https://ui-avatars.com/api/?name=U&background=334155&color=fff`; document.getElementById('user-modal-title').innerText = 'เพิ่มผู้ใช้งานใหม่'; document.getElementById('user-btn-submit').innerText = 'สร้างผู้ใช้'; document.getElementById('user-form-modal').style.display = 'flex'; }
+        function editUser(username) { const u = appUsers[username]; if(!u) return; document.getElementById('u_original_username').value = username; document.getElementById('u_username').value = username; document.getElementById('u_password').value = u.password; document.getElementById('u_name').value = u.name; document.getElementById('u_prof_base64').value = ''; document.getElementById('u_prof_file').value = ''; document.getElementById('u_prof_preview').src = getProfileImg(u.name); document.getElementById('user-modal-title').innerText = 'แก้ไขข้อมูลผู้ใช้'; document.getElementById('user-btn-submit').innerText = 'อัปเดตข้อมูล'; document.getElementById('user-form-modal').style.display = 'flex'; }
         function closeUserModal() { document.getElementById('user-form-modal').style.display = 'none'; }
         
         function saveUser(e) {
-            e.preventDefault(); 
-            const origUser = document.getElementById('u_original_username').value;
-            const username = document.getElementById('u_username').value.trim(); 
-            const password = document.getElementById('u_password').value.trim(); 
-            const name = document.getElementById('u_name').value.trim();
+            e.preventDefault(); const origUser = document.getElementById('u_original_username').value;
+            const username = document.getElementById('u_username').value.trim(); const password = document.getElementById('u_password').value.trim(); const name = document.getElementById('u_name').value.trim();
             const base64Img = document.getElementById('u_prof_base64').value;
-            
             if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
 
             if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
             
-            let userOrder = 999;
-            let isFav = false;
-            let isHid = false;
+            let userOrder = 999; let isFav = false; let isHid = false;
 
             if (origUser && appUsers[origUser]) { 
                 if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; 
-                isFav = appUsers[origUser].isFavorite || false;
-                isHid = appUsers[origUser].isHidden || false;
+                isFav = appUsers[origUser].isFavorite || false; isHid = appUsers[origUser].isHidden || false;
             } else { 
-                let maxOrder = -1; 
-                for(let k in appUsers) { 
-                    if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; 
-                } 
+                let maxOrder = -1; for(let k in appUsers) { if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } 
                 userOrder = maxOrder + 1; 
             }
 
             if(origUser && origUser !== username) { db.ref('app_users/' + origUser).remove(); }
-            
-            db.ref('app_users/' + username).update({ 
-                password: password, 
-                name: name, 
-                order: userOrder, 
-                isFavorite: isFav, 
-                isHidden: isHid 
-            }).then(() => { 
-                showWarningToast('✅ บันทึกข้อมูลสำเร็จ!'); 
-                closeUserModal(); 
-            });
+            db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder, isFavorite: isFav, isHidden: isHid }).then(() => { showWarningToast('✅ บันทึกข้อมูลสำเร็จ!'); closeUserModal(); });
         }
-        
         function deleteUser(username) { if(confirm(`ยืนยันการลบผู้ใช้ ${username} ถาวร?`)) db.ref('app_users/' + username).remove(); }
 
         // --- 7. TRANSACTION HELPERS ---
-        function saveTransaction(e) { 
-            e.preventDefault(); 
-            const editId = document.getElementById('edit_id').value; 
-            let buyerName = document.getElementById('f_buyer').value.trim(); 
-            let isAdminOwner = document.getElementById('f_is_admin').checked; 
-            if (currentRole === 'user') { buyerName = currentUser.name; isAdminOwner = false; } 
-            
-            const base64Img = document.getElementById('form_prof_base64').value; 
-            if (base64Img) db.ref('user_profiles/' + buyerName).set(base64Img); 
-            
-            const payload = { 
-                date: document.getElementById('f_date').value, 
-                shop: document.getElementById('f_shop').value, 
-                buyer: buyerName, 
-                weight: parseFloat(document.getElementById('f_weight').value), 
-                qty: parseInt(document.getElementById('f_qty').value), 
-                buyprice: parseFloat(document.getElementById('f_buyprice').value), 
-                blockfee: parseFloat(document.getElementById('f_blockfee').value), 
-                isAdminOwner: isAdminOwner 
-            }; 
-            
-            if (editId) {
-                db.ref('gold_portfolio/' + editId).update(payload).then(() => toggleAddTxForm(false)); 
-            } else { 
-                db.ref('gold_portfolio').push(payload).then(() => toggleAddTxForm(false)); 
-            } 
-        }
-        
-        function prepareEdit(id) { 
-            const item = transactionsData.find(tx => tx.id === id); 
-            if(item) { 
-                document.getElementById('edit_id').value = item.id; 
-                document.getElementById('f_date').value = item.date; 
-                document.getElementById('f_shop').value = item.shop; 
-                document.getElementById('f_buyer').value = item.buyer; 
-                document.getElementById('f_weight').value = item.weight; 
-                document.getElementById('f_qty').value = item.qty; 
-                document.getElementById('f_buyprice').value = item.buyprice; 
-                document.getElementById('f_blockfee').value = item.blockfee; 
-                document.getElementById('f_is_admin').checked = item.isAdminOwner || false; 
-                
-                document.getElementById('form_prof_base64').value = ""; 
-                document.getElementById('form_prof_file').value = ""; 
-                checkExistingProfile(item.buyer); 
-                
-                document.getElementById('form-title').innerText = `แก้ไขรายการ`; 
-                document.getElementById('btn-submit').innerText = "อัปเดตข้อมูล"; 
-                toggleAddTxForm(true); 
-                window.scrollTo({ top: 0, behavior: 'smooth' }); 
-            } 
-        }
-        
+        function saveTransaction(e) { e.preventDefault(); const editId = document.getElementById('edit_id').value; let buyerName = document.getElementById('f_buyer').value.trim(); let isAdminOwner = document.getElementById('f_is_admin').checked; if (currentRole === 'user') { buyerName = currentUser.name; isAdminOwner = false; } const base64Img = document.getElementById('form_prof_base64').value; if (base64Img) db.ref('user_profiles/' + buyerName).set(base64Img); const payload = { date: document.getElementById('f_date').value, shop: document.getElementById('f_shop').value, buyer: buyerName, weight: parseFloat(document.getElementById('f_weight').value), qty: parseInt(document.getElementById('f_qty').value), buyprice: parseFloat(document.getElementById('f_buyprice').value), blockfee: parseFloat(document.getElementById('f_blockfee').value), isAdminOwner: isAdminOwner }; if (editId) { db.ref('gold_portfolio/' + editId).update(payload).then(() => toggleAddTxForm(false)); } else { db.ref('gold_portfolio').push(payload).then(() => toggleAddTxForm(false)); } }
+        function prepareEdit(id) { const item = transactionsData.find(tx => tx.id === id); if(item) { document.getElementById('edit_id').value = item.id; document.getElementById('f_date').value = item.date; document.getElementById('f_shop').value = item.shop; document.getElementById('f_buyer').value = item.buyer; document.getElementById('f_weight').value = item.weight; document.getElementById('f_qty').value = item.qty; document.getElementById('f_buyprice').value = item.buyprice; document.getElementById('f_blockfee').value = item.blockfee; document.getElementById('f_is_admin').checked = item.isAdminOwner || false; document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; checkExistingProfile(item.buyer); document.getElementById('form-title').innerText = `แก้ไขรายการ`; document.getElementById('btn-submit').innerText = "อัปเดตข้อมูล"; toggleAddTxForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
         function deleteTx(id) { if(confirm("ลบรายการนี้ถาวร?")) db.ref('gold_portfolio/' + id).remove(); }
 
 
@@ -1010,56 +893,29 @@
                 const response = await fetch(csvUrl); 
                 if (!response.ok) return; 
                 const data = await response.text(); 
-                const parseCSV = (str) => { 
-                    let res = [], cur = '', inQ = false; 
-                    for (let i = 0; i < str.length; i++) { 
-                        let c = str[i]; 
-                        if (c === '"') inQ = !inQ; 
-                        else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; } 
-                        else cur += c; 
-                    } 
-                    res.push(cur.trim()); 
-                    return res; 
-                }; 
+                const parseCSV = (str) => { let res = [], cur = '', inQ = false; for (let i = 0; i < str.length; i++) { let c = str[i]; if (c === '"') inQ = !inQ; else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; } else cur += c; } res.push(cur.trim()); return res; }; 
                 const rows = data.split('\n').map(parseCSV); 
                 const cleanNum = (str) => str ? parseFloat(str.replace(/[^0-9.-]+/g, '')) : 0; 
                 
                 document.getElementById('api-date').innerText = rows[2] ? rows[2][17] : '--'; 
                 document.getElementById('api-time').innerText = rows[2] ? rows[2][19] : '--'; 
-                
                 let bBuyStr = rows[4] ? rows[4][18] : ''; 
                 let bSellStr = rows[4] ? rows[4][19] : ''; 
                 let oBuyStr = rows[6] ? rows[6][18] : ''; 
                 let oSellStr = rows[6] ? rows[6][19] : ''; 
                 let chgStr = rows[3] && rows[3][20] ? rows[3][20].trim() : (rows[4] && rows[4][20] ? rows[4][20].trim() : (rows[2] && rows[2][20] ? rows[2][20].trim() : '')); 
-                
                 let newPrice = cleanNum(bBuyStr); 
                 let priceChanged = (newPrice !== currentGoldBuyPrice); 
                 if (newPrice > 0) currentGoldBuyPrice = newPrice; 
-                
                 let priceColorClass = 'text-white'; 
                 if (chgStr) { 
                     let cel = document.getElementById('api-change'); 
                     let chgNum = parseFloat(chgStr.replace(/,/g, '')); 
-                    if(chgNum > 0) { 
-                        priceColorClass = 'text-green-400'; 
-                        cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; 
-                    } else if(chgNum < 0) { 
-                        priceColorClass = 'text-red-400'; 
-                        cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; 
-                    } else { 
-                        cel.innerText = chgStr; 
-                    } 
+                    if(chgNum > 0) { priceColorClass = 'text-green-400'; cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; } 
+                    else if(chgNum < 0) { priceColorClass = 'text-red-400'; cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; } 
+                    else { cel.innerText = chgStr; } 
                 } 
-                
-                [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { 
-                    let el = document.getElementById(item.id); 
-                    if(el && item.val) { 
-                        el.innerText = item.val; 
-                        el.className = `text-2xl font-black ${priceColorClass}`; 
-                    } 
-                }); 
-                
+                [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { let el = document.getElementById(item.id); if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; } }); 
                 if(priceChanged && transactionsData.length > 0) renderData(); 
             } catch (error) {} 
         }
@@ -1072,53 +928,12 @@
         function handleFormImageUpload(event) { handleImgBase(event, base64Data => { document.getElementById('form_prof_base64').value = base64Data; document.getElementById('form_prof_preview').src = base64Data; }); }
         function handleUserImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('u_prof_base64').value = base64Data; document.getElementById('u_prof_preview').src = base64Data; }); }
         function handleAdminImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('admin_prof_base64').value = base64Data; document.getElementById('admin_prof_preview').src = base64Data; if (db) { db.ref('user_profiles/' + adminDisplayName).set(base64Data); showWarningToast('✅ บันทึกรูปโปรไฟล์ Admin แล้ว!'); } }); }
-        
-        function handleImgBase(event, callback) { 
-            const file = event.target.files[0]; 
-            if (!file) return; 
-            const reader = new FileReader(); 
-            reader.onload = function(e) { 
-                const img = new Image(); 
-                img.onload = function() { 
-                    const canvas = document.createElement('canvas'); 
-                    const MAX_SIZE = 400; 
-                    let width = img.width; 
-                    let height = img.height; 
-                    if (width > height) { 
-                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } 
-                    } else { 
-                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } 
-                    } 
-                    canvas.width = width; 
-                    canvas.height = height; 
-                    const ctx = canvas.getContext('2d'); 
-                    ctx.drawImage(img, 0, 0, width, height); 
-                    callback(canvas.toDataURL('image/jpeg', 0.8)); 
-                }; 
-                img.src = e.target.result; 
-            }; 
-            reader.readAsDataURL(file); 
-        }
-        
-        function showWarningToast(msg) { 
-            if (navigator.vibrate) navigator.vibrate(200); 
-            const container = document.getElementById('toast-container'); 
-            const toast = document.createElement('div'); 
-            toast.className = 'bg-gray-800/95 backdrop-blur-md text-white px-5 py-4 rounded-2xl font-bold shadow-2xl border border-gray-600 transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-3 w-full'; 
-            toast.innerHTML = `<span class="text-2xl emoji">🔔</span> <span class="text-sm">${msg}</span>`; 
-            container.appendChild(toast); 
-            requestAnimationFrame(() => { toast.classList.remove('translate-y-[-20px]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }); 
-            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-20px]', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000); 
-        }
+        function handleImgBase(event, callback) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX_SIZE = 400; let width = img.width; let height = img.height; if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } } canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
+        function showWarningToast(msg) { if (navigator.vibrate) navigator.vibrate(200); const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'bg-gray-800/95 backdrop-blur-md text-white px-5 py-4 rounded-2xl font-bold shadow-2xl border border-gray-600 transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-3 w-full'; toast.innerHTML = `<span class="text-2xl emoji">🔔</span> <span class="text-sm">${msg}</span>`; container.appendChild(toast); requestAnimationFrame(() => { toast.classList.remove('translate-y-[-20px]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-20px]', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
         // --- 9. ADMIN SETTINGS MODAL ---
         let settingPinStep = 1; let sOldPin = '', sNewPin = '', sConfPin = '';
-        function openAdminSettingsModal() { 
-            document.getElementById('admin-settings-modal').style.display = 'flex'; 
-            closeMenu(); showAdminSetting('main'); 
-            document.getElementById('admin_display_name').value = adminDisplayName; 
-            document.getElementById('admin_prof_preview').src = getProfileImg(adminDisplayName); 
-        }
+        function openAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'flex'; closeMenu(); showAdminSetting('main'); document.getElementById('admin_display_name').value = adminDisplayName; document.getElementById('admin_prof_preview').src = getProfileImg(adminDisplayName); }
         function closeAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'none'; document.getElementById('admin-settings-pass').reset(); resetSettingPin(); }
         function loadAdminSettings() { if(!db) return; db.ref('admin_settings').on('value', snap => { const data = snap.val(); if(data) { if(data.password) adminPass = data.password; if(data.pin) adminPin = data.pin; if(data.name) { adminDisplayName = data.name; if(currentUser && currentUser.username === 'admin') { currentUser.name = data.name; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); updateUIRole(); } } } }); }
         function saveAdminProfile() { const newName = document.getElementById('admin_display_name').value.trim(); if(newName === '') { showWarningToast('กรุณากรอกชื่อ Admin!'); return; } db.ref('admin_settings').update({ name: newName }).then(() => { showWarningToast('✅ อัปเดตชื่อ Admin สำเร็จ!'); }); }
@@ -1131,24 +946,16 @@
 
         // --- 10. MODAL SWIPE CONTROLS ---
         let touchStartX = 0; let touchEndX = 0; 
-        function setupSwipeGestures() { 
-            const itemModal = document.getElementById('item-modal'); 
-            itemModal.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true}); 
-            itemModal.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; const SWIPE_THRESHOLD = 50; if (touchStartX - touchEndX > SWIPE_THRESHOLD) nextItem(); if (touchEndX - touchStartX > SWIPE_THRESHOLD) prevItem(); }, {passive: true}); 
-        }
+        function setupSwipeGestures() { const itemModal = document.getElementById('item-modal'); itemModal.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true}); itemModal.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; const SWIPE_THRESHOLD = 50; if (touchStartX - touchEndX > SWIPE_THRESHOLD) nextItem(); if (touchEndX - touchStartX > SWIPE_THRESHOLD) prevItem(); }, {passive: true}); }
         function openModal(index) { if(index < 0 || index >= currentViewList.length) return; activeModalIndex = index; updateModalUI(); document.getElementById('item-modal').classList.remove('opacity-0', 'pointer-events-none'); document.getElementById('modal-content').classList.add('modal-enter'); document.body.style.overflow = 'hidden'; }
         function closeModal() { document.getElementById('item-modal').classList.add('opacity-0', 'pointer-events-none'); document.getElementById('modal-content').classList.remove('modal-enter'); document.body.style.overflow = 'auto'; activeModalIndex = -1; }
         function nextItem() { if(activeModalIndex < currentViewList.length - 1) { document.getElementById('modal-content').classList.remove('modal-enter'); void document.getElementById('modal-content').offsetWidth; activeModalIndex++; updateModalUI(); document.getElementById('modal-content').classList.add('modal-enter'); } }
         function prevItem() { if(activeModalIndex > 0) { document.getElementById('modal-content').classList.remove('modal-enter'); void document.getElementById('modal-content').offsetWidth; activeModalIndex--; updateModalUI(); document.getElementById('modal-content').classList.add('modal-enter'); } }
         
         function updateModalUI() { 
-            if(activeModalIndex === -1 || currentViewList.length === 0) return; 
-            let tx = currentViewList[activeModalIndex]; 
-            document.getElementById('prev-btn').style.display = activeModalIndex > 0 ? 'flex' : 'none'; 
-            document.getElementById('next-btn').style.display = activeModalIndex < currentViewList.length - 1 ? 'flex' : 'none'; 
-            let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; 
-            let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400'; 
-            let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-b from-gray-800 to-gray-900 border-green-500/30' : 'bg-gradient-to-b from-gray-800 to-gray-900 border-red-500/30'; 
+            if(activeModalIndex === -1 || currentViewList.length === 0) return; let tx = currentViewList[activeModalIndex]; 
+            document.getElementById('prev-btn').style.display = activeModalIndex > 0 ? 'flex' : 'none'; document.getElementById('next-btn').style.display = activeModalIndex < currentViewList.length - 1 ? 'flex' : 'none'; 
+            let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400'; let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-b from-gray-800 to-gray-900 border-green-500/30' : 'bg-gradient-to-b from-gray-800 to-gray-900 border-red-500/30'; 
             
             document.getElementById('modal-content').innerHTML = ` 
                 <div class="relative w-full max-w-md mx-auto mt-8 h-[85vh] flex flex-col justify-center"> 
