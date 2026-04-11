@@ -5,13 +5,16 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.6 (Smart Order & UI)</title>
+    <title>พอร์ตทองคำ V6.8 (Smart Sync & Auto Login)</title>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
@@ -47,18 +50,20 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
 
-        .dragging { opacity: 0.4; border: 2px dashed #eab308; }
+        .sortable-ghost { opacity: 0.3; border: 2px dashed #eab308; background: rgba(234, 179, 8, 0.1); }
+        .sortable-drag { cursor: grabbing !important; }
         
-        /* Smooth height transition for form */
         .form-collapse { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease; opacity: 0; }
         .form-expand { max-height: 2000px; opacity: 1; }
+        
+        .pin-dot, .s-pin-dot { transition: all 0.2s ease-in-out; }
     </style>
 </head>
 <body>
     <datalist id="shop-list"></datalist>
     <datalist id="buyer-list"></datalist>
 
-    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[300] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
+    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[500] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
 
     <div id="btn-hamburger" class="fixed top-6 right-6 z-[200] cursor-pointer p-2 hidden" onclick="openMenu()">
         <div class="hamburger-line w-7 h-1 bg-yellow-400 rounded-full mb-1.5 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
@@ -69,15 +74,17 @@
     <div id="side-menu" class="fixed inset-0 z-[250] pointer-events-none">
         <div id="side-menu-bg" class="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-none" onclick="closeMenu()"></div>
         <div id="side-menu-content" class="absolute top-0 right-0 h-full w-4/5 max-w-sm bg-gray-900 border-l border-gray-700 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col pointer-events-auto">
-            <div class="p-6 flex justify-between items-center border-b border-gray-800">
-                <div class="flex items-center gap-3"><img src="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" class="w-10 h-10 rounded-full border border-yellow-500"><span class="text-white font-black text-lg">เมนูหลัก</span></div>
-                <button onclick="closeMenu()" class="text-gray-400 hover:text-white text-2xl font-bold w-10 h-10 flex items-center justify-center rounded-full bg-gray-800">✕</button>
+            
+            <div class="p-6 flex justify-between items-center border-b border-gray-800 bg-gray-800/50">
+                <div class="flex items-center gap-3" id="side-menu-header-profile"></div>
+                <button onclick="closeMenu()" class="text-gray-400 hover:text-white text-2xl font-bold w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 shadow-inner">✕</button>
             </div>
+            
             <div class="flex flex-col p-4 gap-2 mt-2">
-                <button onclick="switchView('dashboard')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3"><span class="emoji">📊</span> ภาพรวมพอร์ต</button>
+                <button onclick="switchView('dashboard')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3"><span class="emoji">📊</span> หน้าแรก</button>
                 <button id="menu-manage-tx" onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/อัปเดตข้อมูลทอง</button>
                 <button id="menu-manage-users" onclick="switchView('manage-users')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-pink-400 transition flex items-center gap-3 hidden"><span class="emoji">👥</span> จัดการบัญชีผู้ใช้งาน</button>
-                <button id="menu-admin-settings" onclick="openAdminSettingsModal()" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-emerald-400 transition flex items-center gap-3 hidden"><span class="emoji">⚙️</span> ตั้งค่ารหัสผ่าน Admin</button>
+                <button id="menu-admin-settings" onclick="openAdminSettingsModal()" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-emerald-400 transition flex items-center gap-3 hidden"><span class="emoji">⚙️</span> ตั้งค่าระบบ Admin</button>
             </div>
             <div class="mt-auto p-6 border-t border-gray-800">
                 <button onclick="logout()" class="w-full text-center px-5 py-4 rounded-2xl text-lg font-black text-red-400 bg-red-500/10 hover:bg-red-500/20 transition flex items-center justify-center gap-2"><span class="emoji">🚪</span> ออกจากระบบ</button>
@@ -85,7 +92,7 @@
         </div>
     </div>
 
-    <div id="login-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] justify-center items-center px-4 flex">
+    <div id="login-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] justify-center items-center px-4 hidden">
         <div class="bg-gray-800 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm border border-gray-700 relative">
             <div class="text-center mb-6 mt-2">
                 <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">เข้าสู่ระบบ</h2>
@@ -170,7 +177,7 @@
             <div id="add-tx-form-container" class="bg-gray-800 p-5 sm:p-8 rounded-[2rem] shadow-2xl mb-8 border border-gray-700 relative form-collapse">
                 <div class="flex justify-between items-center mb-5 border-b border-gray-700 pb-3">
                     <h3 class="text-xl font-black text-white" id="form-title">เพิ่มรายการใหม่</h3>
-                    <button onclick="toggleAddTxForm(false)" class="text-gray-400 hover:text-white bg-gray-700 w-8 h-8 rounded-full font-bold">✕</button>
+                    <button type="button" onclick="toggleAddTxForm(false)" class="text-gray-400 hover:text-white bg-gray-700 w-8 h-8 rounded-full font-bold">✕</button>
                 </div>
                 <input value="" id="edit_id" type="hidden" />
                 <form onsubmit="saveTransaction(event)" id="addForm">
@@ -218,7 +225,7 @@
                 <h2 class="text-2xl font-black text-white flex items-center gap-2">ระบบจัดการผู้ใช้งาน</h2>
             </div>
             
-            <p class="text-xs text-gray-400 font-bold mb-4 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-700">💡 แตะที่การ์ดแล้วลากขึ้น-ลง เพื่อจัดเรียงลำดับการแสดงผลในหน้าแรก</p>
+            <p class="text-xs text-gray-400 font-bold mb-4 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-700">💡 แตะค้างที่ <span class="text-gray-500">☰</span> แล้วลากขึ้น-ลง เพื่อจัดเรียงลำดับในหน้าแรก</p>
             
             <div id="users-cards-container" class="flex flex-col gap-4">
                 </div>
@@ -235,7 +242,7 @@
 
     <div id="user-form-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[300] justify-center items-center px-4 hidden">
         <div class="bg-[#1a1c23] p-6 rounded-[2rem] shadow-2xl w-full max-w-md border border-gray-700 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <button onclick="closeUserModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full font-bold">✕</button>
+            <button type="button" onclick="closeUserModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full font-bold">✕</button>
             <h2 class="text-xl font-black mb-6 text-white text-center" id="user-modal-title">เพิ่มผู้ใช้งานใหม่</h2>
             
             <form onsubmit="saveUser(event)" class="flex flex-col gap-4">
@@ -273,22 +280,41 @@
     <div id="admin-settings-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[200] justify-center items-center px-4 hidden">
         <div class="bg-gray-800 p-6 rounded-[2rem] shadow-2xl w-full max-w-sm border border-gray-700 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <button onclick="closeAdminSettingsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-700 w-8 h-8 rounded-full font-bold">✕</button>
-            <h2 class="text-xl font-black mb-6 text-emerald-400 text-center"><span class="emoji">⚙️</span> ตั้งค่ารหัส Master Admin</h2>
-            <form onsubmit="saveAdminSettings(event)" class="flex flex-col gap-4" id="admin-settings-form">
-                <div class="border-b border-gray-700 pb-4 mb-2">
-                    <label class="block text-sm text-gray-300 mb-3 font-bold">เปลี่ยน Password</label>
-                    <input class="mb-2" placeholder="รหัสผ่านเก่า" id="setting-old-pass" type="password" />
-                    <input class="mb-2" placeholder="รหัสผ่านใหม่" id="setting-new-pass" type="password" />
-                    <input placeholder="ยืนยันรหัสผ่านใหม่" id="setting-confirm-pass" type="password" />
-                </div>
+            <h2 class="text-xl font-black mb-6 text-emerald-400 text-center"><span class="emoji">⚙️</span> ตั้งค่าระบบ Admin</h2>
+            
+            <div id="admin-settings-main" class="flex flex-col gap-4">
+                <button onclick="showAdminSetting('pass')" class="bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border border-gray-600"><span class="emoji">🔑</span> เปลี่ยนรหัสผ่าน</button>
+                <button onclick="showAdminSetting('pin')" class="bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border border-gray-600"><span class="emoji">🔢</span> เปลี่ยน PIN Code</button>
+            </div>
+
+            <form onsubmit="saveAdminPass(event)" class="hidden flex flex-col gap-4" id="admin-settings-pass">
+                <h3 class="text-center text-white font-bold mb-2">เปลี่ยน Password</h3>
                 <div>
-                    <label class="block text-sm text-gray-300 mb-3 font-bold">เปลี่ยน PIN Code (6 หลัก)</label>
-                    <input oninput="if(this.value.length > 6) this.value = this.value.slice(0,6);" maxlength="6" class="mb-2 tracking-widest font-mono text-center" placeholder="PIN เก่า" id="setting-old-pin" type="number" />
-                    <input oninput="if(this.value.length > 6) this.value = this.value.slice(0,6);" maxlength="6" class="mb-2 tracking-widest font-mono text-center" placeholder="PIN ใหม่" id="setting-new-pin" type="number" />
-                    <input oninput="if(this.value.length > 6) this.value = this.value.slice(0,6);" maxlength="6" class="mb-4 tracking-widest font-mono text-center" placeholder="ยืนยัน PIN ใหม่" id="setting-confirm-pin" type="number" />
+                    <input class="mb-3" placeholder="รหัสผ่านเก่า" id="setting-old-pass" type="password" required />
+                    <input class="mb-3" placeholder="รหัสผ่านใหม่" id="setting-new-pass" type="password" required />
+                    <input placeholder="ยืนยันรหัสผ่านใหม่" id="setting-confirm-pass" type="password" required />
                 </div>
-                <button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-black transition shadow-lg shadow-emerald-500/30" type="submit">บันทึกรหัสใหม่</button>
+                <div class="flex gap-3 mt-2">
+                    <button class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-black transition shadow-lg" type="submit">บันทึก</button>
+                    <button class="flex-1 bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-black transition" type="button" onclick="showAdminSetting('main')">ยกเลิก</button>
+                </div>
             </form>
+
+            <div id="admin-settings-pin" class="hidden flex flex-col gap-4">
+                <h3 id="setting-pin-title" class="text-center text-white font-bold mb-2 text-lg">กรอก PIN ปัจจุบัน</h3>
+                
+                <div class="flex justify-center gap-3 mb-6 h-4">
+                    <div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
+                    <div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto text-white">
+                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('1')">1</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('2')">2</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('3')">3</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('4')">4</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('5')">5</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('6')">6</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('7')">7</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('8')">8</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('9')">9</button>
+                    <div class="w-14 h-14"></div><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('0')">0</button><button class="w-14 h-14 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deleteSettingPin()">⌫</button>
+                </div>
+                
+                <button class="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-black transition mt-4" type="button" onclick="showAdminSetting('main')">ยกเลิก</button>
+            </div>
         </div>
     </div>
 
@@ -311,16 +337,20 @@
         let currentView = 'dashboard';
         let currentGoldBuyPrice = 70300; let simulatedGoldPrice = null; 
         let transactionsData = []; let userProfiles = {}; let currentViewList = []; let activeModalIndex = -1;
-        let appUsers = {}; let draggedItem = null;
+        let appUsers = {}; 
 
         let adminPass = '060421'; let adminPin = '135790'; let currentPinInput = '';
+        let sortableInstance = null; // For Drag&Drop
 
         window.addEventListener('load', () => { initApp(); setupSwipeGestures(); });
 
         function initApp() { 
             const session = localStorage.getItem('goldAppSession');
-            if (session) { currentUser = JSON.parse(session); currentRole = currentUser.role; } 
-            else { currentRole = 'guest'; currentUser = null; }
+            if (session) { 
+                currentUser = JSON.parse(session); currentRole = currentUser.role; 
+            } else { 
+                currentRole = 'guest'; currentUser = null; 
+            }
             updateUIRole(); loadAdminSettings(); loadUsers(); loadProfiles(); 
             if(db) loadData(); 
             fetchGoldFromSheet(); setInterval(fetchGoldFromSheet, 1000); 
@@ -334,20 +364,27 @@
             document.getElementById('view-' + viewName).classList.add('active');
             currentView = viewName; closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' });
             if(viewName === 'dashboard') renderData();
-            if(viewName === 'manage-tx') toggleAddTxForm(false); // ปิดฟอร์มเสมอเมื่อเข้าหน้าจัดการ
+            if(viewName === 'manage-tx') toggleAddTxForm(false); 
         }
 
         function updateUIRole() {
             const btnHamburger = document.getElementById('btn-hamburger');
             const titleSec = document.getElementById('current-user-title');
-            if (currentRole === 'admin') {
+            const sideMenuHeader = document.getElementById('side-menu-header-profile');
+
+            if (currentRole === 'admin' || currentRole === 'user') {
                 btnHamburger.style.display = 'block';
+                let profImg = getProfileImg(currentUser.name);
+                sideMenuHeader.innerHTML = `<img src="${profImg}" class="w-10 h-10 rounded-full border-2 border-yellow-500 object-cover shadow-md bg-gray-800"><div class="flex flex-col"><span class="text-white font-black text-base leading-tight">${currentUser.name}</span><span class="text-[10px] text-gray-400 font-bold">${currentUser.username}</span></div>`;
+                document.getElementById('login-modal').style.display = 'none'; // ซ่อนหน้าล็อกอิน
+            }
+
+            if (currentRole === 'admin') {
                 document.getElementById('menu-manage-users').style.display = 'flex'; 
                 document.getElementById('menu-admin-settings').style.display = 'flex'; 
                 document.getElementById('admin-only-checkbox-sec').style.display = 'flex'; 
                 document.getElementById('f_buyer').readOnly = false; titleSec.innerHTML = '';
             } else if (currentRole === 'user') {
-                btnHamburger.style.display = 'block';
                 document.getElementById('menu-manage-users').style.display = 'none'; 
                 document.getElementById('menu-admin-settings').style.display = 'none'; 
                 document.getElementById('admin-only-checkbox-sec').style.display = 'none';
@@ -365,17 +402,10 @@
             const container = document.getElementById('add-tx-form-container');
             const btn = document.getElementById('btn-show-add-tx');
             if(show) {
-                container.classList.remove('form-collapse');
-                container.classList.add('form-expand');
-                btn.classList.add('hidden');
-                document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`;
-                document.getElementById('btn-submit').innerText = "บันทึกข้อมูล";
+                container.classList.remove('form-collapse'); container.classList.add('form-expand'); btn.classList.add('hidden');
+                document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; document.getElementById('btn-submit').innerText = "บันทึกข้อมูล";
             } else {
-                container.classList.remove('form-expand');
-                container.classList.add('form-collapse');
-                btn.classList.remove('hidden');
-                
-                // Clear Form
+                container.classList.remove('form-expand'); container.classList.add('form-collapse'); btn.classList.remove('hidden');
                 document.getElementById('edit_id').value = ""; document.getElementById('addForm').reset(); 
                 document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; 
                 document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; 
@@ -397,8 +427,7 @@
                 currentRole = 'admin'; currentUser = { username: 'admin', name: 'Master Admin', role: 'admin' };
                 localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
             } else if (appUsers[userStr] && appUsers[userStr].password === passStr) {
-                currentRole = 'user'; 
-                currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' };
+                currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' };
                 localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData();
             } else {
                 document.getElementById('login-error').innerText = 'Username หรือ Password ไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden');
@@ -415,13 +444,15 @@
         }
         function logout() { localStorage.removeItem('goldAppSession'); location.reload(); }
 
-        // --- MANAGE USERS & DRAG-DROP LOGIC ---
+        // --- MANAGE USERS & DRAG-DROP LOGIC (SortableJS) ---
+        let isSavingOrder = false;
         function loadUsers() { 
             if(!db) return; 
             db.ref('app_users').on('value', snap => { 
+                if(isSavingOrder) return; // Prevent screen jump while saving
                 appUsers = snap.val() || {}; 
                 renderUsersCards(); 
-                if(currentView === 'dashboard') renderData(); // Re-render to sort based on new order
+                if(currentView === 'dashboard') renderData(); 
             }); 
         }
         
@@ -430,32 +461,28 @@
             if(!container) return;
             container.innerHTML = '';
             
-            // Sort users based on their 'order' value in DB
             const sortedUsers = Object.entries(appUsers).map(([username, data]) => ({ username, ...data }))
                                   .sort((a, b) => (a.order || 999) - (b.order || 999));
 
             sortedUsers.forEach((u, index) => {
                 const profImg = getProfileImg(u.name);
-                const roleColor = '#cbd5e1'; 
                 const isOnline = (currentUser && currentUser.username === u.username) || false;
                 const statusColor = isOnline ? '#22c55e' : '#6b7280';
                 const statusText = isOnline ? 'ออนไลน์' : 'ออฟไลน์';
 
                 container.innerHTML += `
-                    <div id="ucard-${u.username}" data-username="${u.username}" draggable="true" class="user-drag-item bg-[#1a1c23] rounded-[1.5rem] p-4 flex items-center justify-between shadow-lg border border-gray-800/50 cursor-grab active:cursor-grabbing">
+                    <div data-username="${u.username}" class="user-drag-item bg-[#1a1c23] rounded-[1.5rem] p-4 flex items-center justify-between shadow-lg border border-gray-800/50">
                         <div class="flex items-center gap-3">
-                            <div class="text-gray-600 flex flex-col gap-1 w-3">
-                                <div class="flex gap-1"><div class="w-1 h-1 bg-gray-500 rounded-full"></div><div class="w-1 h-1 bg-gray-500 rounded-full"></div></div>
-                                <div class="flex gap-1"><div class="w-1 h-1 bg-gray-500 rounded-full"></div><div class="w-1 h-1 bg-gray-500 rounded-full"></div></div>
-                                <div class="flex gap-1"><div class="w-1 h-1 bg-gray-500 rounded-full"></div><div class="w-1 h-1 bg-gray-500 rounded-full"></div></div>
+                            <div class="drag-handle cursor-grab active:cursor-grabbing text-gray-500 hover:text-yellow-400 p-2 flex flex-col gap-1 w-8 h-8 items-center justify-center bg-gray-800 rounded-lg transition">
+                                <div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
+                                <div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
+                                <div class="flex gap-1"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
                             </div>
                             
                             <img src="${profImg}" class="w-14 h-14 rounded-full object-cover border border-gray-700 shadow-inner pointer-events-none">
                             
                             <div class="flex flex-col justify-center pointer-events-none">
-                                <div class="flex items-center gap-1.5">
-                                    <h3 class="text-white font-black text-lg leading-none">${u.name}</h3>
-                                </div>
+                                <h3 class="text-white font-black text-lg leading-none">${u.name}</h3>
                                 <p class="text-gray-400 text-xs font-bold mt-1">User: <span class="text-gray-200">${u.username}</span></p>
                                 <div class="flex items-center gap-1.5 mt-1">
                                     <div class="w-2.5 h-2.5 rounded-full" style="background-color: ${statusColor};"></div>
@@ -464,65 +491,59 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-3 ml-2">
-                            <button onclick="editUser('${u.username}')" class="hover:scale-110 transition"><svg class="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                            <button onclick="deleteUser('${u.username}')" class="hover:scale-110 transition"><svg class="w-5 h-5 text-[#ef4444]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>
+                        <div class="flex items-center gap-2 ml-2">
+                            <button onclick="editUser('${u.username}')" class="p-2 hover:scale-110 transition bg-blue-500/10 rounded-full"><svg class="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                            <button onclick="deleteUser('${u.username}')" class="p-2 hover:scale-110 transition bg-red-500/10 rounded-full"><svg class="w-5 h-5 text-[#ef4444]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>
                         </div>
                     </div>
                 `;
             });
-            attachDragEvents();
-        }
-
-        function attachDragEvents() {
-            const items = document.querySelectorAll('.user-drag-item');
-            items.forEach(item => {
-                item.addEventListener('dragstart', () => { draggedItem = item; setTimeout(() => item.classList.add('dragging'), 0); });
-                item.addEventListener('dragend', () => { draggedItem.classList.remove('dragging'); draggedItem = null; updateOrderInDB(); });
-                item.addEventListener('dragover', e => { e.preventDefault(); const afterElement = getDragAfterElement(document.getElementById('users-cards-container'), e.clientY); const container = document.getElementById('users-cards-container'); if (afterElement == null) { container.appendChild(draggedItem); } else { container.insertBefore(draggedItem, afterElement); } });
+            
+            if(sortableInstance) sortableInstance.destroy();
+            sortableInstance = new Sortable(container, {
+                animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
+                onEnd: function () { updateOrderInDB(); }
             });
         }
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('.user-drag-item:not(.dragging)')];
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect(); const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) { return { offset: offset, element: child }; } else { return closest; }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
+
         function updateOrderInDB() {
             if(!db) return;
+            isSavingOrder = true;
             const items = document.querySelectorAll('.user-drag-item');
+            let updates = {};
             items.forEach((item, index) => {
-                const username = item.getAttribute('data-username');
-                db.ref('app_users/' + username).update({ order: index });
+                let uname = item.getAttribute('data-username');
+                if(uname) {
+                    updates[uname + '/order'] = index;
+                    if(appUsers[uname]) appUsers[uname].order = index; 
+                }
+            });
+            db.ref('app_users').update(updates).then(() => {
+                isSavingOrder = false;
+                showWarningToast('✅ บันทึกการจัดเรียงสำเร็จ!');
+                if(currentView === 'dashboard') renderData();
             });
         }
 
         function openUserModal() {
             document.getElementById('u_original_username').value = '';
-            document.getElementById('u_username').value = ''; document.getElementById('u_password').value = ''; 
-            document.getElementById('u_name').value = '';
+            document.getElementById('u_username').value = ''; document.getElementById('u_password').value = ''; document.getElementById('u_name').value = '';
             document.getElementById('u_prof_base64').value = ''; document.getElementById('u_prof_file').value = '';
             document.getElementById('u_prof_preview').src = `https://ui-avatars.com/api/?name=U&background=334155&color=fff`;
             
-            document.getElementById('user-modal-title').innerText = 'เพิ่มผู้ใช้งานใหม่';
-            document.getElementById('user-btn-submit').innerText = 'สร้างผู้ใช้';
+            document.getElementById('user-modal-title').innerText = 'เพิ่มผู้ใช้งานใหม่'; document.getElementById('user-btn-submit').innerText = 'สร้างผู้ใช้';
             document.getElementById('user-form-modal').style.display = 'flex';
         }
 
         function editUser(username) {
-            const u = appUsers[username];
-            if(!u) return;
-            document.getElementById('u_original_username').value = username;
-            document.getElementById('u_username').value = username;
-            document.getElementById('u_password').value = u.password;
-            document.getElementById('u_name').value = u.name;
+            const u = appUsers[username]; if(!u) return;
+            document.getElementById('u_original_username').value = username; document.getElementById('u_username').value = username;
+            document.getElementById('u_password').value = u.password; document.getElementById('u_name').value = u.name;
             
             document.getElementById('u_prof_base64').value = ''; document.getElementById('u_prof_file').value = '';
             document.getElementById('u_prof_preview').src = getProfileImg(u.name);
             
-            document.getElementById('user-modal-title').innerText = 'แก้ไขข้อมูลผู้ใช้';
-            document.getElementById('user-btn-submit').innerText = 'อัปเดตข้อมูล';
+            document.getElementById('user-modal-title').innerText = 'แก้ไขข้อมูลผู้ใช้'; document.getElementById('user-btn-submit').innerText = 'อัปเดตข้อมูล';
             document.getElementById('user-form-modal').style.display = 'flex';
         }
 
@@ -533,58 +554,26 @@
         function saveUser(e) {
             e.preventDefault(); 
             const origUser = document.getElementById('u_original_username').value;
-            const username = document.getElementById('u_username').value.trim(); 
-            const password = document.getElementById('u_password').value.trim(); 
-            const name = document.getElementById('u_name').value.trim();
+            const username = document.getElementById('u_username').value.trim(); const password = document.getElementById('u_password').value.trim(); const name = document.getElementById('u_name').value.trim();
             const base64Img = document.getElementById('u_prof_base64').value;
             if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
 
             if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
             
             let userOrder = 999;
-            if (origUser && appUsers[origUser] && appUsers[origUser].order !== undefined) {
-                userOrder = appUsers[origUser].order; // Keep same order if editing
-            } else {
-                // Find Max order for new user to append at the bottom
-                let maxOrder = -1;
-                for(let k in appUsers) { if(appUsers[k].order !== undefined && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; }
-                userOrder = maxOrder + 1;
-            }
+            if (origUser && appUsers[origUser] && appUsers[origUser].order !== undefined) { userOrder = appUsers[origUser].order; } 
+            else { let maxOrder = -1; for(let k in appUsers) { if(appUsers[k].order !== undefined && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } userOrder = maxOrder + 1; }
 
             if(origUser && origUser !== username) { db.ref('app_users/' + origUser).remove(); }
 
-            db.ref('app_users/' + username).update({ password: password, name: name, role: 'User', order: userOrder }).then(() => { 
-                showWarningToast('บันทึกข้อมูลผู้ใช้สำเร็จ!'); closeUserModal();
-            });
+            db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder }).then(() => { showWarningToast('บันทึกข้อมูลผู้ใช้สำเร็จ!'); closeUserModal(); });
         }
         function deleteUser(username) { if(confirm(`ยืนยันการลบผู้ใช้ ${username} ถาวร?`)) db.ref('app_users/' + username).remove(); }
 
         // --- MANAGE TX LOGIC ---
         function loadData() { 
             db.ref('gold_portfolio').on('value', (snapshot) => { 
-                transactionsData = []; 
-                snapshot.forEach(child => { transactionsData.push({ id: child.key, ...child.val() }); }); 
-                
-                // Advanced Sorting based on User Order
-                transactionsData.sort((a, b) => { 
-                    let aAdmin = a.isAdminOwner ? 1 : 0; let bAdmin = b.isAdminOwner ? 1 : 0; 
-                    if (aAdmin !== bAdmin) return bAdmin - aAdmin; // Admin Top
-                    
-                    if (!a.isAdminOwner && !b.isAdminOwner) { 
-                        // Find custom user order from appUsers DB
-                        let orderA = 999; let orderB = 999;
-                        for(let k in appUsers) {
-                            if(appUsers[k].name === a.buyer) orderA = appUsers[k].order !== undefined ? appUsers[k].order : 999;
-                            if(appUsers[k].name === b.buyer) orderB = appUsers[k].order !== undefined ? appUsers[k].order : 999;
-                        }
-                        if (orderA !== orderB) return orderA - orderB;
-                        
-                        // Fallback to Date (Newest first) if same order
-                        return new Date(b.date) - new Date(a.date); 
-                    } 
-                    return new Date(b.date) - new Date(a.date); 
-                }); 
-                
+                transactionsData = []; snapshot.forEach(child => { transactionsData.push({ id: child.key, ...child.val() }); }); 
                 updateAutocomplete(); renderData(); 
             }); 
         }
@@ -597,6 +586,23 @@
 
         // --- Render Data Cards ---
         function renderData() {
+            // Sort Transactions deeply before rendering
+            transactionsData.sort((a, b) => { 
+                let aAdmin = a.isAdminOwner ? 1 : 0; let bAdmin = b.isAdminOwner ? 1 : 0; 
+                if (aAdmin !== bAdmin) return bAdmin - aAdmin; // Admin Top
+                if (!a.isAdminOwner && !b.isAdminOwner) { 
+                    let orderA = 999; let orderB = 999;
+                    let userA = Object.values(appUsers).find(u => u.name === a.buyer);
+                    let userB = Object.values(appUsers).find(u => u.name === b.buyer);
+                    if (userA && userA.order !== undefined) orderA = userA.order;
+                    if (userB && userB.order !== undefined) orderB = userB.order;
+                    
+                    if (orderA !== orderB) return orderA - orderB;
+                    return new Date(b.date) - new Date(a.date); 
+                } 
+                return new Date(b.date) - new Date(a.date); 
+            }); 
+
             const dashboardContainer = document.getElementById('guest-cards-container'); const txContainer = document.getElementById('tx-cards-container'); if(!dashboardContainer || !txContainer) return; dashboardContainer.innerHTML = ''; txContainer.innerHTML = ''; const effectivePrice = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice; currentViewList = [];
             transactionsData.forEach((tx) => {
                 if (currentRole === 'guest') return; if (currentRole === 'user' && tx.buyer !== currentUser.name) return; 
@@ -608,7 +614,7 @@
                     <div onclick="openModal(${index})" class="app-card ${bgTheme} rounded-3xl p-5 border relative overflow-hidden text-white group">
                         <div class="flex items-center justify-between mb-4 relative z-10 mt-1">
                             <div class="flex items-center gap-3">
-                                <div class="relative inline-block shrink-0"><img src="${tx.profImg}" class="w-14 h-14 rounded-full border-2 border-white object-cover shadow-lg">${isAdmin ? '<div class="absolute -bottom-1 -right-1 text-lg drop-shadow-md emoji z-20">👑</div>' : ''}</div>
+                                <div class="relative inline-block shrink-0"><img src="${tx.profImg}" class="w-14 h-14 rounded-full border-2 border-white object-cover shadow-lg bg-gray-800">${isAdmin ? '<div class="absolute -bottom-1 -right-1 text-lg drop-shadow-md emoji z-20">👑</div>' : ''}</div>
                                 <div><p class="font-black text-xl tracking-tight">${tx.buyer}</p><span class="bg-black/30 px-2 py-0.5 rounded text-[10px] font-bold emoji">📅 ${tx.date}</span></div>
                             </div>
                             <div class="text-right"><p class="text-[9px] text-yellow-500/90 font-bold uppercase tracking-widest mb-0.5">ราคาตลาด/บ.</p><p class="font-black text-yellow-400 text-sm">${effectivePrice.toLocaleString()}</p></div>
@@ -628,7 +634,7 @@
                     <div class="bg-gray-800 p-4 rounded-3xl border border-gray-700 shadow-md relative flex flex-col gap-3">
                         ${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50">Admin Port</div>' : ''}
                         <div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-1">
-                            <div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover"><div><p class="font-black text-white leading-none">${tx.buyer}</p><p class="text-[10px] text-gray-500 mt-1">${tx.date}</p></div></div>
+                            <div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><p class="text-[10px] text-gray-500 mt-1">${tx.date}</p></div></div>
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-sm bg-black/30 p-3 rounded-xl border border-white/5">
                             <div><span class="text-gray-500 text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div>
@@ -644,6 +650,7 @@
                 `; txContainer.innerHTML += txCard;
             });
             document.getElementById('total-items-count').innerText = `${currentViewList.length} รายการ`;
+            updateUIRole(); // update side menu profile pic if needed
         }
 
         // --- APIs and Helpers ---
@@ -656,17 +663,56 @@
         function handleImgBase(event, callback) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX_SIZE = 400; let width = img.width; let height = img.height; if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } } canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
         function showWarningToast(msg) { if (navigator.vibrate) navigator.vibrate(200); const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'bg-gray-800/95 backdrop-blur-md text-white px-5 py-4 rounded-2xl font-bold shadow-2xl border border-gray-600 transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-3 w-full'; toast.innerHTML = `<span class="text-2xl emoji">🔔</span> <span class="text-sm">${msg}</span>`; container.appendChild(toast); requestAnimationFrame(() => { toast.classList.remove('translate-y-[-20px]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-20px]', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
-        function openAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'flex'; closeMenu(); }
-        function closeAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'none'; document.getElementById('admin-settings-form').reset(); }
+        // --- Admin Settings Modal (Redesigned logic) ---
+        let settingPinStep = 1; let sOldPin = '', sNewPin = '', sConfPin = '';
+
+        function openAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'flex'; closeMenu(); showAdminSetting('main'); }
+        function closeAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'none'; document.getElementById('admin-settings-pass').reset(); resetSettingPin(); }
         function loadAdminSettings() { if(!db) return; db.ref('admin_settings').on('value', snap => { const data = snap.val(); if(data) { if(data.password) adminPass = data.password; if(data.pin) adminPin = data.pin; } }); }
-        function saveAdminSettings(e) { e.preventDefault(); if(!db) return; const oldPass = document.getElementById('setting-old-pass').value; const newPass = document.getElementById('setting-new-pass').value; const confPass = document.getElementById('setting-confirm-pass').value; const oldPin = document.getElementById('setting-old-pin').value; const newPin = document.getElementById('setting-new-pin').value; const confPin = document.getElementById('setting-confirm-pin').value; let updates = {}; if (oldPass || newPass || confPass) { if (oldPass !== adminPass) { showWarningToast('รหัสผ่านเก่าไม่ถูกต้อง!'); return; } if (newPass !== confPass) { showWarningToast('รหัสใหม่ไม่ตรงกัน!'); return; } updates.password = newPass; } if (oldPin || newPin || confPin) { if (oldPin !== adminPin) { showWarningToast('PIN เก่าไม่ถูกต้อง!'); return; } if (newPin.length !== 6 || newPin !== confPin) { showWarningToast('PIN ไม่ถูกต้อง (ต้อง 6 หลักและตรงกัน)'); return; } updates.pin = newPin; } if(Object.keys(updates).length > 0) { db.ref('admin_settings').update(updates).then(() => { showWarningToast('บันทึกรหัสผ่าน/PIN แล้ว!'); document.getElementById('admin-settings-form').reset(); if(updates.password) adminPass = updates.password; if(updates.pin) adminPin = updates.pin; closeAdminSettingsModal(); }); } }
+        
+        function showAdminSetting(mode) {
+             document.getElementById('admin-settings-main').classList.add('hidden');
+             document.getElementById('admin-settings-pass').classList.add('hidden');
+             document.getElementById('admin-settings-pin').classList.add('hidden');
+             if(mode === 'main') { document.getElementById('admin-settings-main').classList.remove('hidden'); }
+             else if(mode === 'pass') { document.getElementById('admin-settings-pass').classList.remove('hidden'); }
+             else if(mode === 'pin') { document.getElementById('admin-settings-pin').classList.remove('hidden'); resetSettingPin(); }
+        }
+
+        function saveAdminPass(e) {
+             e.preventDefault(); if(!db) return; 
+             const oldPass = document.getElementById('setting-old-pass').value; const newPass = document.getElementById('setting-new-pass').value; const confPass = document.getElementById('setting-confirm-pass').value;
+             if (oldPass !== adminPass) { showWarningToast('รหัสผ่านเก่าไม่ถูกต้อง!'); return; } 
+             if (newPass !== confPass) { showWarningToast('รหัสผ่านใหม่ไม่ตรงกัน!'); return; }
+             db.ref('admin_settings').update({password: newPass}).then(() => { showWarningToast('เปลี่ยนรหัสผ่านสำเร็จ!'); adminPass = newPass; closeAdminSettingsModal(); });
+        }
+
+        function resetSettingPin() { settingPinStep = 1; sOldPin = ''; sNewPin = ''; sConfPin = ''; document.getElementById('setting-pin-title').innerText = 'กรอก PIN ปัจจุบัน'; updateSettingPinUI(); }
+        function updateSettingPinUI() {
+             let curLen = settingPinStep === 1 ? sOldPin.length : (settingPinStep === 2 ? sNewPin.length : sConfPin.length);
+             const dots = document.querySelectorAll('.s-pin-dot');
+             dots.forEach((dot, idx) => { if(idx < curLen) { dot.classList.remove('bg-gray-700'); dot.classList.add('bg-yellow-400'); } else { dot.classList.add('bg-gray-700'); dot.classList.remove('bg-yellow-400'); } });
+        }
+        function enterSettingPin(num) {
+             if(settingPinStep === 1) {
+                  if(sOldPin.length < 6) sOldPin += num; updateSettingPinUI();
+                  if(sOldPin.length === 6) setTimeout(() => { if(sOldPin === adminPin) { settingPinStep = 2; document.getElementById('setting-pin-title').innerText = 'ตั้ง PIN ใหม่ 6 หลัก'; updateSettingPinUI(); } else { showWarningToast('PIN ปัจจุบันไม่ถูกต้อง!'); sOldPin = ''; updateSettingPinUI(); } }, 50);
+             } else if(settingPinStep === 2) {
+                  if(sNewPin.length < 6) sNewPin += num; updateSettingPinUI();
+                  if(sNewPin.length === 6) setTimeout(() => { settingPinStep = 3; document.getElementById('setting-pin-title').innerText = 'ยืนยัน PIN ใหม่อีกครั้ง'; updateSettingPinUI(); }, 50);
+             } else if(settingPinStep === 3) {
+                  if(sConfPin.length < 6) sConfPin += num; updateSettingPinUI();
+                  if(sConfPin.length === 6) setTimeout(() => { if(sNewPin === sConfPin) { db.ref('admin_settings').update({pin: sNewPin}).then(() => { showWarningToast('เปลี่ยนรหัส PIN สำเร็จ!'); adminPin = sNewPin; closeAdminSettingsModal(); }); } else { showWarningToast('PIN ไม่ตรงกัน! กรุณาตั้งใหม่'); settingPinStep = 2; sNewPin = ''; sConfPin = ''; document.getElementById('setting-pin-title').innerText = 'ตั้ง PIN ใหม่ 6 หลัก'; updateSettingPinUI(); } }, 50);
+             }
+        }
+        function deleteSettingPin() { if(settingPinStep === 1) sOldPin = sOldPin.slice(0,-1); else if(settingPinStep === 2) sNewPin = sNewPin.slice(0,-1); else if(settingPinStep === 3) sConfPin = sConfPin.slice(0,-1); updateSettingPinUI(); }
 
         let touchStartX = 0; let touchEndX = 0; function setupSwipeGestures() { const itemModal = document.getElementById('item-modal'); itemModal.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true}); itemModal.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; const SWIPE_THRESHOLD = 50; if (touchStartX - touchEndX > SWIPE_THRESHOLD) nextItem(); if (touchEndX - touchStartX > SWIPE_THRESHOLD) prevItem(); }, {passive: true}); }
         function openModal(index) { if(index < 0 || index >= currentViewList.length) return; activeModalIndex = index; updateModalUI(); document.getElementById('item-modal').classList.remove('opacity-0', 'pointer-events-none'); document.getElementById('modal-content').classList.add('modal-enter'); document.body.style.overflow = 'hidden'; }
         function closeModal() { document.getElementById('item-modal').classList.add('opacity-0', 'pointer-events-none'); document.getElementById('modal-content').classList.remove('modal-enter'); document.body.style.overflow = 'auto'; activeModalIndex = -1; }
         function nextItem() { if(activeModalIndex < currentViewList.length - 1) { document.getElementById('modal-content').classList.remove('modal-enter'); void document.getElementById('modal-content').offsetWidth; activeModalIndex++; updateModalUI(); document.getElementById('modal-content').classList.add('modal-enter'); } }
         function prevItem() { if(activeModalIndex > 0) { document.getElementById('modal-content').classList.remove('modal-enter'); void document.getElementById('modal-content').offsetWidth; activeModalIndex--; updateModalUI(); document.getElementById('modal-content').classList.add('modal-enter'); } }
-        function updateModalUI() { if(activeModalIndex === -1 || currentViewList.length === 0) return; let tx = currentViewList[activeModalIndex]; document.getElementById('prev-btn').style.display = activeModalIndex > 0 ? 'flex' : 'none'; document.getElementById('next-btn').style.display = activeModalIndex < currentViewList.length - 1 ? 'flex' : 'none'; let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400'; let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-b from-gray-800 to-gray-900 border-green-500/30' : 'bg-gradient-to-b from-gray-800 to-gray-900 border-red-500/30'; document.getElementById('modal-content').innerHTML = ` <div class="relative w-full max-w-md mx-auto mt-8 h-[85vh] flex flex-col justify-center"> <button class="absolute -top-4 -right-2 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-12 h-12 flex items-center justify-center transition shadow-2xl text-2xl font-black z-[400] border border-gray-600 cursor-pointer" onclick="closeModal()">✕</button> <div class="${bgTheme} rounded-[2rem] p-5 md:p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] border relative text-center text-white overflow-y-auto w-full max-h-full hide-scroll"> <div class="absolute top-6 left-6 bg-black/60 px-4 py-1.5 rounded-full text-sm font-bold border border-gray-600">${activeModalIndex + 1} / ${currentViewList.length}</div> <div class="relative inline-block mx-auto mb-2 mt-8"><img src="${tx.profImg}" class="w-32 h-32 rounded-full object-cover border-4 border-gray-700 shadow-2xl relative z-10">${tx.isAdminOwner ? '<div class="absolute bottom-1 right-1 text-4xl drop-shadow-lg emoji z-20">👑</div>' : ''}</div> <h2 class="text-4xl font-black text-white mt-2 tracking-tight">${tx.buyer}</h2> <div class="flex justify-center gap-2 mt-3 mb-6"><span class="bg-gray-700 px-3 py-1 rounded-md text-sm font-bold text-gray-200 emoji">📅 ${tx.date}</span><span class="bg-gray-700 px-3 py-1 rounded-md text-sm font-bold text-gray-200 emoji">🏦 ${tx.shop}</span></div> <div class="bg-black/50 rounded-3xl p-5 mb-5 shadow-inner border border-white/10 text-center"><p class="text-gray-400 text-sm uppercase font-bold tracking-widest mb-1">น้ำหนัก</p><p class="text-3xl font-black text-yellow-400">${tx.totalWeight} <span class="text-xl text-gray-400">บ.</span></p><p class="text-sm text-yellow-200 mt-2 font-bold bg-gray-800/80 inline-block px-4 py-2 rounded-xl border border-gray-600">ก้อนละ ${tx.weight} บ. x ${tx.qty} ก้อน</p></div> <div class="grid grid-cols-2 gap-3 text-center mb-6"><div class="bg-gray-800/90 rounded-2xl p-3 border border-gray-600"><p class="text-[11px] text-gray-400 uppercase font-bold mb-1">ราคาซื้อ/บาท</p><p class="font-black text-yellow-400 text-2xl">${tx.buyprice.toLocaleString()}</p></div><div class="bg-gray-800/90 rounded-2xl p-3 border border-gray-600"><p class="text-[11px] text-gray-400 uppercase font-bold mb-1">ค่าบล็อกรวม</p><p class="font-black text-white text-2xl">${(tx.blockfee * tx.totalWeight).toLocaleString()}</p></div></div> <div class="border-t border-gray-700 pt-5 text-center pb-4"> <div class="bg-gray-800/80 p-3 rounded-2xl flex flex-col items-center mb-4 border border-gray-700"><p class="text-xs text-gray-300 font-bold uppercase mb-1">ต้นทุนทั้งหมด</p><p class="text-3xl font-black text-green-400">${tx.totalCost.toLocaleString()}</p></div> <div class="bg-black/70 p-4 rounded-3xl flex flex-col gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10"><div><span class="block text-xs text-gray-400 font-bold uppercase mb-1">มูลค่าปัจจุบัน</span><span class="text-3xl font-black ${valCol}">${tx.currentValue.toLocaleString()}</span></div><div class="border-t border-gray-700 pt-3"><span class="block text-xs text-gray-400 font-bold uppercase mb-1">กำไร/ขาดทุนสุทธิ</span><div class="bg-black/50 px-4 py-2 rounded-2xl inline-block mt-1"><span class="text-3xl font-black ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div></div></div> </div> </div> </div> `; }
+        function updateModalUI() { if(activeModalIndex === -1 || currentViewList.length === 0) return; let tx = currentViewList[activeModalIndex]; document.getElementById('prev-btn').style.display = activeModalIndex > 0 ? 'flex' : 'none'; document.getElementById('next-btn').style.display = activeModalIndex < currentViewList.length - 1 ? 'flex' : 'none'; let pCol = tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; let valCol = tx.currentValue < tx.totalCost ? 'text-red-400' : 'text-green-400'; let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-b from-gray-800 to-gray-900 border-green-500/30' : 'bg-gradient-to-b from-gray-800 to-gray-900 border-red-500/30'; document.getElementById('modal-content').innerHTML = ` <div class="relative w-full max-w-md mx-auto mt-8 h-[85vh] flex flex-col justify-center"> <button class="absolute -top-4 -right-2 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-12 h-12 flex items-center justify-center transition shadow-2xl text-2xl font-black z-[400] border border-gray-600 cursor-pointer" onclick="closeModal()">✕</button> <div class="${bgTheme} rounded-[2rem] p-5 md:p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] border relative text-center text-white overflow-y-auto w-full max-h-full hide-scroll"> <div class="absolute top-6 left-6 bg-black/60 px-4 py-1.5 rounded-full text-sm font-bold border border-gray-600">${activeModalIndex + 1} / ${currentViewList.length}</div> <div class="relative inline-block mx-auto mb-2 mt-8"><img src="${tx.profImg}" class="w-32 h-32 rounded-full object-cover border-4 border-gray-700 shadow-2xl relative z-10 bg-gray-800">${tx.isAdminOwner ? '<div class="absolute bottom-1 right-1 text-4xl drop-shadow-lg emoji z-20">👑</div>' : ''}</div> <h2 class="text-4xl font-black text-white mt-2 tracking-tight">${tx.buyer}</h2> <div class="flex justify-center gap-2 mt-3 mb-6"><span class="bg-gray-700 px-3 py-1 rounded-md text-sm font-bold text-gray-200 emoji">📅 ${tx.date}</span><span class="bg-gray-700 px-3 py-1 rounded-md text-sm font-bold text-gray-200 emoji">🏦 ${tx.shop}</span></div> <div class="bg-black/50 rounded-3xl p-5 mb-5 shadow-inner border border-white/10 text-center"><p class="text-gray-400 text-sm uppercase font-bold tracking-widest mb-1">น้ำหนัก</p><p class="text-3xl font-black text-yellow-400">${tx.totalWeight} <span class="text-xl text-gray-400">บ.</span></p><p class="text-sm text-yellow-200 mt-2 font-bold bg-gray-800/80 inline-block px-4 py-2 rounded-xl border border-gray-600">ก้อนละ ${tx.weight} บ. x ${tx.qty} ก้อน</p></div> <div class="grid grid-cols-2 gap-3 text-center mb-6"><div class="bg-gray-800/90 rounded-2xl p-3 border border-gray-600"><p class="text-[11px] text-gray-400 uppercase font-bold mb-1">ราคาซื้อ/บาท</p><p class="font-black text-yellow-400 text-2xl">${tx.buyprice.toLocaleString()}</p></div><div class="bg-gray-800/90 rounded-2xl p-3 border border-gray-600"><p class="text-[11px] text-gray-400 uppercase font-bold mb-1">ค่าบล็อกรวม</p><p class="font-black text-white text-2xl">${(tx.blockfee * tx.totalWeight).toLocaleString()}</p></div></div> <div class="border-t border-gray-700 pt-5 text-center pb-4"> <div class="bg-gray-800/80 p-3 rounded-2xl flex flex-col items-center mb-4 border border-gray-700"><p class="text-xs text-gray-300 font-bold uppercase mb-1">ต้นทุนทั้งหมด</p><p class="text-3xl font-black text-green-400">${tx.totalCost.toLocaleString()}</p></div> <div class="bg-black/70 p-4 rounded-3xl flex flex-col gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10"><div><span class="block text-xs text-gray-400 font-bold uppercase mb-1">มูลค่าปัจจุบัน</span><span class="text-3xl font-black ${valCol}">${tx.currentValue.toLocaleString()}</span></div><div class="border-t border-gray-700 pt-3"><span class="block text-xs text-gray-400 font-bold uppercase mb-1">กำไร/ขาดทุนสุทธิ</span><div class="bg-black/50 px-4 py-2 rounded-2xl inline-block mt-1"><span class="text-3xl font-black ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div></div></div> </div> </div> </div> `; }
     </script>
 </body>
 </html>
