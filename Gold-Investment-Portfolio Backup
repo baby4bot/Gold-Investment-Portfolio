@@ -5,24 +5,50 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.22 (Sync Visibility & Full Bubble Calc)</title>
+    <title>พอร์ตทองคำ V6.22 (Sync & Fullscreen App)</title>
+    
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="พอร์ตทองคำ" />
     
     <link rel="apple-touch-icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
     <link rel="icon" sizes="192x192" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
     <link rel="icon" sizes="512x512" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
-    <link rel="shortcut icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
+    <link rel="shortcut icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />  
+    
+    <link id="dynamic-manifest" rel="manifest" href="" />
      
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     
+    <script>
+        // โค้ดบังคับสร้าง Web App Manifest ให้ Google Chrome อ่านเพื่อทำ Fullscreen และดึงโลโก้
+        const manifestObj = {
+            "name": "พอร์ตทองคำ",
+            "short_name": "พอร์ตทองคำ",
+            "display": "fullscreen",
+            "start_url": window.location.href.split('?')[0],
+            "background_color": "#0f172a",
+            "theme_color": "#0f172a",
+            "icons": [
+                { "src": "https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg", "sizes": "192x192", "type": "image/jpeg" },
+                { "src": "https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg", "sizes": "512x512", "type": "image/jpeg" }
+            ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], {type: 'application/json'});
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelector('#dynamic-manifest').setAttribute('href', URL.createObjectURL(manifestBlob));
+        });
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        
+        /* เพิ่ม overscroll-behavior-y: none เพื่อบล็อกการดึงรีเฟรชหน้าจอของ Chrome */
+        body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; touch-action: manipulation; overscroll-behavior-y: none; }
         .emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "Segoe UI Symbol", sans-serif !important; }
         
         input[type="text"], input[type="number"], input[type="date"], input[type="password"], select { background-color: #1e293b; color: #ffffff; border: 1px solid #334155; border-radius: 1rem; padding: 0.75rem 1rem; width: 100%; outline: none; transition: border-color 0.2s; }
@@ -47,7 +73,7 @@
         @keyframes zoomExpand { 
             0% { opacity: 0; transform: scale(0.6) translateY(30px); } 
             100% { opacity: 1; transform: scale(1) translateY(0); } 
-}        
+        }        
         .view-section { display: none; animation: fadeIn 0.3s ease forwards; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -62,6 +88,9 @@
         .form-collapse { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease; opacity: 0; }
         .form-expand { max-height: 2000px; opacity: 1; }
         .pin-dot, .s-pin-dot { transition: all 0.2s ease-in-out; }
+        
+        /* บล็อกการรีเฟรชเมื่อเลื่อน Pop-up Modal */
+        #item-modal { overscroll-behavior: contain; }
     </style>
 </head>
 <body>
@@ -85,7 +114,7 @@
             </div>
             <div class="flex flex-col p-4 gap-2 mt-2">
                 <button onclick="switchView('dashboard')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3"><span class="emoji">📊</span> หน้าแรก</button>
-                <button onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/อัปเดตข้อมูลทอง</button>
+                <button onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/แก้ไข ข้อมูลทอง</button>
                 <button id="menu-manage-users" onclick="switchView('manage-users')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-pink-400 transition flex items-center gap-3 hidden"><span class="emoji">👥</span> จัดการบัญชีผู้ใช้งาน</button>
                 <button id="menu-admin-settings" onclick="openAdminSettingsModal()" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-emerald-400 transition flex items-center gap-3 hidden"><span class="emoji">⚙️</span> ตั้งค่าระบบ Admin</button>
             </div>
@@ -211,7 +240,7 @@
 
         <div id="view-manage-tx" class="view-section relative min-h-screen">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black text-blue-400 flex items-center gap-2"><span class="emoji">📝</span> จัดการข้อมูลทอง</h2>
+                <h2 class="text-2xl font-black text-blue-400 flex items-center gap-2"><span class="emoji">📝</span> บริหารจัดการข้อมูลทอง</h2>
                 <button id="btn-show-add-tx" onclick="toggleAddTxForm(true)" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-bold shadow-[0_5px_15px_rgba(37,99,235,0.4)] transition flex items-center gap-2 text-sm active:scale-95">
                     <span class="emoji">➕</span> เพิ่มรายการ
                 </button>
@@ -241,11 +270,11 @@
                         <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อร้านทอง</label><input placeholder="ระบุชื่อร้าน" required id="f_shop" type="text" list="shop-list" /></div>
                         <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อผู้ซื้อ (เจ้าของพอร์ต)</label><input placeholder="เช่น อนาวิล" required id="f_buyer" type="text" list="buyer-list" onchange="checkExistingProfile(this.value)" /></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">น.น./ก้อน (บ.)</label><input required id="f_weight" step="0.25" type="number" placeholder="เช่น 5" /></div>
-                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">จำนวน (ก้อน)</label><input required id="f_qty" type="number" placeholder="เช่น 2" /></div>
+                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">น้ำหนักทอง/ก้อน (บ.)</label><input required id="f_weight" step="0.25" type="number" placeholder="เช่น 5 บาท" /></div>
+                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">จำนวน (ก้อน)</label><input required id="f_qty" type="number" placeholder="เช่น 2 ก้อน" /></div>
                         </div>
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ราคาซื้อ/บาท</label><input required id="f_buyprice" type="number" placeholder="ยอดซื้อ" /></div>
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ค่าบล็อก/บาท</label><input required value="0" id="f_blockfee" type="number" /></div>
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ราคา ณ.วันซื้อ / บาท</label><input required id="f_buyprice" type="number" placeholder="ราคา ณ.วันซื้อ / บาท" /></div>
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ค่าบล็อก / บาท</label><input required value="0" id="f_blockfee" type="number" /></div>
                     </div>
 
                     <div id="half-half-sec" class="mb-4 bg-blue-900/20 p-4 rounded-xl border border-blue-700/50 hidden items-center gap-3 transition-colors hover:bg-blue-900/30">
@@ -589,17 +618,59 @@
         function closeUserModal() { document.getElementById('user-form-modal').style.display = 'none'; }
         
         function saveUser(e) {
-            e.preventDefault(); const origUser = document.getElementById('u_original_username').value; const username = document.getElementById('u_username').value.trim(); const password = document.getElementById('u_password').value.trim(); const name = document.getElementById('u_name').value.trim(); const base64Img = document.getElementById('u_prof_base64').value;
+            e.preventDefault(); 
+            const origUser = document.getElementById('u_original_username').value; 
+            const username = document.getElementById('u_username').value.trim(); 
+            const password = document.getElementById('u_password').value.trim(); 
+            const name = document.getElementById('u_name').value.trim(); 
+            const base64Img = document.getElementById('u_prof_base64').value;
+            
             if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
             if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
             
-            // ค่าเริ่มต้นของ User ใหม่ ให้ซ่อนตัวไปก่อน
             let userOrder = 999; let isFav = false; let isHid = true; let isHidSum = true;
-            if (origUser && appUsers[origUser]) { if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; isFav = appUsers[origUser].isFavorite || false; isHid = appUsers[origUser].isHidden || false; isHidSum = appUsers[origUser].isHiddenFromSummary || false; } 
-            else { let maxOrder = -1; for(let k in appUsers) { if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } userOrder = maxOrder + 1; }
+            let oldName = ""; // เพิ่มตัวแปรเก็บชื่อเก่าเพื่อเอาไว้เทียบ
+
+            if (origUser && appUsers[origUser]) { 
+                oldName = appUsers[origUser].name; // จำชื่อเดิมเอาไว้
+                if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; 
+                isFav = appUsers[origUser].isFavorite || false; 
+                isHid = appUsers[origUser].isHidden || false; 
+                isHidSum = appUsers[origUser].isHiddenFromSummary || false; 
+            } else { 
+                let maxOrder = -1; for(let k in appUsers) { if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } userOrder = maxOrder + 1; 
+            }
 
             if(origUser && origUser !== username) { db.ref('app_users/' + origUser).remove(); }
-            db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder, isFavorite: isFav, isHidden: isHid, isHiddenFromSummary: isHidSum }).then(() => { showWarningToast('✅ บันทึกข้อมูลสำเร็จ!'); closeUserModal(); });
+            
+            db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder, isFavorite: isFav, isHidden: isHid, isHiddenFromSummary: isHidSum }).then(() => { 
+                
+                // --- ส่วนที่เพิ่มใหม่: ตามไปอัปเดตชื่อในพอร์ตทองและรูปโปรไฟล์ ---
+                if (oldName && oldName !== name) {
+                    let updates = {};
+                    
+                    // ค้นหาและเตรียมข้อมูลแก้ไขชื่อใน gold_portfolio
+                    transactionsData.forEach(tx => {
+                        if (tx.buyer === oldName) {
+                            updates[tx.id + '/buyer'] = name;
+                        }
+                    });
+
+                    // ถ้ามีรายการที่ต้องแก้ ให้อัปเดตเข้าฐานข้อมูลรวดเดียว
+                    if (Object.keys(updates).length > 0) {
+                        db.ref('gold_portfolio').update(updates);
+                    }
+
+                    // ย้ายรูปโปรไฟล์เดิมไปผูกกับชื่อใหม่ (ในกรณีที่ไม่ได้อัปรูปใหม่เข้ามาด้วย)
+                    if (userProfiles[oldName] && !base64Img) {
+                        db.ref('user_profiles/' + name).set(userProfiles[oldName]);
+                    }
+                }
+                // --------------------------------------------------------
+
+                showWarningToast('✅ บันทึกข้อมูลและอัปเดตชื่อสำเร็จ!'); 
+                closeUserModal(); 
+            });
         }
         function deleteUser(username) { if(confirm(`ยืนยันการลบผู้ใช้ ${username} ถาวร?`)) db.ref('app_users/' + username).remove(); }
 
@@ -645,7 +716,7 @@
                 tx.profImg = getProfileImg(tx.buyer);
                 let isAdmin = tx.isAdminOwner === true;
 
-                // สิทธิ์ในการแสดงผลในหน้า "เพิ่ม/อัปเดตข้อมูลทอง" (Manage TX)
+                // สิทธิ์ในการแสดงผลในหน้า "เพิ่ม/แก้ไข ข้อมูลทอง" (Manage TX)
                 let canManage = false;
                 if (currentRole === 'admin') {
                     canManage = true; // Admin เห็นทุกรายการ
@@ -707,12 +778,12 @@
                 if (isSim && tx.currentValue >= tx.totalCost) valCol = 'text-yellow-300';
 
                 let profitLabel = tx.totalProfit >= 0 ? 'กำไรสุทธิ' : 'ขาดทุนสุทธิ';
-                let profitPerBahtLabel = tx.profitPerBaht >= 0 ? 'กำไรเฉลี่ยต่อบาท' : 'ขาดทุนเฉลี่ยต่อบาท';
+                let profitPerBahtLabel = tx.profitPerBaht >= 0 ? 'กำไรเฉลี่ย / บาท' : 'ขาดทุนเฉลี่ย / บาท';
                 let isAdmin = tx.isAdminOwner === true;
 
                 let dashCard = `
                     <div onclick="openModal(${index})" class="app-card ${bgTheme} rounded-[1.5rem] p-4 border relative overflow-hidden text-white group">
-                        ${tx.isHalfHalf ? '<div class="absolute top-0 right-0 bg-blue-600/30 px-3 py-1 rounded-bl-2xl text-blue-200 text-[10px] font-black border-b border-l border-blue-500/50 shadow-lg backdrop-blur-md z-20 flex items-center gap-1"><span class="emoji text-xs">🤝</span> คนละครึ่ง</div>' : ''}
+                        ${tx.isHalfHalf ? '<div class="absolute top-0 right-0 bg-blue-600/30 px-3 py-1 rounded-bl-2xl text-blue-200 text-[10px] font-black border-b border-l border-blue-500/50 shadow-lg backdrop-blur-md z-20 flex items-center gap-1"><span class="emoji text-xs">🤝</span> โครงการคนละครึ่ง</div>' : ''}
                         <div class="flex items-center gap-3 mb-4 relative z-10 mt-1">
                             <div class="relative inline-block shrink-0"><img src="${tx.profImg}" class="w-16 h-16 rounded-full border-2 border-white object-cover shadow-lg bg-gray-800">${isAdmin ? '<div class="absolute -bottom-1 -right-1 text-xl drop-shadow-md emoji z-20">👑</div>' : ''}</div>
                             <div class="flex flex-col"><p class="font-black text-2xl tracking-tight leading-none mb-1">${tx.buyer}</p><span class="bg-black/30 px-2.5 py-1 rounded-lg text-[11px] font-bold emoji inline-block w-max">📅 ${tx.date}</span></div>
@@ -735,7 +806,7 @@
                                 <p class="font-bold text-base md:text-lg">${tx.weight} <span class="text-xs text-gray-400">x ${tx.qty}</span> = <span class="text-yellow-300">${tx.totalWeight}</span></p>
                             </div>
                             <div class="bg-black/20 rounded-xl p-3 border border-white/10 text-right">
-                                <p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">ราคา ณ วันที่ซื้อทั้งหมด</p>
+                                <p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">ราคารวม ณ.วันที่ซื้อ</p>
                                 <p class="font-black text-green-400 text-base md:text-lg">${tx.totalCost.toLocaleString()}</p>
                             </div>
                         </div>
@@ -941,53 +1012,86 @@
         // --- 11. MODAL SWIPE & DRAG BUTTON CONTROLS ---
         function setupDraggableCloseBtn() {
             const btn = document.getElementById('floating-close-btn');
-            let isDraggingBtn = false; let currentX, currentY, initialX, initialY;
-            
-            let xOffset = parseFloat(localStorage.getItem('closeBtnOffsetX_v2')) || 0;
-            let yOffset = parseFloat(localStorage.getItem('closeBtnOffsetY_v2')) || 0;
+            let isDraggingBtn = false; 
+            let currentX = 0, currentY = 0, initialX = 0, initialY = 0;
+            let xOffset = parseFloat(localStorage.getItem('closeBtnOffsetX_v3')) || 0;
+            let yOffset = parseFloat(localStorage.getItem('closeBtnOffsetY_v3')) || 0;
             let moved = false;
 
-            function setTranslate(xPos, yPos, el) { el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; }
-            if (xOffset !== 0 || yOffset !== 0) setTranslate(xOffset, yOffset, btn);
+            function setTranslate(xPos, yPos, el) { 
+                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; 
+            }
+            if (xOffset !== 0 || yOffset !== 0) { 
+                currentX = xOffset; currentY = yOffset; 
+                setTranslate(xOffset, yOffset, btn); 
+            }
 
             function dragStart(e) {
-                if (e.type === "touchstart") { initialX = e.touches[0].clientX - xOffset; initialY = e.touches[0].clientY - yOffset; } 
-                else { initialX = e.clientX - xOffset; initialY = e.clientY - yOffset; }
-                if (e.target === btn || btn.contains(e.target)) { isDraggingBtn = true; moved = false; }
+                if (e.type === "touchstart") { 
+                    initialX = e.touches[0].clientX - xOffset; 
+                    initialY = e.touches[0].clientY - yOffset; 
+                } else { 
+                    initialX = e.clientX - xOffset; 
+                    initialY = e.clientY - yOffset; 
+                }
+                if (e.target === btn || btn.contains(e.target)) { 
+                    isDraggingBtn = true; 
+                    moved = false; 
+                }
             }
 
             function dragEnd(e) {
                 if (!isDraggingBtn) return;
-                initialX = currentX; initialY = currentY; isDraggingBtn = false;
-                localStorage.setItem('closeBtnOffsetX_v2', xOffset); localStorage.setItem('closeBtnOffsetY_v2', yOffset);
+                initialX = currentX; 
+                initialY = currentY; 
+                isDraggingBtn = false;
+                localStorage.setItem('closeBtnOffsetX_v3', xOffset); 
+                localStorage.setItem('closeBtnOffsetY_v3', yOffset);
                 
-                if (!moved) closeModal();
+                // ถ้าไม่ได้ขยับนิ้ว ถือเป็นการคลิกปิด
+                if (!moved) {
+                    if (e.cancelable) e.preventDefault();
+                    e.stopPropagation();
+                    closeModal();
+                }
             }
 
             function drag(e) {
                 if (isDraggingBtn) {
-                    e.preventDefault();
+                    if (e.cancelable) e.preventDefault(); // ป้องกันหน้าจอเลื่อนเวลาลากปุ่ม
                     let clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
                     let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
                     
-                    currentX = clientX - initialX;
-                    currentY = clientY - initialY;
+                    let newX = clientX - initialX;
+                    let newY = clientY - initialY;
                     
-                    if (Math.abs(currentX - xOffset) > 5 || Math.abs(currentY - yOffset) > 5) {
+                    // ป้องกันนิ้วสั่น เช็คว่าต้องลากเกิน 5 pixel ถึงจะมองว่าเป็นการลากจริงๆ
+                    if (Math.abs(newX - xOffset) > 5 || Math.abs(newY - yOffset) > 5) {
                         moved = true;
                     }
                     
-                    xOffset = currentX; yOffset = currentY;
+                    currentX = newX;
+                    currentY = newY;
+                    xOffset = currentX; 
+                    yOffset = currentY;
                     setTranslate(currentX, currentY, btn);
                 }
             }
 
+            // Click event สำหรับ Mouse บน PC
             btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 if(!moved) closeModal();
             });
 
-            btn.addEventListener("touchstart", dragStart, {passive: false}); btn.addEventListener("touchend", dragEnd, false); btn.addEventListener("touchmove", drag, {passive: false});
-            btn.addEventListener("mousedown", dragStart, false); window.addEventListener("mouseup", dragEnd, false); window.addEventListener("mousemove", drag, {passive: false});
+            // ใช้ passive: false เพื่อให้ใช้ e.preventDefault() บล็อกการทำงานซ้อนทับบนมือถือได้
+            btn.addEventListener("touchstart", dragStart, {passive: false}); 
+            btn.addEventListener("touchend", dragEnd, {passive: false}); 
+            window.addEventListener("touchmove", drag, {passive: false});
+            btn.addEventListener("mousedown", dragStart, false); 
+            window.addEventListener("mouseup", dragEnd, false); 
+            window.addEventListener("mousemove", drag, {passive: false});
         }
 
         function openModal(index) { 
@@ -1024,7 +1128,7 @@
             if (isSim && tx.currentValue >= tx.totalCost) valCol = 'text-yellow-300';
 
             let profitLabel = tx.totalProfit >= 0 ? 'กำไรสุทธิ' : 'ขาดทุนสุทธิ';
-            let profitPerBahtLabel = tx.profitPerBaht >= 0 ? 'กำไรเฉลี่ยต่อบาท' : 'ขาดทุนเฉลี่ยต่อบาท';
+            let profitPerBahtLabel = tx.profitPerBaht >= 0 ? 'กำไรเฉลี่ย / บาท' : 'ขาดทุนเฉลี่ย / บาท';
 
             let halfHalfHtml = '';
             if(tx.isHalfHalf) {
@@ -1035,7 +1139,7 @@
 
                 halfHalfHtml = `
                     <div class="mt-6 pt-4 border-t border-white/20">
-                        <div class="text-xs font-bold text-blue-300 mb-4 bg-blue-900/30 inline-block px-3 py-1 rounded-full border border-blue-500/30">🤝 แบ่งส่วนคนละครึ่ง 50:50</div>
+                        <div class="text-xs font-bold text-blue-300 mb-4 bg-blue-900/30 inline-block px-3 py-1 rounded-full border border-blue-500/30">🤝 แบ่งส่วนโครงการคนละครึ่ง</div>
                         <div class="flex justify-center gap-10">
                             <div class="flex flex-col items-center">
                                 <img src="${getProfileImg(adminDisplayName)}" class="w-10 h-10 rounded-full border-2 border-yellow-500 mb-1.5 shadow-md">
@@ -1077,7 +1181,7 @@
                                 <p class="font-black text-white text-xl md:text-2xl">${tx.weight} <span class="text-sm text-gray-400">x ${tx.qty}</span> = <span class="text-yellow-300">${tx.totalWeight}</span> บ.</p>
                             </div>
                             <div class="bg-gray-800/90 rounded-2xl p-4 border border-gray-600 flex flex-col items-center justify-center">
-                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">ราคา ณ วันที่ซื้อทั้งหมด</p>
+                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">ราคารวม ณ.วันที่ซื้อ</p>
                                 <p class="font-black text-green-400 text-xl md:text-2xl">${tx.totalCost.toLocaleString()}</p>
                             </div>
                         </div>
@@ -1086,10 +1190,10 @@
                             <div class="bg-black/70 p-4 rounded-3xl flex flex-col gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10">
                                 <div class="flex justify-between px-2 text-left">
                                     <div><span class="block text-xs md:text-sm text-gray-400 font-bold uppercase mb-1">${profitPerBahtLabel}</span><span class="text-xl md:text-2xl font-black ${pCol}">${tx.profitPerBaht >= 0 ? '+' : ''}${tx.profitPerBaht.toLocaleString()}</span></div>
-                                    <div class="text-right"><span class="block text-xs md:text-sm text-gray-400 font-bold uppercase mb-1">มูลค่าปัจจุบัน (เต็ม)</span><span class="text-xl md:text-2xl font-black ${valCol}">${tx.currentValue.toLocaleString()}</span></div>
+                                    <div class="text-right"><span class="block text-xs md:text-sm text-gray-400 font-bold uppercase mb-1">รวมมูลค่า ณ.ปัจจุบัน</span><span class="text-xl md:text-2xl font-black ${valCol}">${tx.currentValue.toLocaleString()}</span></div>
                                 </div>
                                 <div class="border-t border-gray-700 pt-3 mt-1">
-                                    <span class="block text-xs md:text-sm text-gray-400 font-bold uppercase mb-1">${profitLabel}ทั้งหมด (เต็ม)</span>
+                                    <span class="block text-xs md:text-sm text-gray-400 font-bold uppercase mb-1">${profitLabel} (รวมทั้งหมด)</span>
                                     <div class="bg-black/50 px-4 py-3 rounded-2xl inline-block mt-1 min-w-[70%]"><span class="text-4xl font-black ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div>
                                 </div>
                                 ${halfHalfHtml}
