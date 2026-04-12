@@ -5,15 +5,19 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.22 (Sync Visibility & Full Bubble Calc)</title>
+    <title>พอร์ตทองคำ V6.22 (Sync Visibility)</title>
+    
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="พอร์ตทองคำ" />
     
     <link rel="apple-touch-icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
     <link rel="icon" sizes="192x192" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
     <link rel="icon" sizes="512x512" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
-    <link rel="shortcut icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
+    <link rel="shortcut icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />  
+    
+    <link rel="manifest" href='data:application/manifest+json;utf-8,{"name":"พอร์ตทองคำ","short_name":"พอร์ตทองคำ","display":"standalone","start_url":".","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg","sizes":"512x512","type":"image/jpeg"}]}'>  
      
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -47,7 +51,7 @@
         @keyframes zoomExpand { 
             0% { opacity: 0; transform: scale(0.6) translateY(30px); } 
             100% { opacity: 1; transform: scale(1) translateY(0); } 
-}        
+        }        
         .view-section { display: none; animation: fadeIn 0.3s ease forwards; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -983,27 +987,46 @@
         // --- 11. MODAL SWIPE & DRAG BUTTON CONTROLS ---
         function setupDraggableCloseBtn() {
             const btn = document.getElementById('floating-close-btn');
-            let isDraggingBtn = false; let currentX, currentY, initialX, initialY;
-            
+            let isDraggingBtn = false; 
+            let currentX = 0, currentY = 0, initialX = 0, initialY = 0;
             let xOffset = parseFloat(localStorage.getItem('closeBtnOffsetX_v2')) || 0;
             let yOffset = parseFloat(localStorage.getItem('closeBtnOffsetY_v2')) || 0;
             let moved = false;
 
-            function setTranslate(xPos, yPos, el) { el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; }
-            if (xOffset !== 0 || yOffset !== 0) setTranslate(xOffset, yOffset, btn);
+            function setTranslate(xPos, yPos, el) { 
+                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; 
+            }
+            if (xOffset !== 0 || yOffset !== 0) { 
+                currentX = xOffset; currentY = yOffset; 
+                setTranslate(xOffset, yOffset, btn); 
+            }
 
             function dragStart(e) {
-                if (e.type === "touchstart") { initialX = e.touches[0].clientX - xOffset; initialY = e.touches[0].clientY - yOffset; } 
-                else { initialX = e.clientX - xOffset; initialY = e.clientY - yOffset; }
-                if (e.target === btn || btn.contains(e.target)) { isDraggingBtn = true; moved = false; }
+                if (e.type === "touchstart") { 
+                    initialX = e.touches[0].clientX - xOffset; 
+                    initialY = e.touches[0].clientY - yOffset; 
+                } else { 
+                    initialX = e.clientX - xOffset; 
+                    initialY = e.clientY - yOffset; 
+                }
+                if (e.target === btn || btn.contains(e.target)) { 
+                    isDraggingBtn = true; 
+                    moved = false; 
+                }
             }
 
             function dragEnd(e) {
                 if (!isDraggingBtn) return;
-                initialX = currentX; initialY = currentY; isDraggingBtn = false;
-                localStorage.setItem('closeBtnOffsetX_v2', xOffset); localStorage.setItem('closeBtnOffsetY_v2', yOffset);
+                initialX = currentX; 
+                initialY = currentY; 
+                isDraggingBtn = false;
+                localStorage.setItem('closeBtnOffsetX_v2', xOffset); 
+                localStorage.setItem('closeBtnOffsetY_v2', yOffset);
                 
-                if (!moved) closeModal();
+                // ถ้าขยับนิ้วน้อยกว่า 5px ให้ถือว่าเป็นการกดคลิก (Tap)
+                if (!moved) {
+                    closeModal();
+                }
             }
 
             function drag(e) {
@@ -1012,14 +1035,18 @@
                     let clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
                     let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
                     
-                    currentX = clientX - initialX;
-                    currentY = clientY - initialY;
+                    let newX = clientX - initialX;
+                    let newY = clientY - initialY;
                     
-                    if (Math.abs(currentX - xOffset) > 5 || Math.abs(currentY - yOffset) > 5) {
+                    // ป้องกันนิ้วสั่น เช็คว่าต้องลากเกิน 5 pixel ถึงจะมองว่าเป็นการลากจริงๆ
+                    if (Math.abs(newX - xOffset) > 5 || Math.abs(newY - yOffset) > 5) {
                         moved = true;
                     }
                     
-                    xOffset = currentX; yOffset = currentY;
+                    currentX = newX;
+                    currentY = newY;
+                    xOffset = currentX; 
+                    yOffset = currentY;
                     setTranslate(currentX, currentY, btn);
                 }
             }
@@ -1028,8 +1055,12 @@
                 if(!moved) closeModal();
             });
 
-            btn.addEventListener("touchstart", dragStart, {passive: false}); btn.addEventListener("touchend", dragEnd, false); btn.addEventListener("touchmove", drag, {passive: false});
-            btn.addEventListener("mousedown", dragStart, false); window.addEventListener("mouseup", dragEnd, false); window.addEventListener("mousemove", drag, {passive: false});
+            btn.addEventListener("touchstart", dragStart, {passive: true}); 
+            btn.addEventListener("touchend", dragEnd, {passive: true}); 
+            window.addEventListener("touchmove", drag, {passive: false}); // จับที่ window จะลากได้ลื่นกว่า
+            btn.addEventListener("mousedown", dragStart, false); 
+            window.addEventListener("mouseup", dragEnd, false); 
+            window.addEventListener("mousemove", drag, {passive: false});
         }
 
         function openModal(index) { 
