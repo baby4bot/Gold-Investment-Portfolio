@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.22 (Sync & Fullscreen App)</title>
+    <title>พอร์ตทองคำ V6.23 (Sync & Fullscreen App)</title>
     
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -430,8 +430,8 @@
         </div>
     </div>
 
-    <div id="item-modal" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[600] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300 overflow-hidden">
-        <div id="modal-content" class="w-full h-full relative z-[610]"></div>
+    <div id="item-modal" onclick="closeModal(event)" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[600] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300 overflow-hidden cursor-pointer">
+        <div id="modal-content" onclick="event.stopPropagation()" class="w-full h-full relative z-[610] cursor-default"></div>
         
         <div id="floating-close-btn" class="fixed w-12 h-12 bg-red-600 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xl font-black shadow-[0_0_20px_rgba(0,0,0,0.8)] cursor-grab active:cursor-grabbing z-[650] border-2 border-white/20 transition-transform active:scale-95 hidden" style="top: 1.5rem; right: 1.5rem; touch-action: none;">
             ✕
