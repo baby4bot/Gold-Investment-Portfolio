@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.22 (Sync Visibility)</title>
+    <title>พอร์ตทองคำ V6.23 (Sync & Fullscreen App)</title>
     
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,16 +17,38 @@
     <link rel="icon" sizes="512x512" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
     <link rel="shortcut icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />  
     
-    <link rel="manifest" href='data:application/manifest+json;utf-8,{"name":"พอร์ตทองคำ","short_name":"พอร์ตทองคำ","display":"standalone","start_url":".","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg","sizes":"512x512","type":"image/jpeg"}]}'>  
+    <link id="dynamic-manifest" rel="manifest" href="" />
      
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     
+    <script>
+        // โค้ดบังคับสร้าง Web App Manifest ให้ Google Chrome อ่านเพื่อทำ Fullscreen และดึงโลโก้
+        const manifestObj = {
+            "name": "พอร์ตทองคำ",
+            "short_name": "พอร์ตทองคำ",
+            "display": "fullscreen",
+            "start_url": window.location.href.split('?')[0],
+            "background_color": "#0f172a",
+            "theme_color": "#0f172a",
+            "icons": [
+                { "src": "https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg", "sizes": "192x192", "type": "image/jpeg" },
+                { "src": "https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg", "sizes": "512x512", "type": "image/jpeg" }
+            ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], {type: 'application/json'});
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelector('#dynamic-manifest').setAttribute('href', URL.createObjectURL(manifestBlob));
+        });
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        
+        /* เพิ่ม overscroll-behavior-y: none เพื่อบล็อกการดึงรีเฟรชหน้าจอของ Chrome */
+        body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; touch-action: manipulation; overscroll-behavior-y: none; }
         .emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "Segoe UI Symbol", sans-serif !important; }
         
         input[type="text"], input[type="number"], input[type="date"], input[type="password"], select { background-color: #1e293b; color: #ffffff; border: 1px solid #334155; border-radius: 1rem; padding: 0.75rem 1rem; width: 100%; outline: none; transition: border-color 0.2s; }
@@ -66,6 +88,9 @@
         .form-collapse { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease; opacity: 0; }
         .form-expand { max-height: 2000px; opacity: 1; }
         .pin-dot, .s-pin-dot { transition: all 0.2s ease-in-out; }
+        
+        /* บล็อกการรีเฟรชเมื่อเลื่อน Pop-up Modal */
+        #item-modal { overscroll-behavior: contain; }
     </style>
 </head>
 <body>
@@ -989,8 +1014,8 @@
             const btn = document.getElementById('floating-close-btn');
             let isDraggingBtn = false; 
             let currentX = 0, currentY = 0, initialX = 0, initialY = 0;
-            let xOffset = parseFloat(localStorage.getItem('closeBtnOffsetX_v2')) || 0;
-            let yOffset = parseFloat(localStorage.getItem('closeBtnOffsetY_v2')) || 0;
+            let xOffset = parseFloat(localStorage.getItem('closeBtnOffsetX_v3')) || 0;
+            let yOffset = parseFloat(localStorage.getItem('closeBtnOffsetY_v3')) || 0;
             let moved = false;
 
             function setTranslate(xPos, yPos, el) { 
@@ -1020,18 +1045,20 @@
                 initialX = currentX; 
                 initialY = currentY; 
                 isDraggingBtn = false;
-                localStorage.setItem('closeBtnOffsetX_v2', xOffset); 
-                localStorage.setItem('closeBtnOffsetY_v2', yOffset);
+                localStorage.setItem('closeBtnOffsetX_v3', xOffset); 
+                localStorage.setItem('closeBtnOffsetY_v3', yOffset);
                 
-                // ถ้าขยับนิ้วน้อยกว่า 5px ให้ถือว่าเป็นการกดคลิก (Tap)
+                // ถ้าไม่ได้ขยับนิ้ว ถือเป็นการคลิกปิด
                 if (!moved) {
+                    if (e.cancelable) e.preventDefault();
+                    e.stopPropagation();
                     closeModal();
                 }
             }
 
             function drag(e) {
                 if (isDraggingBtn) {
-                    e.preventDefault();
+                    if (e.cancelable) e.preventDefault(); // ป้องกันหน้าจอเลื่อนเวลาลากปุ่ม
                     let clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
                     let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
                     
@@ -1051,13 +1078,17 @@
                 }
             }
 
+            // Click event สำหรับ Mouse บน PC
             btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 if(!moved) closeModal();
             });
 
-            btn.addEventListener("touchstart", dragStart, {passive: true}); 
-            btn.addEventListener("touchend", dragEnd, {passive: true}); 
-            window.addEventListener("touchmove", drag, {passive: false}); // จับที่ window จะลากได้ลื่นกว่า
+            // ใช้ passive: false เพื่อให้ใช้ e.preventDefault() บล็อกการทำงานซ้อนทับบนมือถือได้
+            btn.addEventListener("touchstart", dragStart, {passive: false}); 
+            btn.addEventListener("touchend", dragEnd, {passive: false}); 
+            window.addEventListener("touchmove", drag, {passive: false});
             btn.addEventListener("mousedown", dragStart, false); 
             window.addEventListener("mouseup", dragEnd, false); 
             window.addEventListener("mousemove", drag, {passive: false});
