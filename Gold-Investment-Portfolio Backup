@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.17 (Clean & Full Screen Modal Fixed)</title>
+    <title>พอร์ตทองคำ V6.18 (Overall Summary Added)</title>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -204,6 +204,7 @@
             <div id="sim-alert-container"></div>
 
             <div id="guest-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+            
             <div id="overall-summary-container" class="mt-12"></div>
         </div>
 
@@ -276,7 +277,7 @@
 
             <div class="mt-8 pb-10 w-full">
                 <button onclick="openUserModal()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-3xl font-black text-lg shadow-[0_10px_30px_rgba(34,197,94,0.4)] transition-transform active:scale-95 flex justify-center items-center gap-2">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 100-2h-1V7z"></path></svg>
                     เพิ่มผู้ใช้งานใหม่
                 </button>
             </div>
@@ -677,6 +678,83 @@
                 `; txContainer.innerHTML += txCard; 
             });
             document.getElementById('total-items-count').innerText = `${currentViewList.length} รายการ`;
+
+            // --- SUMMARY SECTION ---
+            const summaryContainer = document.getElementById('overall-summary-container');
+            if (currentViewList.length === 0) {
+                summaryContainer.innerHTML = '';
+            } else {
+                let summaryMap = {};
+                let grandTotal = 0;
+
+                currentViewList.forEach(tx => {
+                    let buyer = tx.buyer;
+                    if (!summaryMap[buyer]) {
+                        summaryMap[buyer] = {
+                            name: buyer,
+                            profImg: tx.profImg,
+                            isAdmin: tx.isAdminOwner,
+                            totalProfit: 0
+                        };
+                    }
+                    summaryMap[buyer].totalProfit += tx.totalProfit;
+                    grandTotal += tx.totalProfit;
+                });
+
+                let summaryKeys = Object.keys(summaryMap);
+                let sortedBuyers = summaryKeys.sort((a, b) => {
+                    let aAdmin = summaryMap[a].isAdmin ? 1 : 0;
+                    let bAdmin = summaryMap[b].isAdmin ? 1 : 0;
+                    return bAdmin - aAdmin; // Admin first
+                });
+
+                let summaryHTML = `<h3 class="text-xl font-black text-white text-center mb-6 drop-shadow-md">สรุปภาพรวมกำไร/ขาดทุน</h3>`;
+                summaryHTML += `<div class="flex flex-wrap justify-center gap-4">`;
+
+                sortedBuyers.forEach(buyer => {
+                    let data = summaryMap[buyer];
+                    let isSim = simulatedGoldPrice !== null;
+                    let pCol = data.totalProfit >= 0 ? 'text-green-400' : 'text-red-400';
+                    if (isSim && data.totalProfit >= 0) pCol = 'text-yellow-300'; // Match sim colors
+                    
+                    let prefix = data.totalProfit > 0 ? '+' : '';
+                    let icon = data.isAdmin ? '👑' : '👤';
+                    let titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';
+                    
+                    summaryHTML += `
+                        <div class="bg-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-gray-700 shadow-xl transition-transform hover:scale-105 cursor-default">
+                            <img src="${data.profImg}" class="w-14 h-14 rounded-full object-cover border-2 ${data.isAdmin ? 'border-yellow-500' : 'border-blue-400'} bg-gray-800 shrink-0 shadow-inner">
+                            <div class="flex flex-col justify-center">
+                                <div class="${titleColor} text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">${icon}</span> ${data.name}</div>
+                                <div class="text-xl md:text-2xl font-black ${pCol} leading-none tracking-tight">${prefix}${data.totalProfit.toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if (sortedBuyers.length > 1 && currentRole === 'admin') {
+                    let isSim = simulatedGoldPrice !== null;
+                    let gtCol = grandTotal >= 0 ? 'text-green-400' : 'text-red-400';
+                    if (isSim && grandTotal >= 0) gtCol = 'text-yellow-300';
+                    let gtPrefix = grandTotal > 0 ? '+' : '';
+                    
+                    summaryHTML += `
+                        <div class="bg-gradient-to-r from-gray-800 to-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-yellow-500/30 shadow-xl transition-transform hover:scale-105 cursor-default mt-2 w-full max-w-[300px] mx-auto md:mt-0 md:w-auto md:max-w-none">
+                            <div class="w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
+                                <span class="text-2xl emoji">🪙</span>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <div class="text-yellow-400 text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">🌟</span> ผลรวมสุทธิ</div>
+                                <div class="text-xl md:text-2xl font-black ${gtCol} leading-none tracking-tight">${gtPrefix}${grandTotal.toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                summaryHTML += `</div>`;
+                summaryContainer.innerHTML = summaryHTML;
+            }
+            // --- END SUMMARY SECTION ---
         }
 
         // --- 9. API FETCH & OTHERS ---
