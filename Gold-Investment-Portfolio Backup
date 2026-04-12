@@ -2,30 +2,24 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8" />
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta content="dark" name="color-scheme" />
+    <meta content="#0f172a" name="theme-color" />
     <title>พอร์ตทองคำ V6.22</title>
-    
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="พอร์ตทองคำ" />
-    
-    <link rel="apple-touch-icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
-    <link rel="icon" sizes="192x192" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
-    <link rel="icon" sizes="512x512" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />    
-    <link rel="shortcut icon" href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />  
-    
-    <link id="dynamic-manifest" rel="manifest" href="" />
-     
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="พอร์ตทองคำ" name="apple-mobile-web-app-title" />
+    <link href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" rel="apple-touch-icon" />
+    <link href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" sizes="192x192" rel="icon" />
+    <link href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" sizes="512x512" rel="icon" />
+    <link href="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" rel="shortcut icon" />
+    <link href="" rel="manifest" id="dynamic-manifest" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    
     <script>
-        // บังคับสร้าง Manifest เพื่อให้ Chrome มองเห็นเป็น App และดึงโลโก้
         const manifestObj = {
             "name": "พอร์ตทองคำ",
             "short_name": "พอร์ตทองคำ",
@@ -43,41 +37,32 @@
             document.querySelector('#dynamic-manifest').setAttribute('href', URL.createObjectURL(manifestBlob));
         });
     </script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
-        
         body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; touch-action: manipulation; overscroll-behavior-y: none; }
         .emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "Segoe UI Symbol", sans-serif !important; }
-        
         input[type="text"], input[type="number"], input[type="date"], input[type="password"], select { background-color: #1e293b; color: #ffffff; border: 1px solid #334155; border-radius: 1rem; padding: 0.75rem 1rem; width: 100%; outline: none; transition: border-color 0.2s; }
         input:focus, select:focus { border-color: #eab308; box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.2); }
         input[readonly] { opacity: 0.6; cursor: not-allowed; }
         input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
         #sim-price-input::selection { background-color: rgba(255, 255, 255, 0.1); color: #facc15; }
-
         .app-card { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .app-card:active { transform: scale(0.97); }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .hide-scroll::-webkit-scrollbar { display: none; }
-        
         .hamburger-line { transition: all 0.3s ease; transform-origin: center; animation: floatMenu 3s infinite ease-in-out; }
         .hamburger-line:nth-child(2) { animation-delay: 0.2s; }
         .hamburger-line:nth-child(3) { animation-delay: 0.4s; }
         @keyframes floatMenu { 0%, 100% { transform: translateX(0); opacity: 0.8; } 50% { transform: translateX(-2px); opacity: 1; } }
-
         .modal-enter { animation: zoomExpand 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes zoomExpand { 0% { opacity: 0; transform: scale(0.6) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }        
-        
+        @keyframes zoomExpand { 0% { opacity: 0; transform: scale(0.6) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } } 
         .view-section { display: none; animation: fadeIn 0.3s ease forwards; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
-
         .sortable-ghost { opacity: 0.3; border: 2px dashed #eab308; background: rgba(234, 179, 8, 0.1); }
         .sortable-drag { cursor: grabbing !important; }
         .form-collapse { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease; opacity: 0; }
@@ -89,274 +74,279 @@
 <body>
     <datalist id="shop-list"></datalist>
     <datalist id="buyer-list"></datalist>
+    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-[800] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm"></div>
 
-    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[800] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
-
-    <div id="btn-hamburger" class="fixed top-6 right-6 z-[200] cursor-pointer p-2 hidden" onclick="openMenu()">
+    <div onclick="openMenu()" class="fixed top-6 right-6 z-[200] cursor-pointer p-2 hidden" id="btn-hamburger">
         <div class="hamburger-line w-7 h-1 bg-yellow-400 rounded-full mb-1.5 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
         <div class="hamburger-line w-7 h-1 bg-yellow-400 rounded-full mb-1.5 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
         <div class="hamburger-line w-7 h-1 bg-yellow-400 rounded-full shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
     </div>
 
-    <div id="side-menu" class="fixed inset-0 z-[250] pointer-events-none">
-        <div id="side-menu-bg" class="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-none" onclick="closeMenu()"></div>
-        <div id="side-menu-content" class="absolute top-0 right-0 h-full w-4/5 max-w-sm bg-gray-900 border-l border-gray-700 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col pointer-events-auto">
+    <div class="fixed inset-0 z-[250] pointer-events-none" id="side-menu">
+        <div onclick="closeMenu()" class="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-none" id="side-menu-bg"></div>
+        <div class="absolute top-0 right-0 h-full w-4/5 max-w-sm bg-gray-900 border-l border-gray-700 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col pointer-events-auto" id="side-menu-content">
             <div class="p-6 flex justify-between items-center border-b border-gray-800 bg-gray-800/50">
-                <div class="flex items-center gap-3" id="side-menu-header-profile"></div>
-                <button onclick="closeMenu()" class="text-gray-400 hover:text-white text-2xl font-bold w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 shadow-inner">✕</button>
+                <div id="side-menu-header-profile" class="flex items-center gap-3"></div>
+                <button class="text-gray-400 hover:text-white text-2xl font-bold w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 shadow-inner" onclick="closeMenu()">✕</button>
             </div>
             <div class="flex flex-col p-4 gap-2 mt-2">
-                <button onclick="switchView('dashboard')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3"><span class="emoji">📊</span> หน้าแรก</button>
-                <button onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/แก้ไข ข้อมูลทอง</button>
-                <button id="menu-manage-users" onclick="switchView('manage-users')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-pink-400 transition flex items-center gap-3 hidden"><span class="emoji">👥</span> จัดการบัญชีผู้ใช้งาน</button>
-                <button id="menu-admin-settings" onclick="openAdminSettingsModal()" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-emerald-400 transition flex items-center gap-3 hidden"><span class="emoji">⚙️</span> ตั้งค่าระบบ Admin</button>
+                <button class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3" onclick="switchView('dashboard')">
+                    <span class="emoji">&#x1F4CA;</span> หน้าแรก
+                </button>
+                <button class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3" onclick="switchView('manage-tx')">
+                    <span class="emoji">&#x1F4DD;</span> เพิ่ม/แก้ไข ข้อมูลทอง
+                </button>
+                <button class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-pink-400 transition flex items-center gap-3 hidden" onclick="switchView('manage-users')" id="menu-manage-users">
+                    <span class="emoji">&#x1F465;</span> จัดการบัญชีผู้ใช้งาน
+                </button>
+                <button class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-emerald-400 transition flex items-center gap-3 hidden" onclick="openAdminSettingsModal()" id="menu-admin-settings">
+                    <span class="emoji">&#x2699;&#xFE0F;</span> ตั้งค่าระบบ Admin
+                </button>
             </div>
             <div class="mt-auto p-6 border-t border-gray-800">
-                <button onclick="logout()" class="w-full text-center px-5 py-4 rounded-2xl text-lg font-black text-red-400 bg-red-500/10 hover:bg-red-500/20 transition flex items-center justify-center gap-2"><span class="emoji">🚪</span> ออกจากระบบ</button>
+                <button class="w-full text-center px-5 py-4 rounded-2xl text-lg font-black text-red-400 bg-red-500/10 hover:bg-red-500/20 transition flex items-center justify-center gap-2" onclick="logout()">
+                    <span class="emoji">&#x1F6AA;</span> ออกจากระบบ
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="login-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] justify-center items-center px-4 hidden">
+    <div class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] justify-center items-center px-4 hidden" id="login-modal">
         <div class="bg-gray-800 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm border border-gray-700 relative">
             <div class="text-center mb-6 mt-2">
                 <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">เข้าสู่ระบบ</h2>
                 <p class="text-sm text-gray-400 mt-2">เพื่อเข้าดูและจัดการพอร์ตทองคำ</p>
             </div>
             <div class="flex border-b border-gray-700 mb-6">
-                <button id="tab-pass" onclick="switchLoginTab('pass')" class="flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition">ผู้ใช้ทั่วไป</button>
-                <button id="tab-pin" onclick="switchLoginTab('pin')" class="flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition">รหัส PIN (Admin)</button>
+                <button class="flex-1 py-3 text-yellow-500 border-b-2 border-yellow-500 font-bold transition" onclick="switchLoginTab('pass')" id="tab-pass">ผู้ใช้ทั่วไป</button>
+                <button class="flex-1 py-3 text-gray-500 border-b-2 border-transparent font-bold transition" onclick="switchLoginTab('pin')" id="tab-pin">รหัส PIN (Admin)</button>
             </div>
-            <div class="text-red-400 text-sm mb-4 hidden bg-red-900/30 p-3 rounded-xl text-center font-bold" id="login-error">ข้อมูลไม่ถูกต้อง!</div>
+            <div id="login-error" class="text-red-400 text-sm mb-4 hidden bg-red-900/30 p-3 rounded-xl text-center font-bold">ข้อมูลไม่ถูกต้อง!</div>
             
-            <div class="block" id="login-pass-section">
-                <div class="mb-4"><input placeholder="Username" id="username" type="text" class="text-lg py-3" /></div>
-                <div class="mb-6"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="Password" id="password" type="password" class="text-lg py-3" /></div>
-                <button class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 font-black py-3.5 text-lg rounded-xl hover:scale-[1.02] transition shadow-lg shadow-yellow-500/20" onclick="loginPass()">ล็อกอิน</button>
+            <div id="login-pass-section" class="block">
+                <div class="mb-4"><input class="text-lg py-3" type="text" id="username" placeholder="Username" /></div>
+                <div class="mb-6"><input class="text-lg py-3" type="password" id="password" placeholder="Password" onkeypress="if(event.key === 'Enter') loginPass()" /></div>
+                <button onclick="loginPass()" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 font-black py-3.5 text-lg rounded-xl hover:scale-[1.02] transition shadow-lg shadow-yellow-500/20">ล็อกอิน</button>
             </div>
-
-            <div class="hidden" id="login-pin-section">
+            
+            <div id="login-pin-section" class="hidden">
                 <div class="flex justify-center gap-3 mb-8 h-4">
                     <div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
                     <div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto text-white">
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('1')">1</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('2')">2</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('3')">3</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('4')">4</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('5')">5</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('6')">6</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('7')">7</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('8')">8</button>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('9')">9</button>
+                    <button onclick="enterPin('1')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">1</button>
+                    <button onclick="enterPin('2')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">2</button>
+                    <button onclick="enterPin('3')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">3</button>
+                    <button onclick="enterPin('4')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">4</button>
+                    <button onclick="enterPin('5')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">5</button>
+                    <button onclick="enterPin('6')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">6</button>
+                    <button onclick="enterPin('7')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">7</button>
+                    <button onclick="enterPin('8')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">8</button>
+                    <button onclick="enterPin('9')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">9</button>
                     <div class="w-14 h-14"></div>
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterPin('0')">0</button>
-                    <button class="w-14 h-14 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deletePin()">⌫</button>
+                    <button onclick="enterPin('0')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">0</button>
+                    <button onclick="deletePin()" class="w-14 h-14 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95">&#x232B;</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="p-4 md:p-6 max-w-[1400px] mx-auto pb-10 mt-4">
-        
         <div class="flex items-center gap-4 mb-6">
-            <img src="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" class="w-14 h-14 drop-shadow-lg rounded-full object-cover border-2 border-yellow-500/50" />
+            <img class="w-14 h-14 drop-shadow-lg rounded-full object-cover border-2 border-yellow-500/50" src="https://i.ibb.co/Q7xT2w90/istockphoto-810182634-612x612.jpg" />
             <div>
                 <h1 class="text-3xl font-black text-white tracking-tight">พอร์ต<span class="text-yellow-500">ทองคำ</span></h1>
                 <p class="text-gray-400 text-xs mt-0.5 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>เชื่อมต่อข้อมูล Real-time</p>
             </div>
         </div>
 
-        <div id="view-dashboard" class="view-section active">
+        <div class="view-section active" id="view-dashboard">
             <div class="bg-gradient-to-br from-gray-900 to-black rounded-[2rem] shadow-2xl mb-8 border border-gray-800 overflow-hidden">
                 <div class="text-center py-4 border-b border-gray-800/50 bg-black/40 relative">
                     <h2 class="text-xl font-black text-yellow-500">ประกาศราคาสมาคมฯ</h2>
                     <p class="text-sm text-yellow-300 font-bold mt-2 bg-gray-800/80 inline-block px-4 py-1 rounded-full border border-gray-600">อัปเดต: <span id="api-date">--</span> | <span id="api-time">--</span></p>
                 </div>
-                
                 <div class="border-b border-gray-800 p-4 bg-gradient-to-r from-yellow-900/10 to-transparent">
                     <h3 class="text-yellow-500 font-bold text-lg mb-3 text-center">ทองคำแท่ง 96.5%</h3>
                     <div class="grid grid-cols-2 gap-3 max-w-xl mx-auto">
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">รับซื้อ</div><p id="bar-buy" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">รับซื้อ</div>
+                            <p class="text-2xl font-black" id="bar-buy">--</p>
                         </div>
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div><p id="bar-sell" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div>
+                            <p class="text-2xl font-black" id="bar-sell">--</p>
                         </div>
                     </div>
                 </div>
-                
                 <div class="border-b border-gray-800 p-4 bg-gradient-to-r from-yellow-900/10 to-transparent">
                     <h3 class="text-yellow-500 font-bold text-lg mb-3 text-center">ทองรูปพรรณ 96.5%</h3>
                     <div class="grid grid-cols-2 gap-3 max-w-xl mx-auto">
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ฐานภาษี</div><p id="ornament-buy" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ฐานภาษี</div>
+                            <p class="text-2xl font-black" id="ornament-buy">--</p>
                         </div>
                         <div class="bg-gray-800/80 rounded-2xl p-4 text-center border border-gray-600 shadow-inner">
-                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div><p id="ornament-sell" class="text-2xl font-black">--</p>
+                            <div class="text-yellow-500 text-xs font-bold uppercase mb-2">ขายออก</div>
+                            <p class="text-2xl font-black" id="ornament-sell">--</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-black/80 text-center py-4 flex justify-center items-center gap-3">
-                    <span id="api-change" class="text-xl font-black tracking-tighter">--</span>
+                    <span class="text-xl font-black tracking-tighter" id="api-change">--</span>
                 </div>
             </div>
 
-            <div class="flex justify-between items-center mb-4 px-1" id="portfolio-title-sec">
+            <div id="portfolio-title-sec" class="flex justify-between items-center mb-4 px-1">
                 <div class="flex items-center gap-2">
-                    <h3 class="text-xl font-black text-white flex items-center gap-2">
-                        รายการลงทุน <span id="current-user-title"></span>
-                        <button id="btn-hide-admin" onclick="toggleAdminPort()" class="bg-gray-700/50 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-600 transition border border-gray-600 shadow-md hidden" title="ซ่อนพอร์ต Admin">
-                            <svg id="icon-eye-admin" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    <h3 class="text-xl font-black text-white flex items-center gap-2">รายการลงทุน <span id="current-user-title"></span>
+                        <button title="ซ่อนพอร์ต Admin" class="bg-gray-700/50 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-600 transition border border-gray-600 shadow-md hidden" onclick="toggleAdminPort()" id="btn-hide-admin">
+                            <svg stroke-width="2.5" viewbox="0 0 24 24" stroke="currentColor" fill="none" class="w-4 h-4" id="icon-eye-admin"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linejoin="round" stroke-linecap="round"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linejoin="round" stroke-linecap="round"></path></svg>
                         </button>
                     </h3>
                 </div>
-                
                 <div class="flex items-center gap-3">
-                    <button onclick="openSimModal()" class="bg-indigo-600/30 text-indigo-400 w-9 h-9 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" title="จำลองราคาทอง">
-                        <span class="emoji text-base">🪄</span>
+                    <button title="จำลองราคาทอง" class="bg-indigo-600/30 text-indigo-400 w-9 h-9 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" onclick="openSimModal()">
+                        <span class="emoji text-base">&#x1FA84;</span>
                     </button>
-                    <span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full whitespace-nowrap" id="total-items-count">0 รายการ</span>
+                    <span id="total-items-count" class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full whitespace-nowrap">0 รายการ</span>
                 </div>
             </div>
 
             <div id="sim-alert-container"></div>
-            <div id="guest-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-            <div id="overall-summary-container" class="mt-12 relative z-0"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="guest-cards-container"></div>
+            <div class="mt-12 relative z-0" id="overall-summary-container"></div>
             <div id="half-half-summary-container"></div>
         </div>
 
-        <div id="view-manage-tx" class="view-section relative min-h-screen">
+        <div class="view-section relative min-h-screen" id="view-manage-tx">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black text-blue-400 flex items-center gap-2"><span class="emoji">📝</span> บริหารจัดการข้อมูลทอง</h2>
-                <button id="btn-show-add-tx" onclick="toggleAddTxForm(true)" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-bold shadow-[0_5px_15px_rgba(37,99,235,0.4)] transition flex items-center gap-2 text-sm active:scale-95">
-                    <span class="emoji">➕</span> เพิ่มรายการ
+                <h2 class="text-2xl font-black text-blue-400 flex items-center gap-2">
+                    <span class="emoji">&#x1F4DD;</span> บริหารจัดการข้อมูลทอง
+                </h2>
+                <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-bold shadow-[0_5px_15px_rgba(37,99,235,0.4)] transition flex items-center gap-2 text-sm active:scale-95" onclick="toggleAddTxForm(true)" id="btn-show-add-tx">
+                    <span class="emoji">&#x2795;</span> เพิ่มรายการ
                 </button>
             </div>
-            
-            <div id="add-tx-form-container" class="bg-gray-800 p-5 sm:p-8 rounded-[2rem] shadow-2xl mb-8 border border-gray-700 relative form-collapse">
+
+            <div class="bg-gray-800 p-5 sm:p-8 rounded-[2rem] shadow-2xl mb-8 border border-gray-700 relative form-collapse" id="add-tx-form-container">
                 <div class="flex justify-between items-center mb-5 border-b border-gray-700 pb-3">
-                    <h3 class="text-xl font-black text-white" id="form-title">เพิ่มรายการใหม่</h3>
-                    <button type="button" onclick="toggleAddTxForm(false)" class="text-gray-400 hover:text-white bg-gray-700 w-8 h-8 rounded-full font-bold">✕</button>
+                    <h3 id="form-title" class="text-xl font-black text-white">เพิ่มรายการใหม่</h3>
+                    <button class="text-gray-400 hover:text-white bg-gray-700 w-8 h-8 rounded-full font-bold" onclick="toggleAddTxForm(false)" type="button">✕</button>
                 </div>
-                <input value="" id="edit_id" type="hidden" />
-                <form onsubmit="saveTransaction(event)" id="addForm">
+                <input type="hidden" id="edit_id" value="" />
+                <form id="addForm" onsubmit="saveTransaction(event)">
                     <div class="flex flex-col items-center justify-center mb-6">
-                        <div class="relative group cursor-pointer" onclick="document.getElementById('form_prof_file').click()">
-                            <input type="file" id="form_prof_file" accept="image/*" onchange="handleFormImageUpload(event)" class="hidden" />
-                            <input type="hidden" id="form_prof_base64" />
-                            <img id="form_prof_preview" src="https://ui-avatars.com/api/?name=User&background=334155&color=fff" class="w-24 h-24 rounded-full object-cover border-4 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:scale-105 transition-transform" />
+                        <div onclick="document.getElementById('form_prof_file').click()" class="relative group cursor-pointer">
+                            <input class="hidden" onchange="handleFormImageUpload(event)" accept="image/*" id="form_prof_file" type="file" />
+                            <input id="form_prof_base64" type="hidden" />
+                            <img class="w-24 h-24 rounded-full object-cover border-4 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:scale-105 transition-transform" src="https://ui-avatars.com/api/?name=User&background=334155&color=fff" id="form_prof_preview" />
                             <div class="absolute bottom-0 right-0 bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white border-2 border-gray-800 shadow-md">
-                                <span class="emoji text-sm">📷</span>
+                                <span class="emoji text-sm">&#x1F4F7;</span>
                             </div>
                         </div>
                         <p class="text-xs text-gray-400 mt-3 font-bold bg-gray-900 px-4 py-1.5 rounded-full border border-gray-700 shadow-inner">จิ้มที่รูปเพื่อเลือกภาพ</p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start mb-6">
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">วันที่ซื้อ</label><input required id="f_date" type="date" /></div>
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อร้านทอง</label><input placeholder="ระบุชื่อร้าน" required id="f_shop" type="text" list="shop-list" /></div>
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อผู้ซื้อ (เจ้าของพอร์ต)</label><input placeholder="เช่น อนาวิล" required id="f_buyer" type="text" list="buyer-list" onchange="checkExistingProfile(this.value)" /></div>
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">วันที่ซื้อ</label><input type="date" id="f_date" required="" /></div>
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อร้านทอง</label><input list="shop-list" type="text" id="f_shop" required="" placeholder="ระบุชื่อร้าน" /></div>
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ชื่อผู้ซื้อ (เจ้าของพอร์ต)</label><input onchange="checkExistingProfile(this.value)" list="buyer-list" type="text" id="f_buyer" required="" placeholder="เช่น อนาวิล" /></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">น้ำหนักทอง/ก้อน (บ.)</label><input required id="f_weight" step="0.25" type="number" placeholder="เช่น 5 บาท" /></div>
-                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">จำนวน (ก้อน)</label><input required id="f_qty" type="number" placeholder="เช่น 2 ก้อน" /></div>
+                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">น้ำหนักทอง/ก้อน (บ.)</label><input placeholder="เช่น 5 บาท" type="number" step="0.25" id="f_weight" required="" /></div>
+                            <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">จำนวน (ก้อน)</label><input placeholder="เช่น 2 ก้อน" type="number" id="f_qty" required="" /></div>
                         </div>
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ราคา ณ.วันซื้อ / บาท</label><input required id="f_buyprice" type="number" placeholder="ราคา ณ.วันซื้อ / บาท" /></div>
-                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ค่าบล็อก / บาท</label><input required value="0" id="f_blockfee" type="number" /></div>
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ราคา ณ.วันซื้อ / บาท</label><input placeholder="ราคา ณ.วันซื้อ / บาท" type="number" id="f_buyprice" required="" /></div>
+                        <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ค่าบล็อก / บาท</label><input type="number" id="f_blockfee" value="0" required="" /></div>
                     </div>
 
-                    <div id="half-half-sec" class="mb-4 bg-blue-900/20 p-4 rounded-xl border border-blue-700/50 hidden items-center gap-3 transition-colors hover:bg-blue-900/30">
-                        <input class="w-6 h-6 accent-blue-500 cursor-pointer shrink-0" id="f_is_half_half" type="checkbox" />
-                        <label class="text-sm text-blue-400 font-bold cursor-pointer select-none leading-tight" for="f_is_half_half">🤝 โครงการคนละครึ่ง<br><span class="text-xs text-gray-400 font-normal">แบ่งกำไร/ขาดทุน 50:50 กับ Admin</span></label>
+                    <div class="mb-4 bg-blue-900/20 p-4 rounded-xl border border-blue-700/50 hidden items-center gap-3 transition-colors hover:bg-blue-900/30" id="half-half-sec">
+                        <input type="checkbox" id="f_is_half_half" class="w-6 h-6 accent-blue-500 cursor-pointer shrink-0" />
+                        <label for="f_is_half_half" class="text-sm text-blue-400 font-bold cursor-pointer select-none leading-tight">&#x1F91D; โครงการคนละครึ่ง<br /><span class="text-xs text-gray-400 font-normal">แบ่งกำไร/ขาดทุน 50:50 กับ Admin</span></label>
                     </div>
 
-                    <div id="admin-only-checkbox-sec" class="mb-6 bg-yellow-900/20 p-4 rounded-xl border border-yellow-700/50 hidden items-center gap-3">
-                        <input class="w-6 h-6 accent-yellow-500 cursor-pointer" id="f_is_admin" type="checkbox" />
-                        <label class="text-sm text-yellow-500 font-bold cursor-pointer select-none" for="f_is_admin">👑 พอร์ต Admin (ซ่อนจากผู้ใช้ทั่วไป)</label>
+                    <div class="mb-6 bg-yellow-900/20 p-4 rounded-xl border border-yellow-700/50 hidden items-center gap-3" id="admin-only-checkbox-sec">
+                        <input type="checkbox" id="f_is_admin" class="w-6 h-6 accent-yellow-500 cursor-pointer" />
+                        <label for="f_is_admin" class="text-sm text-yellow-500 font-bold cursor-pointer select-none">&#x1F451; พอร์ต Admin (ซ่อนจากผู้ใช้ทั่วไป)</label>
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 mt-4">
-                        <button class="w-full bg-blue-600 text-white rounded-2xl py-3.5 text-lg font-black hover:bg-blue-500 transition shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)]" id="btn-submit" type="submit">บันทึกข้อมูล</button>
+                        <button type="submit" id="btn-submit" class="w-full bg-blue-600 text-white rounded-2xl py-3.5 text-lg font-black hover:bg-blue-500 transition shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)]">บันทึกข้อมูล</button>
                     </div>
                 </form>
             </div>
 
             <h3 class="text-lg font-black text-gray-300 mb-4 border-b border-gray-700 pb-2">รายการที่มีในระบบ</h3>
-            <div id="tx-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="tx-cards-container"></div>
         </div>
 
-        <div id="view-manage-users" class="view-section relative">
+        <div class="view-section relative" id="view-manage-users">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-black text-white flex items-center gap-2">ระบบจัดการผู้ใช้งาน</h2>
             </div>
-            
             <p class="text-xs text-gray-400 font-bold mb-4 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-700 leading-relaxed">
-                💡 ติดดาวเพื่อให้อยู่บนสุด / กดลูกตาเพื่อซ่อนพอร์ตในหน้าแรก<br>
-                📊 กดกราฟเพื่อซ่อนจากสรุปภาพรวม / 👆 ลาก <span class="text-gray-500 font-bold text-sm">☰</span> เพื่อจัดเรียง
+                &#x1F4A1; ติดดาวเพื่อให้อยู่บนสุด / กดลูกตาเพื่อซ่อนพอร์ตในหน้าแรก<br />
+                &#x1F4CA; กดกราฟเพื่อซ่อนจากสรุปภาพรวม / &#x1F446; ลาก <span class="text-gray-500 font-bold text-sm">☰</span> เพื่อจัดเรียง
             </p>
-            
-            <div id="users-cards-container" class="flex flex-col gap-4"></div>
-
+            <div class="flex flex-col gap-4" id="users-cards-container"></div>
             <div class="mt-8 pb-10 w-full">
-                <button onclick="openUserModal()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-3xl font-black text-lg shadow-[0_10px_30px_rgba(34,197,94,0.4)] transition-transform active:scale-95 flex justify-center items-center gap-2">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg>
-                    เพิ่มผู้ใช้งานใหม่
+                <button class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-3xl font-black text-lg shadow-[0_10px_30px_rgba(34,197,94,0.4)] transition-transform active:scale-95 flex justify-center items-center gap-2" onclick="openUserModal()">
+                    <svg viewbox="0 0 20 20" fill="currentColor" class="w-6 h-6"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg> เพิ่มผู้ใช้งานใหม่
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="sim-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[400] justify-center items-center px-4 hidden">
+    <div class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[400] justify-center items-center px-4 hidden" id="sim-modal">
         <div class="bg-gradient-to-br from-indigo-900 to-gray-900 p-6 rounded-[2rem] shadow-2xl w-full max-w-sm border border-indigo-500/50 relative">
-            <button type="button" onclick="closeSimModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full font-bold">✕</button>
-            <h2 class="text-xl font-black mb-2 text-indigo-300 text-center"><span class="emoji">🪄</span> โหมดจำลองราคา</h2>
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full font-bold" onclick="closeSimModal()" type="button">✕</button>
+            <h2 class="text-xl font-black mb-2 text-indigo-300 text-center"><span class="emoji">&#x1FA84;</span> โหมดจำลองราคา</h2>
             <p class="text-xs text-gray-400 text-center mb-6">พิมพ์ทับราคาทองที่ต้องการ แล้วกดจำลองได้เลย</p>
-            <input id="sim-price-input" type="number" placeholder="เช่น 45000" class="text-center text-3xl font-black text-yellow-400 py-4 mb-6 bg-black/40 border-indigo-500/50 rounded-2xl focus:border-yellow-400" />
+            <input class="text-center text-3xl font-black text-yellow-400 py-4 mb-6 bg-black/40 border-indigo-500/50 rounded-2xl focus:border-yellow-400" placeholder="เช่น 45000" type="number" id="sim-price-input" />
             <div class="flex gap-3">
-                <button onclick="applySim()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(79,70,229,0.4)]">จำลองราคา</button>
-                <button onclick="resetSim()" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(225,29,72,0.4)]">ยกเลิก</button>
+                <button class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(79,70,229,0.4)]" onclick="applySim()">จำลองราคา</button>
+                <button class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(225,29,72,0.4)]" onclick="resetSim()">ยกเลิก</button>
             </div>
         </div>
     </div>
 
-    <div id="user-form-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[300] justify-center items-center px-4 hidden">
+    <div class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[300] justify-center items-center px-4 hidden" id="user-form-modal">
         <div class="bg-[#1a1c23] p-6 rounded-[2rem] shadow-2xl w-full max-w-md border border-gray-700 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <button type="button" onclick="closeUserModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full font-bold">✕</button>
-            <h2 class="text-xl font-black mb-6 text-white text-center" id="user-modal-title">เพิ่มผู้ใช้งานใหม่</h2>
-            <form onsubmit="saveUser(event)" class="flex flex-col gap-4">
-                <input type="hidden" id="u_original_username" />
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full font-bold" onclick="closeUserModal()" type="button">✕</button>
+            <h2 id="user-modal-title" class="text-xl font-black mb-6 text-white text-center">เพิ่มผู้ใช้งานใหม่</h2>
+            <form class="flex flex-col gap-4" onsubmit="saveUser(event)">
+                <input id="u_original_username" type="hidden" />
                 <div class="flex flex-col items-center justify-center mb-2">
-                    <div class="relative group cursor-pointer" onclick="document.getElementById('u_prof_file').click()">
-                        <input type="file" id="u_prof_file" accept="image/*" onchange="handleUserImgUpload(event)" class="hidden" />
-                        <input type="hidden" id="u_prof_base64" />
-                        <img id="u_prof_preview" src="https://ui-avatars.com/api/?name=U&background=334155&color=fff" class="w-24 h-24 rounded-full object-cover border-4 border-gray-600 shadow-lg hover:scale-105 transition-transform" />
+                    <div onclick="document.getElementById('u_prof_file').click()" class="relative group cursor-pointer">
+                        <input class="hidden" onchange="handleUserImgUpload(event)" accept="image/*" id="u_prof_file" type="file" />
+                        <input id="u_prof_base64" type="hidden" />
+                        <img class="w-24 h-24 rounded-full object-cover border-4 border-gray-600 shadow-lg hover:scale-105 transition-transform" src="https://ui-avatars.com/api/?name=U&background=334155&color=fff" id="u_prof_preview" />
                         <div class="absolute bottom-0 right-0 bg-[#22c55e] w-8 h-8 rounded-full flex items-center justify-center text-white border-2 border-gray-800 shadow-md">
-                            <span class="emoji text-sm">📷</span>
+                            <span class="emoji text-sm">&#x1F4F7;</span>
                         </div>
                     </div>
                 </div>
-                <div><label class="block text-xs text-gray-400 mb-1 font-bold">ชื่อที่ใช้แสดง (Display Name)</label><input required id="u_name" type="text" placeholder="ชื่อที่จะโชว์ในพอร์ต (เช่น แรร์ไอเทม)" /></div>
-                <div><label class="block text-xs text-gray-400 mb-1 font-bold">Username (ใช้ล็อกอิน)</label><input required id="u_username" type="text" placeholder="เช่น rareitem" /></div>
-                <div><label class="block text-xs text-gray-400 mb-1 font-bold">Password</label><input required id="u_password" type="text" placeholder="ตั้งรหัสผ่าน" /></div>
-                <button class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-3.5 rounded-2xl font-black transition shadow-lg mt-2" type="submit" id="user-btn-submit">บันทึกข้อมูล</button>
+                <div><label class="block text-xs text-gray-400 mb-1 font-bold">ชื่อที่ใช้แสดง (Display Name)</label><input placeholder="ชื่อที่จะโชว์ในพอร์ต (เช่น แรร์ไอเทม)" type="text" id="u_name" required="" /></div>
+                <div><label class="block text-xs text-gray-400 mb-1 font-bold">Username (ใช้ล็อกอิน)</label><input placeholder="เช่น rareitem" type="text" id="u_username" required="" /></div>
+                <div><label class="block text-xs text-gray-400 mb-1 font-bold">Password</label><input placeholder="ตั้งรหัสผ่าน" type="text" id="u_password" required="" /></div>
+                <button id="user-btn-submit" type="submit" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-3.5 rounded-2xl font-black transition shadow-lg mt-2">บันทึกข้อมูล</button>
             </form>
         </div>
     </div>
 
-    <div id="admin-settings-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[200] justify-center items-center px-4 hidden">
+    <div class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[200] justify-center items-center px-4 hidden" id="admin-settings-modal">
         <div class="bg-gray-800 p-6 rounded-[2rem] shadow-2xl w-full max-w-sm border border-gray-700 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <button onclick="closeAdminSettingsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-700 w-8 h-8 rounded-full font-bold">✕</button>
-            <h2 class="text-xl font-black mb-6 text-emerald-400 text-center"><span class="emoji">⚙️</span> ตั้งค่าระบบ Admin</h2>
-            <div id="admin-settings-main" class="flex flex-col gap-4">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-700 w-8 h-8 rounded-full font-bold" onclick="closeAdminSettingsModal()">✕</button>
+            <h2 class="text-xl font-black mb-6 text-emerald-400 text-center"><span class="emoji">&#x2699;&#xFE0F;</span> ตั้งค่าระบบ Admin</h2>
+            <div class="flex flex-col gap-4" id="admin-settings-main">
                 <div class="flex flex-col items-center justify-center mb-2">
-                    <div class="relative group cursor-pointer" onclick="document.getElementById('admin_prof_file').click()">
-                        <input type="file" id="admin_prof_file" accept="image/*" onchange="handleAdminImgUpload(event)" class="hidden" />
-                        <input type="hidden" id="admin_prof_base64" />
-                        <img id="admin_prof_preview" src="https://ui-avatars.com/api/?name=Admin&background=ca8a04&color=fff" class="w-24 h-24 rounded-full object-cover border-4 border-yellow-500 shadow-lg hover:scale-105 transition-transform bg-gray-900" />
+                    <div onclick="document.getElementById('admin_prof_file').click()" class="relative group cursor-pointer">
+                        <input class="hidden" onchange="handleAdminImgUpload(event)" accept="image/*" id="admin_prof_file" type="file" />
+                        <input id="admin_prof_base64" type="hidden" />
+                        <img class="w-24 h-24 rounded-full object-cover border-4 border-yellow-500 shadow-lg hover:scale-105 transition-transform bg-gray-900" src="https://ui-avatars.com/api/?name=Admin&background=ca8a04&color=fff" id="admin_prof_preview" />
                         <div class="absolute bottom-0 right-0 bg-yellow-500 w-8 h-8 rounded-full flex items-center justify-center text-black border-2 border-gray-800 shadow-md">
-                            <span class="emoji text-sm">📷</span>
+                            <span class="emoji text-sm">&#x1F4F7;</span>
                         </div>
                     </div>
                     <p class="text-xs text-gray-400 mt-3 font-bold bg-gray-900 px-4 py-1.5 rounded-full border border-gray-700">จิ้มที่รูปเพื่อเปลี่ยนภาพ</p>
@@ -364,56 +354,72 @@
                 <div class="mb-4">
                     <label class="block text-xs text-gray-400 mb-1 font-bold">ชื่อที่ใช้แสดง (Display Name)</label>
                     <div class="flex gap-2">
-                        <input id="admin_display_name" type="text" placeholder="เช่น Master Admin" class="flex-1" />
-                        <button type="button" onclick="saveAdminProfile()" class="bg-yellow-600 hover:bg-yellow-500 text-white px-4 rounded-xl font-bold shadow-lg transition whitespace-nowrap active:scale-95">บันทึกชื่อ</button>
+                        <input class="flex-1" placeholder="เช่น Master Admin" type="text" id="admin_display_name" />
+                        <button class="bg-yellow-600 hover:bg-yellow-500 text-white px-4 rounded-xl font-bold shadow-lg transition whitespace-nowrap active:scale-95" onclick="saveAdminProfile()" type="button">บันทึกชื่อ</button>
                     </div>
                 </div>
                 <div class="border-t border-gray-700 my-2"></div>
-                <button onclick="showAdminSetting('pass')" class="bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border border-gray-600"><span class="emoji">🔑</span> เปลี่ยนรหัสผ่าน</button>
-                <button onclick="showAdminSetting('pin')" class="bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border border-gray-600"><span class="emoji">🔢</span> เปลี่ยน PIN Code</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border border-gray-600" onclick="showAdminSetting('pass')">
+                    <span class="emoji">&#x1F511;</span> เปลี่ยนรหัสผ่าน
+                </button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border border-gray-600" onclick="showAdminSetting('pin')">
+                    <span class="emoji">&#x1F522;</span> เปลี่ยน PIN Code
+                </button>
             </div>
-            <form onsubmit="saveAdminPass(event)" class="hidden flex flex-col gap-4" id="admin-settings-pass">
+            
+            <form id="admin-settings-pass" class="hidden flex flex-col gap-4" onsubmit="saveAdminPass(event)">
                 <h3 class="text-center text-white font-bold mb-2">เปลี่ยน Password</h3>
                 <div>
-                    <input class="mb-3" placeholder="รหัสผ่านเก่า" id="setting-old-pass" type="password" required />
-                    <input class="mb-3" placeholder="รหัสผ่านใหม่" id="setting-new-pass" type="password" required />
-                    <input placeholder="ยืนยันรหัสผ่านใหม่" id="setting-confirm-pass" type="password" required />
+                    <input required="" type="password" id="setting-old-pass" placeholder="รหัสผ่านเก่า" class="mb-3" />
+                    <input required="" type="password" id="setting-new-pass" placeholder="รหัสผ่านใหม่" class="mb-3" />
+                    <input required="" type="password" id="setting-confirm-pass" placeholder="ยืนยันรหัสผ่านใหม่" />
                 </div>
                 <div class="flex gap-3 mt-2">
-                    <button class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-black transition shadow-lg" type="submit">บันทึก</button>
-                    <button class="flex-1 bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-black transition" type="button" onclick="showAdminSetting('main')">ยกเลิก</button>
+                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-black transition shadow-lg">บันทึก</button>
+                    <button onclick="showAdminSetting('main')" type="button" class="flex-1 bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-black transition">ยกเลิก</button>
                 </div>
             </form>
-            <div id="admin-settings-pin" class="hidden flex flex-col gap-4">
-                <h3 id="setting-pin-title" class="text-center text-white font-bold mb-2 text-lg">กรอก PIN ปัจจุบัน</h3>
+
+            <div class="hidden flex flex-col gap-4" id="admin-settings-pin">
+                <h3 class="text-center text-white font-bold mb-2 text-lg" id="setting-pin-title">กรอก PIN ปัจจุบัน</h3>
                 <div class="flex justify-center gap-3 mb-6 h-4">
                     <div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
                     <div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div><div class="s-pin-dot w-4 h-4 rounded-full bg-gray-700"></div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto text-white">
-                    <button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('1')">1</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('2')">2</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('3')">3</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('4')">4</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('5')">5</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('6')">6</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('7')">7</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('8')">8</button><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('9')">9</button>
-                    <div class="w-14 h-14"></div><button class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition" onclick="enterSettingPin('0')">0</button><button class="w-14 h-14 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95" onclick="deleteSettingPin()">⌫</button>
+                    <button onclick="enterSettingPin('1')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">1</button>
+                    <button onclick="enterSettingPin('2')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">2</button>
+                    <button onclick="enterSettingPin('3')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">3</button>
+                    <button onclick="enterSettingPin('4')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">4</button>
+                    <button onclick="enterSettingPin('5')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">5</button>
+                    <button onclick="enterSettingPin('6')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">6</button>
+                    <button onclick="enterSettingPin('7')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">7</button>
+                    <button onclick="enterSettingPin('8')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">8</button>
+                    <button onclick="enterSettingPin('9')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">9</button>
+                    <div class="w-14 h-14"></div>
+                    <button onclick="enterSettingPin('0')" class="w-14 h-14 rounded-full bg-gray-700/50 hover:bg-gray-600 text-2xl font-bold mx-auto transition">0</button>
+                    <button onclick="deleteSettingPin()" class="w-14 h-14 rounded-full bg-red-900/40 text-red-400 hover:bg-red-800/60 text-xl font-bold mx-auto transition shadow-sm active:scale-95">&#x232B;</button>
                 </div>
-                <button class="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-black transition mt-4" type="button" onclick="showAdminSetting('main')">ยกเลิก</button>
+                <button onclick="showAdminSetting('main')" type="button" class="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-black transition mt-4">ยกเลิก</button>
             </div>
         </div>
     </div>
 
-    <div id="custom-confirm-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[900] justify-center items-center px-4 hidden">
+    <div class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[900] justify-center items-center px-4 hidden" id="custom-confirm-modal">
         <div class="bg-[#1a1c23] p-6 rounded-[2rem] shadow-2xl w-full max-w-sm border border-gray-700 relative text-center modal-enter">
-            <div class="text-5xl mb-4 drop-shadow-lg emoji">⚠️</div>
-            <h3 class="text-xl font-black text-white mb-2" id="confirm-title">ยืนยันการทำรายการ</h3>
-            <p class="text-gray-400 text-sm mb-8" id="confirm-message">คุณแน่ใจหรือไม่?</p>
+            <div class="text-5xl mb-4 drop-shadow-lg emoji">&#x26A0;&#xFE0F;</div>
+            <h3 id="confirm-title" class="text-xl font-black text-white mb-2">ยืนยันการทำรายการ</h3>
+            <p id="confirm-message" class="text-gray-400 text-sm mb-8">คุณแน่ใจหรือไม่?</p>
             <div class="flex gap-3">
-                <button onclick="executeConfirmAction()" class="flex-1 bg-red-600 hover:bg-red-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(220,38,38,0.4)]">ยืนยันลบ</button>
-                <button onclick="closeConfirmModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3.5 rounded-xl font-black transition">ยกเลิก</button>
+                <button class="flex-1 bg-red-600 hover:bg-red-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(220,38,38,0.4)]" onclick="executeConfirmAction()">ยืนยันลบ</button>
+                <button class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3.5 rounded-xl font-black transition" onclick="closeConfirmModal()">ยกเลิก</button>
             </div>
         </div>
     </div>
 
-    <div id="item-modal" onclick="closeModal(event)" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[600] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300 overflow-hidden cursor-pointer">
-        <div id="modal-content" onclick="event.stopPropagation()" class="w-full h-full relative z-[610] cursor-default"></div>
-        <div id="floating-close-btn" class="fixed w-12 h-12 bg-red-600 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xl font-black shadow-[0_0_20px_rgba(0,0,0,0.8)] cursor-grab active:cursor-grabbing z-[650] border-2 border-white/20 transition-transform active:scale-95 hidden" style="top: 1.5rem; right: 1.5rem; touch-action: none;">✕</div>
+    <div class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[600] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300 overflow-hidden cursor-pointer" onclick="closeModal(event)" id="item-modal">
+        <div class="w-full h-full relative z-[610] cursor-default" onclick="event.stopPropagation()" id="modal-content"></div>
+        <div style="top: 1.5rem; right: 1.5rem; touch-action: none;" class="fixed w-12 h-12 bg-red-600 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xl font-black shadow-[0_0_20px_rgba(0,0,0,0.8)] cursor-grab active:cursor-grabbing z-[650] border-2 border-white/20 transition-transform active:scale-95 hidden" id="floating-close-btn">✕</div>
     </div>
 
     <script>
@@ -485,10 +491,10 @@
 
         function openSimModal() { let input = document.getElementById('sim-price-input'); input.value = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice; document.getElementById('sim-modal').style.display = 'flex'; setTimeout(() => { input.focus(); input.select(); }, 100); }
         function closeSimModal() { document.getElementById('sim-modal').style.display = 'none'; }
-        function applySim() { let val = parseFloat(document.getElementById('sim-price-input').value); if(isNaN(val) || val <= 0) { showWarningToast('ระบุราคาให้ถูกต้อง!'); return; } simulatedGoldPrice = val; closeSimModal(); renderData(); showWarningToast('🪄 เปิดโหมดจำลองราคาสำเร็จ!'); }
+        function applySim() { let val = parseFloat(document.getElementById('sim-price-input').value); if(isNaN(val) || val <= 0) { showWarningToast('ระบุราคาให้ถูกต้อง!'); return; } simulatedGoldPrice = val; closeSimModal(); renderData(); showWarningToast('&#x1FA84; เปิดโหมดจำลองราคาสำเร็จ!'); }
         function resetSim() { simulatedGoldPrice = null; closeSimModal(); renderData(); showWarningToast('ปิดโหมดจำลองราคาแล้ว'); }
-        function toggleAdminPort() { isHideAdminPort = !isHideAdminPort; const icon = document.getElementById('icon-eye-admin'); if(isHideAdminPort) { icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`; icon.classList.add('text-rose-400'); icon.classList.remove('text-gray-400'); showWarningToast('👁️ ซ่อนพอร์ต Admin แล้ว'); } else { icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`; icon.classList.remove('text-rose-400'); icon.classList.add('text-gray-400'); showWarningToast('👁️ แสดงพอร์ต Admin'); } renderData(); }
-        function quickHideUser(username, e) { if(e) e.stopPropagation(); if(!db || !appUsers[username]) return; db.ref('app_users/' + username).update({ isHidden: true, isHiddenFromSummary: true }).then(() => { showWarningToast(`👁️ ซ่อน ${username} เรียบร้อย`); }); }
+        function toggleAdminPort() { isHideAdminPort = !isHideAdminPort; const icon = document.getElementById('icon-eye-admin'); if(isHideAdminPort) { icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`; icon.classList.add('text-rose-400'); icon.classList.remove('text-gray-400'); showWarningToast('&#x1F441;&#xFE0F; ซ่อนพอร์ต Admin แล้ว'); } else { icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`; icon.classList.remove('text-rose-400'); icon.classList.add('text-gray-400'); showWarningToast('&#x1F441;&#xFE0F; แสดงพอร์ต Admin'); } renderData(); }
+        function quickHideUser(username, e) { if(e) e.stopPropagation(); if(!db || !appUsers[username]) return; db.ref('app_users/' + username).update({ isHidden: true, isHiddenFromSummary: true }).then(() => { showWarningToast(`&#x1F441;&#xFE0F; ซ่อน ${username} เรียบร้อย`); }); }
         function toggleAddTxForm(show) { const container = document.getElementById('add-tx-form-container'); const btn = document.getElementById('btn-show-add-tx'); if(show) { container.classList.remove('form-collapse'); container.classList.add('form-expand'); btn.classList.add('hidden'); document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; document.getElementById('btn-submit').innerText = "บันทึกข้อมูล"; document.getElementById('f_is_half_half').checked = false; } else { container.classList.remove('form-expand'); container.classList.add('form-collapse'); btn.classList.remove('hidden'); document.getElementById('edit_id').value = ""; document.getElementById('addForm').reset(); document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; if(currentRole === 'user') document.getElementById('f_buyer').value = currentUser.name; } }
 
         function showLoginModal() { document.getElementById('login-modal').style.display = 'flex'; switchLoginTab('pass'); }
@@ -520,7 +526,7 @@
             if(sortableInstance) sortableInstance.destroy(); sortableInstance = new Sortable(container, { animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', onStart: function () { isDraggingUser = true; }, onEnd: function () { updateOrderInDB(); setTimeout(() => { isDraggingUser = false; }, 500); } });
         }
 
-        function updateOrderInDB() { if(!db) return; const items = document.querySelectorAll('.user-drag-item'); let updates = {}; items.forEach((item, index) => { let uname = item.getAttribute('data-username'); if(uname) { updates[uname + '/order'] = parseInt(index); } }); db.ref('app_users').update(updates).then(() => { showWarningToast('✅ บันทึกการจัดเรียงสำเร็จ!'); }); }
+        function updateOrderInDB() { if(!db) return; const items = document.querySelectorAll('.user-drag-item'); let updates = {}; items.forEach((item, index) => { let uname = item.getAttribute('data-username'); if(uname) { updates[uname + '/order'] = parseInt(index); } }); db.ref('app_users').update(updates).then(() => { showWarningToast('&#x2705; บันทึกการจัดเรียงสำเร็จ!'); }); }
 
         function showCustomConfirm(title, msg, callback) { document.getElementById('confirm-title').innerText = title; document.getElementById('confirm-message').innerHTML = msg; confirmActionCallback = callback; document.getElementById('custom-confirm-modal').style.display = 'flex'; }
         function closeConfirmModal() { document.getElementById('custom-confirm-modal').style.display = 'none'; confirmActionCallback = null; }
@@ -554,14 +560,14 @@
                     if (Object.keys(updates).length > 0) db.ref('gold_portfolio').update(updates);
                     if (userProfiles[oldName] && !base64Img) db.ref('user_profiles/' + name).set(userProfiles[oldName]);
                 }
-                showWarningToast('✅ บันทึกข้อมูลและอัปเดตชื่อสำเร็จ!'); closeUserModal(); 
+                showWarningToast('&#x2705; บันทึกข้อมูลและอัปเดตชื่อสำเร็จ!'); closeUserModal(); 
             });
         }
-        function deleteUser(username) { showCustomConfirm('ยืนยันการลบผู้ใช้', `คุณแน่ใจหรือไม่ที่จะลบผู้ใช้ <span class="text-yellow-400 text-lg font-bold">"${username}"</span> ?<br><span class="text-xs text-red-400 mt-2 block">ข้อมูลนี้จะหายไปจากระบบถาวร</span>`, () => { db.ref('app_users/' + username).remove().then(() => showWarningToast('🗑️ ลบผู้ใช้เรียบร้อยแล้ว')); }); }
+        function deleteUser(username) { showCustomConfirm('ยืนยันการลบผู้ใช้', `คุณแน่ใจหรือไม่ที่จะลบผู้ใช้ <span class="text-yellow-400 text-lg font-bold">"${username}"</span> ?<br><span class="text-xs text-red-400 mt-2 block">ข้อมูลนี้จะหายไปจากระบบถาวร</span>`, () => { db.ref('app_users/' + username).remove().then(() => showWarningToast('&#x1F5D1;&#xFE0F; ลบผู้ใช้เรียบร้อยแล้ว')); }); }
 
         function saveTransaction(e) { e.preventDefault(); const editId = document.getElementById('edit_id').value; let buyerName = document.getElementById('f_buyer').value.trim(); let isAdminOwner = document.getElementById('f_is_admin').checked; if (currentRole === 'user') { buyerName = currentUser.name; isAdminOwner = false; } const isHalfHalf = document.getElementById('f_is_half_half').checked; const base64Img = document.getElementById('form_prof_base64').value; if (base64Img) db.ref('user_profiles/' + buyerName).set(base64Img); const payload = { date: document.getElementById('f_date').value, shop: document.getElementById('f_shop').value, buyer: buyerName, weight: parseFloat(document.getElementById('f_weight').value), qty: parseInt(document.getElementById('f_qty').value), buyprice: parseFloat(document.getElementById('f_buyprice').value), blockfee: parseFloat(document.getElementById('f_blockfee').value), isAdminOwner: isAdminOwner, isHalfHalf: isHalfHalf }; if (editId) { db.ref('gold_portfolio/' + editId).update(payload).then(() => toggleAddTxForm(false)); } else { db.ref('gold_portfolio').push(payload).then(() => toggleAddTxForm(false)); } }
         function prepareEdit(id) { const item = transactionsData.find(tx => tx.id === id); if(item) { document.getElementById('edit_id').value = item.id; document.getElementById('f_date').value = item.date; document.getElementById('f_shop').value = item.shop; document.getElementById('f_buyer').value = item.buyer; document.getElementById('f_weight').value = item.weight; document.getElementById('f_qty').value = item.qty; document.getElementById('f_buyprice').value = item.buyprice; document.getElementById('f_blockfee').value = item.blockfee; document.getElementById('f_is_admin').checked = item.isAdminOwner || false; document.getElementById('f_is_half_half').checked = item.isHalfHalf || false; document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; checkExistingProfile(item.buyer); document.getElementById('form-title').innerText = `แก้ไขรายการ`; document.getElementById('btn-submit').innerText = "อัปเดตข้อมูล"; toggleAddTxForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
-        function deleteTx(id) { showCustomConfirm('ยืนยันการลบรายการทอง', 'คุณแน่ใจหรือไม่ที่จะลบรายการลงทุนนี้?<br><span class="text-xs text-red-400 mt-2 block">ข้อมูลจะหายไปถาวร</span>', () => { db.ref('gold_portfolio/' + id).remove().then(() => showWarningToast('🗑️ ลบรายการเรียบร้อยแล้ว')); }); }
+        function deleteTx(id) { showCustomConfirm('ยืนยันการลบรายการทอง', 'คุณแน่ใจหรือไม่ที่จะลบรายการลงทุนนี้?<br><span class="text-xs text-red-400 mt-2 block">ข้อมูลจะหายไปถาวร</span>', () => { db.ref('gold_portfolio/' + id).remove().then(() => showWarningToast('&#x1F5D1;&#xFE0F; ลบรายการเรียบร้อยแล้ว')); }); }
 
         function renderData() {
             transactionsData.sort((a, b) => { 
@@ -583,7 +589,7 @@
             dashboardContainer.innerHTML = ''; txContainer.innerHTML = ''; 
             
             let isSim = simulatedGoldPrice !== null;
-            if (isSim && currentView === 'dashboard') { alertContainer.innerHTML = `<div class="col-span-full bg-purple-900/40 border border-purple-500/50 rounded-xl p-3 text-center mb-4 animate-pulse"><p class="text-yellow-400 font-black text-sm">⚠️ โหมดจำลองราคา: <span class="text-lg">${simulatedGoldPrice.toLocaleString()}</span> บาท</p></div>`; } else { alertContainer.innerHTML = ''; }
+            if (isSim && currentView === 'dashboard') { alertContainer.innerHTML = `<div class="col-span-full bg-purple-900/40 border border-purple-500/50 rounded-xl p-3 text-center mb-4 animate-pulse"><p class="text-yellow-400 font-black text-sm">&#x26A0;&#xFE0F; โหมดจำลองราคา: <span class="text-lg">${simulatedGoldPrice.toLocaleString()}</span> บาท</p></div>`; } else { alertContainer.innerHTML = ''; }
 
             const effectivePrice = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice; 
             currentViewList = []; let validTxs = [];
@@ -595,7 +601,7 @@
                 else if (currentRole === 'user' && tx.buyer === currentUser.name) canManage = true; 
 
                 if (canManage) {
-                    txContainer.innerHTML += `<div class="bg-gray-800 p-4 rounded-3xl border border-gray-700 shadow-md relative flex flex-col gap-3">${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50 z-10">Admin Port</div>' : ''}${tx.isHalfHalf ? '<div class="absolute top-0 left-0 bg-blue-600/20 px-3 py-1 rounded-br-xl text-blue-400 text-[10px] font-bold border-b border-r border-blue-600/50 z-10">🤝 โครงการคนละครึ่ง</div>' : ''}<div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-${tx.isHalfHalf || isAdmin ? '4' : '1'}"><div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><p class="text-[10px] text-gray-500 mt-1">${tx.date}</p></div></div></div><div class="grid grid-cols-2 gap-2 text-sm bg-black/30 p-3 rounded-xl border border-white/5"><div><span class="text-gray-500 text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div><div class="text-right"><span class="text-gray-500 text-xs block">น้ำหนัก (ก้อน)</span> <span class="font-bold text-white">${tx.weight} บ. <span class="text-gray-500 text-xs">(x${tx.qty})</span></span></div><div><span class="text-gray-500 text-xs block">ต้นทุนรวม</span> <span class="font-bold text-green-400">${tx.totalCost.toLocaleString()}</span></div><div class="text-right"><span class="text-gray-500 text-xs block">${tx.totalProfit >= 0 ? 'กำไร' : 'ขาดทุน'}</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div></div><div class="flex gap-2 mt-1"><button onclick="prepareEdit('${tx.id}')" class="flex-1 bg-blue-600/20 text-blue-400 py-2.5 rounded-xl text-xs font-black hover:bg-blue-600/40 transition flex justify-center items-center gap-1"><span class="emoji">✏️</span> แก้ไข</button><button onclick="deleteTx('${tx.id}')" class="flex-1 bg-red-600/20 text-red-400 py-2.5 rounded-xl text-xs font-black hover:bg-red-600/40 transition flex justify-center items-center gap-1"><span class="emoji">🗑️</span> ลบ</button></div></div>`;
+                    txContainer.innerHTML += `<div class="bg-gray-800 p-4 rounded-3xl border border-gray-700 shadow-md relative flex flex-col gap-3">${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50 z-10">&#x1F451; Admin Port</div>' : ''}${tx.isHalfHalf ? '<div class="absolute top-0 left-0 bg-blue-600/20 px-3 py-1 rounded-br-xl text-blue-400 text-[10px] font-bold border-b border-r border-blue-600/50 z-10">&#x1F91D; โครงการคนละครึ่ง</div>' : ''}<div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-${tx.isHalfHalf || isAdmin ? '4' : '1'}"><div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><p class="text-[10px] text-gray-500 mt-1">${tx.date}</p></div></div></div><div class="grid grid-cols-2 gap-2 text-sm bg-black/30 p-3 rounded-xl border border-white/5"><div><span class="text-gray-500 text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div><div class="text-right"><span class="text-gray-500 text-xs block">น้ำหนัก (ก้อน)</span> <span class="font-bold text-white">${tx.weight} บ. <span class="text-gray-500 text-xs">(x${tx.qty})</span></span></div><div><span class="text-gray-500 text-xs block">ต้นทุนรวม</span> <span class="font-bold text-green-400">${tx.totalCost.toLocaleString()}</span></div><div class="text-right"><span class="text-gray-500 text-xs block">${tx.totalProfit >= 0 ? 'กำไร' : 'ขาดทุน'}</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div></div><div class="flex gap-2 mt-1"><button onclick="prepareEdit('${tx.id}')" class="flex-1 bg-blue-600/20 text-blue-400 py-2.5 rounded-xl text-xs font-black hover:bg-blue-600/40 transition flex justify-center items-center gap-1"><span class="emoji">&#x270F;&#xFE0F;</span> แก้ไข</button><button onclick="deleteTx('${tx.id}')" class="flex-1 bg-red-600/20 text-red-400 py-2.5 rounded-xl text-xs font-black hover:bg-red-600/40 transition flex justify-center items-center gap-1"><span class="emoji">&#x1F5D1;&#xFE0F;</span> ลบ</button></div></div>`;
                 }
 
                 if (currentRole === 'guest') return; 
@@ -618,7 +624,7 @@
                 if (isSim && tx.totalProfit >= 0) pCol = 'text-yellow-300'; if (isSim && tx.currentValue >= tx.totalCost) valCol = 'text-yellow-300';
                 let profitLabel = tx.totalProfit >= 0 ? 'กำไรสุทธิ' : 'ขาดทุนสุทธิ', profitPerBahtLabel = tx.profitPerBaht >= 0 ? 'กำไรเฉลี่ย / บาท' : 'ขาดทุนเฉลี่ย / บาท', isAdmin = tx.isAdminOwner === true;
 
-                dashboardContainer.innerHTML += `<div onclick="openModal(${index})" class="app-card ${bgTheme} rounded-[1.5rem] p-4 border relative overflow-hidden text-white group">${tx.isHalfHalf ? '<div class="absolute top-0 right-0 bg-blue-600/30 px-3 py-1 rounded-bl-2xl text-blue-200 text-[10px] font-black border-b border-l border-blue-500/50 shadow-lg backdrop-blur-md z-20 flex items-center gap-1"><span class="emoji text-xs">🤝</span> โครงการคนละครึ่ง</div>' : ''}<div class="flex items-center gap-3 mb-4 relative z-10 mt-1"><div class="relative inline-block shrink-0"><img src="${tx.profImg}" class="w-16 h-16 rounded-full border-2 border-white object-cover shadow-lg bg-gray-800">${isAdmin ? '<div class="absolute -bottom-1 -right-1 text-xl drop-shadow-md emoji z-20">👑</div>' : ''}</div><div class="flex flex-col"><p class="font-black text-2xl tracking-tight leading-none mb-1">${tx.buyer}</p><span class="bg-black/30 px-2.5 py-1 rounded-lg text-[11px] font-bold emoji inline-block w-max">📅 ${tx.date}</span></div></div><div class="grid grid-cols-2 gap-3 mb-3 relative z-10"><div class="bg-black/20 rounded-xl p-3 border border-white/10"><p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">💵 ราคา ณ.วันที่ซื้อ</p><p class="font-black text-green-400 text-base md:text-lg">${tx.buyprice.toLocaleString()}</p></div><div class="bg-black/20 rounded-xl p-3 border border-white/10 text-right"><p class="text-[11px] md:text-xs text-yellow-500/90 font-bold uppercase tracking-widest mb-0.5">${isSim ? '💵 ราคาจำลอง' : '💵 ราคา ณ.ปัจจุบัน'}</p><p class="font-black text-yellow-400 text-base md:text-lg">${effectivePrice.toLocaleString()}</p></div></div><div class="grid grid-cols-2 gap-3 mb-4 relative z-10"><div class="bg-black/20 rounded-xl p-3 border border-white/10"><p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">🪙 น้ำหนักทอง (บ.) x ก้อน</p><p class="font-bold text-base md:text-lg">${tx.weight} <span class="text-xs text-gray-400">x ${tx.qty}</span> = <span class="text-yellow-300">${tx.totalWeight}</span></p></div><div class="bg-black/20 rounded-xl p-3 border border-white/10 text-right"><p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">💰 ราคารวม ณ.วันที่ซื้อ</p><p class="font-black text-green-400 text-base md:text-lg">${tx.totalCost.toLocaleString()}</p></div></div><div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-inner flex justify-between items-center relative z-10"><div><p class="text-[11px] md:text-xs text-white/80 uppercase font-bold mb-0.5">${profitPerBahtLabel}</p><p class="font-black text-xl md:text-2xl drop-shadow-md ${pCol}">${tx.profitPerBaht >= 0 ? '+' : ''}${tx.profitPerBaht.toLocaleString()}</p></div><div class="text-right"><p class="text-[11px] md:text-xs text-white/80 uppercase font-bold mb-0.5">${profitLabel}</p><p class="font-black text-2xl md:text-3xl drop-shadow-md ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</p></div></div></div>`;
+                dashboardContainer.innerHTML += `<div onclick="openModal(${index})" class="app-card ${bgTheme} rounded-[1.5rem] p-4 border relative overflow-hidden text-white group">${tx.isHalfHalf ? '<div class="absolute top-0 right-0 bg-blue-600/30 px-3 py-1 rounded-bl-2xl text-blue-200 text-[10px] font-black border-b border-l border-blue-500/50 shadow-lg backdrop-blur-md z-20 flex items-center gap-1"><span class="emoji text-xs">&#x1F91D;</span> โครงการคนละครึ่ง</div>' : ''}<div class="flex items-center gap-3 mb-4 relative z-10 mt-1"><div class="relative inline-block shrink-0"><img src="${tx.profImg}" class="w-16 h-16 rounded-full border-2 border-white object-cover shadow-lg bg-gray-800">${isAdmin ? '<div class="absolute -bottom-1 -right-1 text-xl drop-shadow-md emoji z-20">&#x1F451;</div>' : ''}</div><div class="flex flex-col"><p class="font-black text-2xl tracking-tight leading-none mb-1">${tx.buyer}</p><span class="bg-black/30 px-2.5 py-1 rounded-lg text-[11px] font-bold emoji inline-block w-max">&#x1F4C5; ${tx.date}</span></div></div><div class="grid grid-cols-2 gap-3 mb-3 relative z-10"><div class="bg-black/20 rounded-xl p-3 border border-white/10"><p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">&#x1F4B5; ราคา ณ.วันที่ซื้อ</p><p class="font-black text-green-400 text-base md:text-lg">${tx.buyprice.toLocaleString()}</p></div><div class="bg-black/20 rounded-xl p-3 border border-white/10 text-right"><p class="text-[11px] md:text-xs text-yellow-500/90 font-bold uppercase tracking-widest mb-0.5">${isSim ? '&#x1F4B5; ราคาจำลอง' : '&#x1F4B5; ราคา ณ.ปัจจุบัน'}</p><p class="font-black text-yellow-400 text-base md:text-lg">${effectivePrice.toLocaleString()}</p></div></div><div class="grid grid-cols-2 gap-3 mb-4 relative z-10"><div class="bg-black/20 rounded-xl p-3 border border-white/10"><p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">&#x1FA99; น้ำหนักทอง (บ.) x ก้อน</p><p class="font-bold text-base md:text-lg">${tx.weight} <span class="text-xs text-gray-400">x ${tx.qty}</span> = <span class="text-yellow-300">${tx.totalWeight}</span></p></div><div class="bg-black/20 rounded-xl p-3 border border-white/10 text-right"><p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">&#x1F4B0; ราคารวม ณ.วันที่ซื้อ</p><p class="font-black text-green-400 text-base md:text-lg">${tx.totalCost.toLocaleString()}</p></div></div><div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-inner flex justify-between items-center relative z-10"><div><p class="text-[11px] md:text-xs text-white/80 uppercase font-bold mb-0.5">${profitPerBahtLabel}</p><p class="font-black text-xl md:text-2xl drop-shadow-md ${pCol}">${tx.profitPerBaht >= 0 ? '+' : ''}${tx.profitPerBaht.toLocaleString()}</p></div><div class="text-right"><p class="text-[11px] md:text-xs text-white/80 uppercase font-bold mb-0.5">${profitLabel}</p><p class="font-black text-2xl md:text-3xl drop-shadow-md ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</p></div></div></div>`;
             });
             document.getElementById('total-items-count').innerText = `${validTxs.length} รายการ`;
 
@@ -646,13 +652,13 @@
                     let summaryHTML = `<h3 class="text-xl font-black text-white text-center mb-6 drop-shadow-md">สรุปภาพรวมกำไร/ขาดทุน</h3><div class="flex flex-wrap justify-center gap-4">`;
                     sortedBuyers.forEach(buyer => {
                         let data = summaryMap[buyer]; let pCol = data.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; if (isSim && data.totalProfit >= 0) pCol = 'text-yellow-300';
-                        let prefix = data.totalProfit > 0 ? '+' : '', icon = data.isAdmin ? '👑' : '👤', titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';
+                        let prefix = data.totalProfit > 0 ? '+' : '', icon = data.isAdmin ? '&#x1F451;' : '&#x1F464;', titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';
                         let hideBtn = currentRole === 'admin' ? `<button onclick="quickHideUser('${buyer}', event)" class="absolute -top-2 -right-2 bg-gray-800 text-gray-400 hover:text-red-400 w-6 h-6 rounded-full border border-gray-600 flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95" title="ซ่อนจากหน้าแรก"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg></button>` : '';
                         summaryHTML += `<div class="relative">${hideBtn}<div class="bg-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-gray-700 shadow-xl transition-transform hover:scale-105 cursor-default"><img src="${data.profImg}" class="w-14 h-14 rounded-full object-cover border-2 ${data.isAdmin ? 'border-yellow-500' : 'border-blue-400'} bg-gray-800 shrink-0 shadow-inner"><div class="flex flex-col justify-center"><div class="${titleColor} text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">${icon}</span> ${data.name}</div><div class="text-xl md:text-2xl font-black ${pCol} leading-none tracking-tight">${prefix}${data.totalProfit.toLocaleString()}</div></div></div></div>`;
                     });
                     if (sortedBuyers.length > 1 && currentRole === 'admin') {
                         let gtCol = grandTotal >= 0 ? 'text-green-400' : 'text-red-400'; if (isSim && grandTotal >= 0) gtCol = 'text-yellow-300'; let gtPrefix = grandTotal > 0 ? '+' : '';
-                        summaryHTML += `<div class="bg-gradient-to-r from-gray-800 to-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-yellow-500/30 shadow-xl transition-transform hover:scale-105 cursor-default mt-2 w-full max-w-[300px] mx-auto md:mt-0 md:w-auto md:max-w-none"><div class="w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center shrink-0 shadow-inner"><span class="text-2xl emoji">🪙</span></div><div class="flex flex-col justify-center"><div class="text-yellow-400 text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">🌟</span> ผลรวมสุทธิ</div><div class="text-xl md:text-2xl font-black ${gtCol} leading-none tracking-tight">${gtPrefix}${grandTotal.toLocaleString()}</div></div></div>`;
+                        summaryHTML += `<div class="bg-gradient-to-r from-gray-800 to-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-yellow-500/30 shadow-xl transition-transform hover:scale-105 cursor-default mt-2 w-full max-w-[300px] mx-auto md:mt-0 md:w-auto md:max-w-none"><div class="w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center shrink-0 shadow-inner"><span class="text-2xl emoji">&#x1FA99;</span></div><div class="flex flex-col justify-center"><div class="text-yellow-400 text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">&#x1F31F;</span> ผลรวมสุทธิ</div><div class="text-xl md:text-2xl font-black ${gtCol} leading-none tracking-tight">${gtPrefix}${grandTotal.toLocaleString()}</div></div></div>`;
                     }
                     summaryHTML += `</div>`; summaryContainer.innerHTML = summaryHTML;
                 }
@@ -660,13 +666,13 @@
                 let halfBuyers = Object.keys(halfHalfGroups);
                 if (halfBuyers.length === 0) { halfContainer.innerHTML = ''; } 
                 else {
-                    let halfHTML = `<div class="mt-14 w-full max-w-2xl mx-auto flex flex-col gap-10"><div class="text-center"><span class="bg-blue-600/10 text-blue-400 px-4 py-1.5 rounded-full text-xs font-black border border-blue-500/20 shadow-inner">🤝 สรุปโครงการคนละครึ่ง (รวมทุกรายการ)</span></div>`;
+                    let halfHTML = `<div class="mt-14 w-full max-w-2xl mx-auto flex flex-col gap-10"><div class="text-center"><span class="bg-blue-600/10 text-blue-400 px-4 py-1.5 rounded-full text-xs font-black border border-blue-500/20 shadow-inner">&#x1F91D; สรุปโครงการคนละครึ่ง (รวมทุกรายการ)</span></div>`;
                     halfBuyers.forEach(buyer => {
                         let group = halfHalfGroups[buyer], halfShare = group.totalProfit / 2;
                         let pColTotal = group.totalProfit >= 0 ? 'text-green-400' : 'text-red-400', pColShare = halfShare >= 0 ? 'text-green-400' : 'text-red-400';
                         if (isSim && group.totalProfit >= 0) pColTotal = 'text-yellow-300'; if (isSim && halfShare >= 0) pColShare = 'text-yellow-300';
                         let prefixTotal = group.totalProfit > 0 ? '+' : '', prefixShare = halfShare > 0 ? '+' : '';
-                        halfHTML += `<div class="flex flex-col items-center justify-center cursor-default pb-8 ${halfBuyers.length > 1 ? 'border-b border-gray-800/50 last:border-0' : ''}"><div class="flex items-center justify-center gap-5 mb-5"><div class="flex -space-x-4"><img src="${getProfileImg(adminDisplayName)}" class="w-16 h-16 rounded-full border-[3px] border-[#0f172a] shadow-[0_0_15px_rgba(0,0,0,0.8)] z-10 object-cover bg-gray-800"><img src="${group.profImg}" class="w-16 h-16 rounded-full border-[3px] border-[#0f172a] shadow-[0_0_15px_rgba(0,0,0,0.8)] z-0 object-cover bg-gray-800"></div><div class="text-left"><div class="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-0.5">ยอดรวมทั้งหมด (${buyer})</div><div class="text-3xl md:text-4xl font-black ${pColTotal} drop-shadow-md leading-none tracking-tight">${prefixTotal}${group.totalProfit.toLocaleString()}</div></div></div><div class="flex justify-center gap-10 md:gap-20 text-center"><div class="flex items-center gap-3"><img src="${getProfileImg(adminDisplayName)}" class="w-10 h-10 rounded-full border-2 border-yellow-500 bg-gray-800 shadow-md"><div class="text-left"><div class="text-[10px] md:text-[11px] text-yellow-500 font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1"><span class="emoji">👑</span> ส่วนแบ่ง ADMIN</div><div class="text-xl md:text-2xl font-black ${pColShare} drop-shadow-md leading-none">${prefixShare}${halfShare.toLocaleString()}</div></div></div><div class="flex items-center gap-3"><img src="${group.profImg}" class="w-10 h-10 rounded-full border-2 border-blue-400 bg-gray-800 shadow-md"><div class="text-left"><div class="text-[10px] md:text-[11px] text-blue-400 font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1"><span class="emoji">👤</span> ส่วนแบ่ง ${buyer}</div><div class="text-xl md:text-2xl font-black ${pColShare} drop-shadow-md leading-none">${prefixShare}${halfShare.toLocaleString()}</div></div></div></div></div>`;
+                        halfHTML += `<div class="flex flex-col items-center justify-center cursor-default pb-8 ${halfBuyers.length > 1 ? 'border-b border-gray-800/50 last:border-0' : ''}"><div class="flex items-center justify-center gap-5 mb-5"><div class="flex -space-x-4"><img src="${getProfileImg(adminDisplayName)}" class="w-16 h-16 rounded-full border-[3px] border-[#0f172a] shadow-[0_0_15px_rgba(0,0,0,0.8)] z-10 object-cover bg-gray-800"><img src="${group.profImg}" class="w-16 h-16 rounded-full border-[3px] border-[#0f172a] shadow-[0_0_15px_rgba(0,0,0,0.8)] z-0 object-cover bg-gray-800"></div><div class="text-left"><div class="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-0.5">ยอดรวมทั้งหมด (${buyer})</div><div class="text-3xl md:text-4xl font-black ${pColTotal} drop-shadow-md leading-none tracking-tight">${prefixTotal}${group.totalProfit.toLocaleString()}</div></div></div><div class="flex justify-center gap-10 md:gap-20 text-center"><div class="flex items-center gap-3"><img src="${getProfileImg(adminDisplayName)}" class="w-10 h-10 rounded-full border-2 border-yellow-500 bg-gray-800 shadow-md"><div class="text-left"><div class="text-[10px] md:text-[11px] text-yellow-500 font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1"><span class="emoji">&#x1F451;</span> ส่วนแบ่ง ADMIN</div><div class="text-xl md:text-2xl font-black ${pColShare} drop-shadow-md leading-none">${prefixShare}${halfShare.toLocaleString()}</div></div></div><div class="flex items-center gap-3"><img src="${group.profImg}" class="w-10 h-10 rounded-full border-2 border-blue-400 bg-gray-800 shadow-md"><div class="text-left"><div class="text-[10px] md:text-[11px] text-blue-400 font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1"><span class="emoji">&#x1F464;</span> ส่วนแบ่ง ${buyer}</div><div class="text-xl md:text-2xl font-black ${pColShare} drop-shadow-md leading-none">${prefixShare}${halfShare.toLocaleString()}</div></div></div></div></div>`;
                     });
                     halfHTML += `</div>`; halfContainer.innerHTML = halfHTML;
                 }
@@ -681,14 +687,14 @@
         function updateAutocomplete() { const shops = [...new Set(transactionsData.map(tx => tx.shop))]; const txBuyers = transactionsData.map(tx => tx.buyer); const appUserNames = Object.values(appUsers).map(u => u.name); const buyers = [...new Set([...txBuyers, ...appUserNames, adminDisplayName])].filter(Boolean); document.getElementById('shop-list').innerHTML = shops.map(s => `<option value="${s}">`).join(''); document.getElementById('buyer-list').innerHTML = buyers.map(b => `<option value="${b}">`).join(''); }
         function handleFormImageUpload(event) { handleImgBase(event, base64Data => { document.getElementById('form_prof_base64').value = base64Data; document.getElementById('form_prof_preview').src = base64Data; }); }
         function handleUserImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('u_prof_base64').value = base64Data; document.getElementById('u_prof_preview').src = base64Data; }); }
-        function handleAdminImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('admin_prof_base64').value = base64Data; document.getElementById('admin_prof_preview').src = base64Data; if (db) { db.ref('user_profiles/' + adminDisplayName).set(base64Data); showWarningToast('✅ บันทึกรูปโปรไฟล์ Admin แล้ว!'); } }); }
+        function handleAdminImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('admin_prof_base64').value = base64Data; document.getElementById('admin_prof_preview').src = base64Data; if (db) { db.ref('user_profiles/' + adminDisplayName).set(base64Data); showWarningToast('&#x2705; บันทึกรูปโปรไฟล์ Admin แล้ว!'); } }); }
         function handleImgBase(event, callback) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX_SIZE = 400; let width = img.width; let height = img.height; if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } } canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
-        function showWarningToast(msg) { if (navigator.vibrate) navigator.vibrate(200); const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'bg-gray-800/95 backdrop-blur-md text-white px-5 py-4 rounded-2xl font-bold shadow-2xl border border-gray-600 transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-3 w-full'; toast.innerHTML = `<span class="text-2xl emoji">🔔</span> <span class="text-sm">${msg}</span>`; container.appendChild(toast); requestAnimationFrame(() => { toast.classList.remove('translate-y-[-20px]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-20px]', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000); }
+        function showWarningToast(msg) { if (navigator.vibrate) navigator.vibrate(200); const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'bg-gray-800/95 backdrop-blur-md text-white px-5 py-4 rounded-2xl font-bold shadow-2xl border border-gray-600 transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-3 w-full'; toast.innerHTML = `<span class="text-2xl emoji">&#x1F514;</span> <span class="text-sm">${msg}</span>`; container.appendChild(toast); requestAnimationFrame(() => { toast.classList.remove('translate-y-[-20px]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-20px]', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
         function openAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'flex'; closeMenu(); showAdminSetting('main'); document.getElementById('admin_display_name').value = adminDisplayName; document.getElementById('admin_prof_preview').src = getProfileImg(adminDisplayName); document.getElementById('admin_prof_base64').value = userProfiles[adminDisplayName] || ''; }
         function closeAdminSettingsModal() { document.getElementById('admin-settings-modal').style.display = 'none'; document.getElementById('admin-settings-pass').reset(); resetSettingPin(); }
         function loadAdminSettings() { if(!db) return; db.ref('admin_settings').on('value', snap => { const data = snap.val(); if(data) { if(data.password) adminPass = data.password; if(data.pin) adminPin = data.pin; if(data.name) { adminDisplayName = data.name; if(currentUser && currentUser.username === 'admin') { currentUser.name = data.name; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); updateUIRole(); } } } }); }
-        function saveAdminProfile() { const newName = document.getElementById('admin_display_name').value.trim(); if(newName === '') { showWarningToast('กรุณากรอกชื่อ Admin!'); return; } const base64Img = document.getElementById('admin_prof_base64').value; if(base64Img) { db.ref('user_profiles/' + newName).set(base64Img); } db.ref('admin_settings').update({ name: newName }).then(() => { showWarningToast('✅ อัปเดตชื่อ Admin สำเร็จ!'); }); }
+        function saveAdminProfile() { const newName = document.getElementById('admin_display_name').value.trim(); if(newName === '') { showWarningToast('กรุณากรอกชื่อ Admin!'); return; } const base64Img = document.getElementById('admin_prof_base64').value; if(base64Img) { db.ref('user_profiles/' + newName).set(base64Img); } db.ref('admin_settings').update({ name: newName }).then(() => { showWarningToast('&#x2705; อัปเดตชื่อ Admin สำเร็จ!'); }); }
         function showAdminSetting(mode) { document.getElementById('admin-settings-main').classList.add('hidden'); document.getElementById('admin-settings-pass').classList.add('hidden'); document.getElementById('admin-settings-pin').classList.add('hidden'); if(mode === 'main') { document.getElementById('admin-settings-main').classList.remove('hidden'); } else if(mode === 'pass') { document.getElementById('admin-settings-pass').classList.remove('hidden'); } else if(mode === 'pin') { document.getElementById('admin-settings-pin').classList.remove('hidden'); resetSettingPin(); } }
         function saveAdminPass(e) { e.preventDefault(); if(!db) return; const oldPass = document.getElementById('setting-old-pass').value; const newPass = document.getElementById('setting-new-pass').value; const confPass = document.getElementById('setting-confirm-pass').value; if (oldPass !== adminPass) { showWarningToast('รหัสผ่านเก่าไม่ถูกต้อง!'); return; } if (newPass !== confPass) { showWarningToast('รหัสผ่านใหม่ไม่ตรงกัน!'); return; } db.ref('admin_settings').update({password: newPass}).then(() => { showWarningToast('เปลี่ยนรหัสผ่านสำเร็จ!'); adminPass = newPass; closeAdminSettingsModal(); }); }
         function resetSettingPin() { settingPinStep = 1; sOldPin = ''; sNewPin = ''; sConfPin = ''; document.getElementById('setting-pin-title').innerText = 'กรอก PIN ปัจจุบัน'; updateSettingPinUI(); }
@@ -765,35 +771,35 @@
             let halfHalfHtml = '';
             if(tx.isHalfHalf) {
                 let halfProfit = tx.totalProfit / 2; let hCol = halfProfit >= 0 ? 'text-green-400' : 'text-red-400'; if(isSim && halfProfit >= 0) hCol = 'text-yellow-300'; let hPrefix = halfProfit >= 0 ? '+' : '';
-                halfHalfHtml = `<div class="mt-8 pt-5 border-t border-white/20"><div class="text-sm md:text-base font-black text-blue-300 mb-5 bg-blue-900/50 inline-block px-5 py-2 rounded-full border border-blue-400/50">🤝 แบ่งส่วนโครงการคนละครึ่ง</div><div class="flex justify-center gap-10 md:gap-16"><div class="flex flex-col items-center"><img src="${getProfileImg(adminDisplayName)}" class="w-14 h-14 rounded-full border-[3px] border-yellow-500 mb-2 shadow-md"><span class="text-xs md:text-sm text-yellow-500 font-bold uppercase tracking-wider mb-1">Admin</span><span class="font-black text-2xl md:text-3xl ${hCol}">${hPrefix}${halfProfit.toLocaleString()}</span></div><div class="flex flex-col items-center"><img src="${tx.profImg}" class="w-14 h-14 rounded-full border-[3px] border-blue-400 mb-2 shadow-md"><span class="text-xs md:text-sm text-blue-400 font-bold uppercase tracking-wider mb-1">${tx.buyer}</span><span class="font-black text-2xl md:text-3xl ${hCol}">${hPrefix}${halfProfit.toLocaleString()}</span></div></div></div>`;
+                halfHalfHtml = `<div class="mt-8 pt-5 border-t border-white/20"><div class="text-sm md:text-base font-black text-blue-300 mb-5 bg-blue-900/50 inline-block px-5 py-2 rounded-full border border-blue-400/50">&#x1F91D; แบ่งส่วนโครงการคนละครึ่ง</div><div class="flex justify-center gap-10 md:gap-16"><div class="flex flex-col items-center"><img src="${getProfileImg(adminDisplayName)}" class="w-14 h-14 rounded-full border-[3px] border-yellow-500 mb-2 shadow-md"><span class="text-xs md:text-sm text-yellow-500 font-bold uppercase tracking-wider mb-1">Admin</span><span class="font-black text-2xl md:text-3xl ${hCol}">${hPrefix}${halfProfit.toLocaleString()}</span></div><div class="flex flex-col items-center"><img src="${tx.profImg}" class="w-14 h-14 rounded-full border-[3px] border-blue-400 mb-2 shadow-md"><span class="text-xs md:text-sm text-blue-400 font-bold uppercase tracking-wider mb-1">${tx.buyer}</span><span class="font-black text-2xl md:text-3xl ${hCol}">${hPrefix}${halfProfit.toLocaleString()}</span></div></div></div>`;
             }
 
             document.getElementById('modal-content').innerHTML = ` 
                 <div class="modal-enter relative w-full h-[100dvh] md:max-w-md mx-auto md:h-[85vh] md:mt-8 flex flex-col justify-center"> 
                     <div class="${modalBg} rounded-none md:rounded-[2rem] p-5 pt-12 md:p-6 md:border relative text-center text-white overflow-y-auto w-full h-full md:max-h-full hide-scroll flex flex-col">
                         <div class="absolute top-6 left-6 bg-black/80 px-5 py-2 rounded-full text-base font-black border border-gray-500 shadow-lg">${activeModalIndex + 1} / ${currentViewList.length}</div> 
-                        <div class="relative inline-block mx-auto mb-2 mt-4"><img src="${tx.profImg}" class="w-36 h-36 rounded-full object-cover border-[5px] border-gray-600 shadow-2xl relative z-10 bg-gray-800">${tx.isAdminOwner ? '<div class="absolute bottom-1 right-1 text-5xl drop-shadow-lg emoji z-20">👑</div>' : ''}</div> 
+                        <div class="relative inline-block mx-auto mb-2 mt-4"><img src="${tx.profImg}" class="w-36 h-36 rounded-full object-cover border-[5px] border-gray-600 shadow-2xl relative z-10 bg-gray-800">${tx.isAdminOwner ? '<div class="absolute bottom-1 right-1 text-5xl drop-shadow-lg emoji z-20">&#x1F451;</div>' : ''}</div> 
                         <h2 class="text-4xl md:text-5xl font-black text-white mt-2 tracking-tight drop-shadow-md">${tx.buyer}</h2> 
-                        <div class="flex justify-center gap-3 mt-4 mb-6"><span class="bg-gray-800/80 border border-gray-500 px-4 py-2 rounded-xl text-sm md:text-base font-black text-gray-100 shadow-inner emoji">📅 ${tx.date}</span><span class="bg-gray-800/80 border border-gray-500 px-4 py-2 rounded-xl text-sm md:text-base font-black text-gray-100 shadow-inner emoji">🏦 ${tx.shop}</span></div> 
+                        <div class="flex justify-center gap-3 mt-4 mb-6"><span class="bg-gray-800/80 border border-gray-500 px-4 py-2 rounded-xl text-sm md:text-base font-black text-gray-100 shadow-inner emoji">&#x1F4C5; ${tx.date}</span><span class="bg-gray-800/80 border border-gray-500 px-4 py-2 rounded-xl text-sm md:text-base font-black text-gray-100 shadow-inner emoji">&#x1F3E6; ${tx.shop}</span></div> 
                         
                         <div class="grid grid-cols-2 gap-4 text-center mb-5">
                             <div class="bg-black/60 rounded-3xl p-5 border border-gray-500 shadow-lg flex flex-col justify-center">
-                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">💵 ราคา ณ.วันที่ซื้อ</p>
+                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">&#x1F4B5; ราคา ณ.วันที่ซื้อ</p>
                                 <p class="font-black text-green-400 text-2xl md:text-3xl drop-shadow-md">${tx.buyprice.toLocaleString()}</p>
                             </div>
                             <div class="bg-black/60 rounded-3xl p-5 border border-gray-500 shadow-lg flex flex-col justify-center">
-                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">${isSim ? '💵 ราคาจำลอง' : '💵 ราคา ณ.ปัจจุบัน'}</p>
+                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">${isSim ? '&#x1F4B5; ราคาจำลอง' : '&#x1F4B5; ราคา ณ.ปัจจุบัน'}</p>
                                 <p class="font-black text-yellow-400 text-2xl md:text-3xl drop-shadow-md">${effectivePrice.toLocaleString()}</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 text-center mb-6">
                             <div class="bg-black/60 rounded-3xl p-5 border border-gray-500 flex flex-col items-center justify-center shadow-lg">
-                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">🪙 น้ำหนักทอง (บ.) x ก้อน</p>
+                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">&#x1FA99; น้ำหนักทอง (บ.) x ก้อน</p>
                                 <p class="font-black text-white text-xl md:text-2xl">${tx.weight} <span class="text-lg text-gray-400">x ${tx.qty}</span> = <br/><span class="text-yellow-300 text-2xl md:text-3xl mt-1 block">${tx.totalWeight} บ.</span></p>
                             </div>
                             <div class="bg-black/60 rounded-3xl p-5 border border-gray-500 flex flex-col items-center justify-center shadow-lg">
-                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">💰 ราคารวม ณ.วันที่ซื้อ</p>
+                                <p class="text-sm md:text-base text-gray-300 font-bold mb-2">&#x1F4B0; ราคารวม ณ.วันที่ซื้อ</p>
                                 <p class="font-black text-green-400 text-2xl md:text-3xl drop-shadow-md">${tx.totalCost.toLocaleString()}</p>
                             </div>
                         </div>
