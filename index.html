@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.23 (Sync & Fullscreen App)</title>
+    <title>พอร์ตทองคำ V6.22 (Sync & Fullscreen App)</title>
     
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -178,7 +178,7 @@
         <div id="view-dashboard" class="view-section active">
             <div class="bg-gradient-to-br from-gray-900 to-black rounded-[2rem] shadow-2xl mb-8 border border-gray-800 overflow-hidden">
                 <div class="text-center py-4 border-b border-gray-800/50 bg-black/40 relative">
-                    <h2 class="text-xl font-black text-yellow-500">ประกาศราคาสมาคมฯ *</h2>
+                    <h2 class="text-xl font-black text-yellow-500">ประกาศราคาสมาคมฯ</h2>
                     <p class="text-sm text-yellow-300 font-bold mt-2 bg-gray-800/80 inline-block px-4 py-1 rounded-full border border-gray-600">อัปเดต: <span id="api-date">--</span> | <span id="api-time">--</span></p>
                 </div>
                 
@@ -211,7 +211,7 @@
                 </div>
             </div>
 
-            <div class="flex justify-between items-center mb-4 px-1 relative" id="portfolio-title-sec">
+            <div class="flex justify-between items-center mb-4 px-1" id="portfolio-title-sec">
                 <div class="flex items-center gap-2">
                     <h3 class="text-xl font-black text-white flex items-center gap-2">
                         รายการลงทุน <span id="current-user-title"></span>
@@ -221,13 +221,12 @@
                     </h3>
                 </div>
                 
-                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div class="flex items-center gap-3">
                     <button onclick="openSimModal()" class="bg-indigo-600/30 text-indigo-400 w-9 h-9 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" title="จำลองราคาทอง">
                         <span class="emoji text-base">🪄</span>
                     </button>
+                    <span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full whitespace-nowrap" id="total-items-count">0 รายการ</span>
                 </div>
-
-                <span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full whitespace-nowrap" id="total-items-count">0 รายการ</span>
             </div>
 
             <div id="sim-alert-container"></div>
@@ -1103,7 +1102,8 @@
             document.body.style.overflow = 'hidden'; 
         }
         
-        function closeModal() { 
+        function closeModal(e) { 
+            if(e) e.stopPropagation();
             document.getElementById('item-modal').classList.remove('opacity-100');
             document.getElementById('item-modal').classList.add('opacity-0', 'pointer-events-none'); 
             document.getElementById('floating-close-btn').classList.add('hidden'); 
