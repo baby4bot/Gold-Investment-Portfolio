@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.23 (Sync Sorting & Visibility Fix)</title>
+    <title>พอร์ตทองคำ V6.22 (Sync Visibility & Full Bubble Calc)</title>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -504,6 +504,7 @@
         function quickHideUser(username, e) {
             if(e) e.stopPropagation();
             if(!db || !appUsers[username]) return;
+            // เมื่อกดซ่อนจากหน้าแรก ให้ซ่อนทั้งจาก Dashboard และ สรุปภาพรวม
             db.ref('app_users/' + username).update({ isHidden: true, isHiddenFromSummary: true }).then(() => {
                 showWarningToast(`👁️ ซ่อนพอร์ต ${username} ทั้งหมดเรียบร้อย`);
             });
@@ -524,16 +525,7 @@
         function logout() { localStorage.removeItem('goldAppSession'); location.reload(); }
 
         // --- 5. DB LOAD & DATA RENDER ---
-        function loadUsers() { 
-            if(!db) return; 
-            db.ref('app_users').on('value', snap => { 
-                appUsers = snap.val() || {}; 
-                updateAutocomplete(); 
-                if(isDraggingUser) return; // ข้ามการเรนเดอร์ชั่วคราวตอนกำลังลาก
-                if (currentView === 'manage-users') renderUsersCards(); 
-                if (currentView === 'dashboard') renderData(); 
-            }); 
-        }
+        function loadUsers() { if(!db) return; db.ref('app_users').on('value', snap => { if(isDraggingUser) return; appUsers = snap.val() || {}; updateAutocomplete(); if (currentView === 'manage-users') renderUsersCards(); if (currentView === 'dashboard') renderData(); }); }
         function loadData() { if(!db) return; db.ref('gold_portfolio').on('value', (snapshot) => { transactionsData = []; snapshot.forEach(child => { transactionsData.push({ id: child.key, ...child.val() }); }); updateAutocomplete(); renderData(); }); }
 
         function toggleFav(username) { if(!db || !appUsers[username]) return; let isF = appUsers[username].isFavorite ? false : true; db.ref('app_users/' + username).update({ isFavorite: isF }); }
@@ -542,7 +534,10 @@
             if(!db || !appUsers[username]) return; 
             let isH = appUsers[username].isHidden ? false : true; 
             let updates = { isHidden: isH };
-            if (!isH) updates.isHiddenFromSummary = false; // ถ้ากดยกเลิกซ่อน ให้คืนค่าที่สรุปภาพรวมด้วย
+            // ถ้ายกเลิกการซ่อน (isH = false) ให้ยกเลิกการซ่อนในหน้าสรุปภาพรวมด้วย เพื่อให้ User กลับมาโชว์ที่เดิม
+            if (!isH) {
+                updates.isHiddenFromSummary = false;
+            }
             db.ref('app_users/' + username).update(updates).then(() => {
                 showWarningToast(isH ? `ซ่อน ${username} เรียบร้อย` : `เปิดแสดง ${username} เรียบร้อย`);
             }); 
@@ -583,23 +578,7 @@
                     </div>
                 `;
             });
-            if(sortableInstance) sortableInstance.destroy(); 
-            sortableInstance = new Sortable(container, { 
-                animation: 150, 
-                handle: '.drag-handle', 
-                ghostClass: 'sortable-ghost', 
-                dragClass: 'sortable-drag', 
-                onStart: function () { isDraggingUser = true; }, 
-                onEnd: function () { 
-                    updateOrderInDB(); 
-                    setTimeout(() => { 
-                        isDraggingUser = false; 
-                        // อัปเดต UI ทันทีหลังเรียงเสร็จ
-                        if (currentView === 'manage-users') renderUsersCards(); 
-                        if (currentView === 'dashboard') renderData(); 
-                    }, 500); 
-                } 
-            });
+            if(sortableInstance) sortableInstance.destroy(); sortableInstance = new Sortable(container, { animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', onStart: function () { isDraggingUser = true; }, onEnd: function () { updateOrderInDB(); setTimeout(() => { isDraggingUser = false; }, 500); } });
         }
 
         function updateOrderInDB() { if(!db) return; const items = document.querySelectorAll('.user-drag-item'); let updates = {}; items.forEach((item, index) => { let uname = item.getAttribute('data-username'); if(uname) { updates[uname + '/order'] = parseInt(index); } }); db.ref('app_users').update(updates).then(() => { showWarningToast('✅ บันทึกการจัดเรียงสำเร็จ!'); }); }
@@ -614,6 +593,7 @@
             if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
             if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
             
+            // ค่าเริ่มต้นของ User ใหม่ ให้ซ่อนตัวไปก่อน
             let userOrder = 999; let isFav = false; let isHid = true; let isHidSum = true;
             if (origUser && appUsers[origUser]) { if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; isFav = appUsers[origUser].isFavorite || false; isHid = appUsers[origUser].isHidden || false; isHidSum = appUsers[origUser].isHiddenFromSummary || false; } 
             else { let maxOrder = -1; for(let k in appUsers) { if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } userOrder = maxOrder + 1; }
@@ -665,26 +645,36 @@
                 tx.profImg = getProfileImg(tx.buyer);
                 let isAdmin = tx.isAdminOwner === true;
 
-                // Render Manage-TX list
-                let txCard = `
-                    <div class="bg-gray-800 p-4 rounded-3xl border border-gray-700 shadow-md relative flex flex-col gap-3">
-                        ${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50 z-10">Admin Port</div>' : ''}
-                        ${tx.isHalfHalf ? '<div class="absolute top-0 left-0 bg-blue-600/20 px-3 py-1 rounded-br-xl text-blue-400 text-[10px] font-bold border-b border-r border-blue-600/50 z-10">🤝 โครงการคนละครึ่ง</div>' : ''}
-                        <div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-${tx.isHalfHalf || isAdmin ? '4' : '1'}">
-                            <div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><p class="text-[10px] text-gray-500 mt-1">${tx.date}</p></div></div>
+                // สิทธิ์ในการแสดงผลในหน้า "เพิ่ม/อัปเดตข้อมูลทอง" (Manage TX)
+                let canManage = false;
+                if (currentRole === 'admin') {
+                    canManage = true; // Admin เห็นทุกรายการ
+                } else if (currentRole === 'user' && tx.buyer === currentUser.name) {
+                    canManage = true; // User เห็นเฉพาะของตัวเอง
+                }
+
+                if (canManage) {
+                    let txCard = `
+                        <div class="bg-gray-800 p-4 rounded-3xl border border-gray-700 shadow-md relative flex flex-col gap-3">
+                            ${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50 z-10">Admin Port</div>' : ''}
+                            ${tx.isHalfHalf ? '<div class="absolute top-0 left-0 bg-blue-600/20 px-3 py-1 rounded-br-xl text-blue-400 text-[10px] font-bold border-b border-r border-blue-600/50 z-10">🤝 โครงการคนละครึ่ง</div>' : ''}
+                            <div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-${tx.isHalfHalf || isAdmin ? '4' : '1'}">
+                                <div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><p class="text-[10px] text-gray-500 mt-1">${tx.date}</p></div></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-sm bg-black/30 p-3 rounded-xl border border-white/5">
+                                <div><span class="text-gray-500 text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div>
+                                <div class="text-right"><span class="text-gray-500 text-xs block">น้ำหนัก (ก้อน)</span> <span class="font-bold text-white">${tx.weight} บ. <span class="text-gray-500 text-xs">(x${tx.qty})</span></span></div>
+                                <div><span class="text-gray-500 text-xs block">ต้นทุนรวม</span> <span class="font-bold text-green-400">${tx.totalCost.toLocaleString()}</span></div>
+                                <div class="text-right"><span class="text-gray-500 text-xs block">${tx.totalProfit >= 0 ? 'กำไร' : 'ขาดทุน'}</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div>
+                            </div>
+                            <div class="flex gap-2 mt-1">
+                                <button onclick="prepareEdit('${tx.id}')" class="flex-1 bg-blue-600/20 text-blue-400 py-2.5 rounded-xl text-xs font-black hover:bg-blue-600/40 transition flex justify-center items-center gap-1"><span class="emoji">✏️</span> แก้ไข</button>
+                                <button onclick="deleteTx('${tx.id}')" class="flex-1 bg-red-600/20 text-red-400 py-2.5 rounded-xl text-xs font-black hover:bg-red-600/40 transition flex justify-center items-center gap-1"><span class="emoji">🗑️</span> ลบ</button>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 text-sm bg-black/30 p-3 rounded-xl border border-white/5">
-                            <div><span class="text-gray-500 text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div>
-                            <div class="text-right"><span class="text-gray-500 text-xs block">น้ำหนัก (ก้อน)</span> <span class="font-bold text-white">${tx.weight} บ. <span class="text-gray-500 text-xs">(x${tx.qty})</span></span></div>
-                            <div><span class="text-gray-500 text-xs block">ต้นทุนรวม</span> <span class="font-bold text-green-400">${tx.totalCost.toLocaleString()}</span></div>
-                            <div class="text-right"><span class="text-gray-500 text-xs block">${tx.totalProfit >= 0 ? 'กำไร' : 'ขาดทุน'}</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</span></div>
-                        </div>
-                        <div class="flex gap-2 mt-1">
-                            <button onclick="prepareEdit('${tx.id}')" class="flex-1 bg-blue-600/20 text-blue-400 py-2.5 rounded-xl text-xs font-black hover:bg-blue-600/40 transition flex justify-center items-center gap-1"><span class="emoji">✏️</span> แก้ไข</button>
-                            <button onclick="deleteTx('${tx.id}')" class="flex-1 bg-red-600/20 text-red-400 py-2.5 rounded-xl text-xs font-black hover:bg-red-600/40 transition flex justify-center items-center gap-1"><span class="emoji">🗑️</span> ลบ</button>
-                        </div>
-                    </div>
-                `; txContainer.innerHTML += txCard;
+                    `; 
+                    txContainer.innerHTML += txCard;
+                }
 
                 // Dashboard role filtering
                 if (currentRole === 'guest') return; 
@@ -730,18 +720,18 @@
                         
                         <div class="grid grid-cols-2 gap-3 mb-3 relative z-10">
                             <div class="bg-black/20 rounded-xl p-3 border border-white/10">
-                                <p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">ราคา ณ วันที่ซื้อ</p>
+                                <p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">ราคา ณ.วันที่ซื้อ</p>
                                 <p class="font-black text-green-400 text-base md:text-lg">${tx.buyprice.toLocaleString()}</p>
                             </div>
                             <div class="bg-black/20 rounded-xl p-3 border border-white/10 text-right">
-                                <p class="text-[11px] md:text-xs text-yellow-500/90 font-bold uppercase tracking-widest mb-0.5">${isSim ? 'ราคาจำลอง' : 'ราคา ณ ปัจจุบัน'}</p>
+                                <p class="text-[11px] md:text-xs text-yellow-500/90 font-bold uppercase tracking-widest mb-0.5">${isSim ? 'ราคาจำลอง' : 'ราคา ณ.ปัจจุบัน'}</p>
                                 <p class="font-black text-yellow-400 text-base md:text-lg">${effectivePrice.toLocaleString()}</p>
                             </div>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-3 mb-4 relative z-10">
                             <div class="bg-black/20 rounded-xl p-3 border border-white/10">
-                                <p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">ทอง (บ.) x ก้อน</p>
+                                <p class="text-[11px] md:text-xs text-white/70 uppercase font-bold mb-0.5">น้ำหนักทอง (บ.) x ก้อน</p>
                                 <p class="font-bold text-base md:text-lg">${tx.weight} <span class="text-xs text-gray-400">x ${tx.qty}</span> = <span class="text-yellow-300">${tx.totalWeight}</span></p>
                             </div>
                             <div class="bg-black/20 rounded-xl p-3 border border-white/10 text-right">
@@ -781,19 +771,19 @@
                     for(let key in appUsers) { if(appUsers[key].name === buyer) userObj = appUsers[key]; }
                     if (userObj && userObj.isHiddenFromSummary) isUserHiddenFromSummary = true;
 
-                    // ข้ามการคำนวณของคนนี้ไปเลย ถ้าถูกซ่อน
+                    // ถ้าแอดมินปิดตาสรุปภาพรวม ก็ข้ามการคำนวณของคนนี้ไปเลย
                     if (currentRole === 'admin' && isUserHiddenFromSummary && !tx.isAdminOwner) {
                         return; 
                     }
 
-                    // --- ยอดเต็ม 100% ใส่เข้าบับเบิ้ลเสมอ ---
+                    // --- การเปลี่ยนแปลงสำคัญ: นำกำไรเต็มๆ (100%) ใส่เข้าบับเบิ้ลเสมอ ---
                     if (!summaryMap[buyer]) {
                         summaryMap[buyer] = { name: buyer, profImg: tx.profImg, isAdmin: tx.isAdminOwner, totalProfit: 0 };
                     }
                     summaryMap[buyer].totalProfit += tx.totalProfit;
-                    if (currentRole === 'admin') grandTotal += tx.totalProfit;
+                    if (currentRole === 'admin') grandTotal += tx.totalProfit; // ยอดรวมผลรวมสุทธิก็คิดเต็ม 100% ด้วย
 
-                    // การคิด 50:50 เก็บไว้แสดงด้านล่าง
+                    // ส่วนการคิด 50:50 เก็บไว้แสดงด้านล่างเท่านั้น
                     if (tx.isHalfHalf) {
                         if (!halfHalfGroups[buyer]) {
                             halfHalfGroups[buyer] = { buyer: buyer, profImg: tx.profImg, totalProfit: 0 };
@@ -808,18 +798,10 @@
                 if(summaryKeys.length === 0) { 
                     summaryContainer.innerHTML = ''; 
                 } else {
-                    // จัดเรียง Bubble ตาม Order ในฐานข้อมูล
                     let sortedBuyers = summaryKeys.sort((a, b) => {
                         let aAdmin = summaryMap[a].isAdmin ? 1 : 0;
                         let bAdmin = summaryMap[b].isAdmin ? 1 : 0;
-                        if (aAdmin !== bAdmin) return bAdmin - aAdmin; // Admin first
-                        
-                        let userA = null; for(let k in appUsers) { if(appUsers[k].name === a) { userA = appUsers[k]; break; } }
-                        let userB = null; for(let k in appUsers) { if(appUsers[k].name === b) { userB = appUsers[k]; break; } }
-                        
-                        let orderA = (userA && typeof userA.order === 'number') ? userA.order : 999;
-                        let orderB = (userB && typeof userB.order === 'number') ? userB.order : 999;
-                        return orderA - orderB;
+                        return bAdmin - aAdmin; // Admin first
                     });
 
                     let summaryHTML = `<h3 class="text-xl font-black text-white text-center mb-6 drop-shadow-md">สรุปภาพรวมกำไร/ขาดทุน</h3>`;
@@ -834,18 +816,14 @@
                         let icon = data.isAdmin ? '👑' : '👤';
                         let titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';
                         
-                        // หา Username ที่แท้จริง เพื่อส่งไปฟังก์ชันปิดตาได้ตรงคน
-                        let userKey = null;
-                        for(let k in appUsers) { if(appUsers[k].name === buyer) { userKey = k; break; } }
-
-                        // ปุ่มลูกตา (แก้ไขแล้ว: ส่ง userKey แทนที่จะส่ง Display Name)
-                        let hideBtn = (currentRole === 'admin' && userKey) ? 
-                            `<button onclick="quickHideUser('${userKey}', event)" class="absolute -top-2 -right-2 bg-gray-800 text-gray-400 hover:text-red-400 w-6 h-6 rounded-full border border-gray-600 flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 z-20" title="ซ่อนจากหน้าแรก"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg></button>` : '';
+                        // ปุ่มลูกตาให้ Admin กดซ่อนได้ทันทีจากบับเบิ้ลหน้าแรก
+                        let hideBtn = currentRole === 'admin' ? 
+                            `<button onclick="quickHideUser('${buyer}', event)" class="absolute -top-2 -right-2 bg-gray-800 text-gray-400 hover:text-red-400 w-6 h-6 rounded-full border border-gray-600 flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95" title="ซ่อนจากหน้าแรก"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg></button>` : '';
 
                         summaryHTML += `
                             <div class="relative">
                                 ${hideBtn}
-                                <div class="bg-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-gray-700 shadow-xl transition-transform hover:scale-105 cursor-default relative z-10">
+                                <div class="bg-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-gray-700 shadow-xl transition-transform hover:scale-105 cursor-default">
                                     <img src="${data.profImg}" class="w-14 h-14 rounded-full object-cover border-2 ${data.isAdmin ? 'border-yellow-500' : 'border-blue-400'} bg-gray-800 shrink-0 shadow-inner">
                                     <div class="flex flex-col justify-center">
                                         <div class="${titleColor} text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">${icon}</span> ${data.name}</div>
@@ -882,19 +860,10 @@
                 if (halfBuyers.length === 0) {
                     halfContainer.innerHTML = '';
                 } else {
-                    // เรียงลำดับตาม Order แบบเดียวกับด้านบน
-                    let sortedHalfBuyers = halfBuyers.sort((a, b) => {
-                        let userA = null; for(let k in appUsers) { if(appUsers[k].name === a) { userA = appUsers[k]; break; } }
-                        let userB = null; for(let k in appUsers) { if(appUsers[k].name === b) { userB = appUsers[k]; break; } }
-                        let orderA = (userA && typeof userA.order === 'number') ? userA.order : 999;
-                        let orderB = (userB && typeof userB.order === 'number') ? userB.order : 999;
-                        return orderA - orderB;
-                    });
-
                     let halfHTML = `<div class="mt-14 w-full max-w-2xl mx-auto flex flex-col gap-10">`;
-                    halfHTML += `<div class="text-center"><span class="bg-blue-600/10 text-blue-400 px-4 py-1.5 rounded-full text-xs font-black border border-blue-500/20 shadow-inner">🤝 สรุปโครงการคนละครึ่ง (รวมเฉพาะการ์ดที่เข้าร่วม)</span></div>`;
+                    halfHTML += `<div class="text-center"><span class="bg-blue-600/10 text-blue-400 px-4 py-1.5 rounded-full text-xs font-black border border-blue-500/20 shadow-inner">🤝 สรุปโครงการคนละครึ่ง (รวมทุกรายการ)</span></div>`;
                     
-                    sortedHalfBuyers.forEach(buyer => {
+                    halfBuyers.forEach(buyer => {
                         let group = halfHalfGroups[buyer];
                         let halfShare = group.totalProfit / 2;
                         
@@ -907,7 +876,7 @@
                         let prefixShare = halfShare > 0 ? '+' : '';
 
                         halfHTML += `
-                            <div class="flex flex-col items-center justify-center cursor-default pb-8 ${sortedHalfBuyers.length > 1 ? 'border-b border-gray-800/50 last:border-0' : ''}">
+                            <div class="flex flex-col items-center justify-center cursor-default pb-8 ${halfBuyers.length > 1 ? 'border-b border-gray-800/50 last:border-0' : ''}">
                                 <div class="flex items-center justify-center gap-5 mb-5">
                                     <div class="flex -space-x-4">
                                         <img src="${getProfileImg(adminDisplayName)}" class="w-16 h-16 rounded-full border-[3px] border-[#0f172a] shadow-[0_0_15px_rgba(0,0,0,0.8)] z-10 object-cover bg-gray-800">
@@ -1093,18 +1062,18 @@
                         
                         <div class="grid grid-cols-2 gap-3 text-center mb-4">
                             <div class="bg-gray-800/90 rounded-2xl p-4 border border-gray-600">
-                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">ราคา ณ วันที่ซื้อ</p>
+                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">ราคา ณ.วันที่ซื้อ</p>
                                 <p class="font-black text-green-400 text-2xl md:text-3xl">${tx.buyprice.toLocaleString()}</p>
                             </div>
                             <div class="bg-gray-800/90 rounded-2xl p-4 border border-gray-600">
-                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">${isSim ? 'ราคาจำลอง' : 'ราคา ณ ปัจจุบัน'}</p>
+                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">${isSim ? 'ราคาจำลอง' : 'ราคา ณ.ปัจจุบัน'}</p>
                                 <p class="font-black text-yellow-400 text-2xl md:text-3xl">${effectivePrice.toLocaleString()}</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3 text-center mb-6">
                             <div class="bg-gray-800/90 rounded-2xl p-4 border border-gray-600 flex flex-col items-center justify-center">
-                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">ทอง (บ.) x ก้อน</p>
+                                <p class="text-[11px] md:text-xs text-gray-400 uppercase font-bold mb-1">น้ำหนักทอง (บ.) x ก้อน</p>
                                 <p class="font-black text-white text-xl md:text-2xl">${tx.weight} <span class="text-sm text-gray-400">x ${tx.qty}</span> = <span class="text-yellow-300">${tx.totalWeight}</span> บ.</p>
                             </div>
                             <div class="bg-gray-800/90 rounded-2xl p-4 border border-gray-600 flex flex-col items-center justify-center">
