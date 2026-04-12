@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0f172a" />
-    <title>พอร์ตทองคำ V6.18 (Overall Summary Added)</title>
+    <title>พอร์ตทองคำ V6.20 (Floating Half-Half Summary)</title>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -206,6 +206,7 @@
             <div id="guest-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
             
             <div id="overall-summary-container" class="mt-12"></div>
+            <div id="half-half-summary-container"></div>
         </div>
 
         <div id="view-manage-tx" class="view-section relative min-h-screen">
@@ -247,6 +248,11 @@
                         <div><label class="block text-xs text-gray-400 mb-1.5 font-bold pl-1">ค่าบล็อก/บาท</label><input required value="0" id="f_blockfee" type="number" /></div>
                     </div>
 
+                    <div class="mb-4 bg-blue-900/20 p-4 rounded-xl border border-blue-700/50 flex items-center gap-3 transition-colors hover:bg-blue-900/30">
+                        <input class="w-6 h-6 accent-blue-500 cursor-pointer shrink-0" id="f_is_half_half" type="checkbox" />
+                        <label class="text-sm text-blue-400 font-bold cursor-pointer select-none leading-tight" for="f_is_half_half">🤝 โครงการคนละครึ่ง<br><span class="text-xs text-gray-400 font-normal">แบ่งกำไร/ขาดทุน 50:50 กับ Admin</span></label>
+                    </div>
+
                     <div id="admin-only-checkbox-sec" class="mb-6 bg-yellow-900/20 p-4 rounded-xl border border-yellow-700/50 hidden items-center gap-3">
                         <input class="w-6 h-6 accent-yellow-500 cursor-pointer" id="f_is_admin" type="checkbox" />
                         <label class="text-sm text-yellow-500 font-bold cursor-pointer select-none" for="f_is_admin">👑 พอร์ต Admin (ซ่อนจากผู้ใช้ทั่วไป)</label>
@@ -269,7 +275,7 @@
             
             <p class="text-xs text-gray-400 font-bold mb-4 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-700 leading-relaxed">
                 💡 ติดดาวเพื่อให้อยู่บนสุด / กดลูกตาเพื่อซ่อนพอร์ตในหน้าแรก<br>
-                👆 แตะค้างที่ <span class="text-gray-500 font-bold text-sm">☰</span> แล้วลากขึ้น-ลง เพื่อจัดเรียงลำดับ
+                📊 กดกราฟเพื่อซ่อนจากสรุปภาพรวม / 👆 ลาก <span class="text-gray-500 font-bold text-sm">☰</span> เพื่อจัดเรียง
             </p>
             
             <div id="users-cards-container" class="flex flex-col gap-4">
@@ -277,7 +283,7 @@
 
             <div class="mt-8 pb-10 w-full">
                 <button onclick="openUserModal()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-3xl font-black text-lg shadow-[0_10px_30px_rgba(34,197,94,0.4)] transition-transform active:scale-95 flex justify-center items-center gap-2">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 100-2h-1V7z"></path></svg>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg>
                     เพิ่มผู้ใช้งานใหม่
                 </button>
             </div>
@@ -493,7 +499,7 @@
             renderData();
         }
 
-        function toggleAddTxForm(show) { const container = document.getElementById('add-tx-form-container'); const btn = document.getElementById('btn-show-add-tx'); if(show) { container.classList.remove('form-collapse'); container.classList.add('form-expand'); btn.classList.add('hidden'); document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; document.getElementById('btn-submit').innerText = "บันทึกข้อมูล"; } else { container.classList.remove('form-expand'); container.classList.add('form-collapse'); btn.classList.remove('hidden'); document.getElementById('edit_id').value = ""; document.getElementById('addForm').reset(); document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; if(currentRole === 'user') document.getElementById('f_buyer').value = currentUser.name; } }
+        function toggleAddTxForm(show) { const container = document.getElementById('add-tx-form-container'); const btn = document.getElementById('btn-show-add-tx'); if(show) { container.classList.remove('form-collapse'); container.classList.add('form-expand'); btn.classList.add('hidden'); document.getElementById('form-title').innerText = `เพิ่มรายการใหม่`; document.getElementById('btn-submit').innerText = "บันทึกข้อมูล"; document.getElementById('f_is_half_half').checked = false; } else { container.classList.remove('form-expand'); container.classList.add('form-collapse'); btn.classList.remove('hidden'); document.getElementById('edit_id').value = ""; document.getElementById('addForm').reset(); document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; document.getElementById('form_prof_preview').src = "https://ui-avatars.com/api/?name=User&background=334155&color=fff"; if(currentRole === 'user') document.getElementById('f_buyer').value = currentUser.name; } }
 
         // --- 4. LOGIN LOGIC ---
         function showLoginModal() { document.getElementById('login-modal').style.display = 'flex'; switchLoginTab('pass'); }
@@ -513,14 +519,21 @@
 
         function toggleFav(username) { if(!db || !appUsers[username]) return; let isF = appUsers[username].isFavorite ? false : true; db.ref('app_users/' + username).update({ isFavorite: isF }); }
         function toggleVis(username) { if(!db || !appUsers[username]) return; let isH = appUsers[username].isHidden ? false : true; db.ref('app_users/' + username).update({ isHidden: isH }); }
+        function toggleSummaryVis(username) { if(!db || !appUsers[username]) return; let isH = appUsers[username].isHiddenFromSummary ? false : true; db.ref('app_users/' + username).update({ isHiddenFromSummary: isH }).then(() => { showWarningToast(isH ? 'ซ่อนบัญชีนี้จากสรุปภาพรวมแล้ว' : 'แสดงบัญชีนี้ในสรุปภาพรวมแล้ว'); }); }
 
         function renderUsersCards() {
             const container = document.getElementById('users-cards-container'); if(!container) return; container.innerHTML = '';
             const sortedUsers = Object.entries(appUsers).map(([username, data]) => ({ username, ...data })).sort((a, b) => { if (a.isFavorite && !b.isFavorite) return -1; if (!a.isFavorite && b.isFavorite) return 1; let oA = (typeof a.order === 'number') ? a.order : 999; let oB = (typeof b.order === 'number') ? b.order : 999; return oA - oB; });
             sortedUsers.forEach((u, index) => {
                 const profImg = getProfileImg(u.name); const isOnline = (currentUser && currentUser.username === u.username) || false; const statusColor = isOnline ? '#22c55e' : '#6b7280'; const statusText = isOnline ? 'ออนไลน์' : 'ออฟไลน์';
+                
                 let starSvg = u.isFavorite ? `<svg class="w-6 h-6 text-yellow-400 fill-current drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>` : `<svg class="w-6 h-6 text-gray-600 hover:text-gray-400" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>`;
                 let eyeSvg = u.isHidden ? `<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg>` : `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
+                
+                let chartSvg = u.isHiddenFromSummary ?
+                    `<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>` : 
+                    `<svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>`;
+
                 container.innerHTML += `
                     <div data-username="${u.username}" class="user-drag-item bg-[#1a1c23] rounded-[1.5rem] p-4 flex items-center justify-between shadow-lg border border-gray-800/50 cursor-grab active:cursor-grabbing">
                         <div class="flex items-center gap-3">
@@ -532,8 +545,9 @@
                                 <div class="flex items-center gap-1.5 mt-1 pointer-events-none"><div class="w-2.5 h-2.5 rounded-full" style="background-color: ${statusColor};"></div><span class="text-xs font-bold" style="color: ${statusColor};">${statusText}</span></div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 ml-2">
+                        <div class="flex items-center gap-1.5 md:gap-2 ml-2 flex-wrap justify-end">
                             <button onclick="toggleVis('${u.username}')" class="p-2 hover:scale-110 transition ${u.isHidden ? 'bg-red-500/10' : 'bg-green-500/10'} rounded-full" title="แสดง/ซ่อนพอร์ตในหน้าแรก">${eyeSvg}</button>
+                            <button onclick="toggleSummaryVis('${u.username}')" class="p-2 hover:scale-110 transition ${u.isHiddenFromSummary ? 'bg-red-500/10' : 'bg-yellow-500/10'} rounded-full" title="แสดง/ซ่อนในสรุปภาพรวมกำไร/ขาดทุน">${chartSvg}</button>
                             <button onclick="editUser('${u.username}')" class="p-2 hover:scale-110 transition bg-blue-500/10 rounded-full"><svg class="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
                             <button onclick="deleteUser('${u.username}')" class="p-2 hover:scale-110 transition bg-red-500/10 rounded-full"><svg class="w-5 h-5 text-[#ef4444]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>
                         </div>
@@ -555,18 +569,18 @@
             if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
             if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
             
-            let userOrder = 999; let isFav = false; let isHid = false;
-            if (origUser && appUsers[origUser]) { if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; isFav = appUsers[origUser].isFavorite || false; isHid = appUsers[origUser].isHidden || false; } 
+            let userOrder = 999; let isFav = false; let isHid = false; let isHidSum = false;
+            if (origUser && appUsers[origUser]) { if(typeof appUsers[origUser].order === 'number') userOrder = appUsers[origUser].order; isFav = appUsers[origUser].isFavorite || false; isHid = appUsers[origUser].isHidden || false; isHidSum = appUsers[origUser].isHiddenFromSummary || false; } 
             else { let maxOrder = -1; for(let k in appUsers) { if(typeof appUsers[k].order === 'number' && appUsers[k].order > maxOrder) maxOrder = appUsers[k].order; } userOrder = maxOrder + 1; }
 
             if(origUser && origUser !== username) { db.ref('app_users/' + origUser).remove(); }
-            db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder, isFavorite: isFav, isHidden: isHid }).then(() => { showWarningToast('✅ บันทึกข้อมูลสำเร็จ!'); closeUserModal(); });
+            db.ref('app_users/' + username).update({ password: password, name: name, order: userOrder, isFavorite: isFav, isHidden: isHid, isHiddenFromSummary: isHidSum }).then(() => { showWarningToast('✅ บันทึกข้อมูลสำเร็จ!'); closeUserModal(); });
         }
         function deleteUser(username) { if(confirm(`ยืนยันการลบผู้ใช้ ${username} ถาวร?`)) db.ref('app_users/' + username).remove(); }
 
         // --- 7. TRANSACTION HELPERS ---
-        function saveTransaction(e) { e.preventDefault(); const editId = document.getElementById('edit_id').value; let buyerName = document.getElementById('f_buyer').value.trim(); let isAdminOwner = document.getElementById('f_is_admin').checked; if (currentRole === 'user') { buyerName = currentUser.name; isAdminOwner = false; } const base64Img = document.getElementById('form_prof_base64').value; if (base64Img) db.ref('user_profiles/' + buyerName).set(base64Img); const payload = { date: document.getElementById('f_date').value, shop: document.getElementById('f_shop').value, buyer: buyerName, weight: parseFloat(document.getElementById('f_weight').value), qty: parseInt(document.getElementById('f_qty').value), buyprice: parseFloat(document.getElementById('f_buyprice').value), blockfee: parseFloat(document.getElementById('f_blockfee').value), isAdminOwner: isAdminOwner }; if (editId) { db.ref('gold_portfolio/' + editId).update(payload).then(() => toggleAddTxForm(false)); } else { db.ref('gold_portfolio').push(payload).then(() => toggleAddTxForm(false)); } }
-        function prepareEdit(id) { const item = transactionsData.find(tx => tx.id === id); if(item) { document.getElementById('edit_id').value = item.id; document.getElementById('f_date').value = item.date; document.getElementById('f_shop').value = item.shop; document.getElementById('f_buyer').value = item.buyer; document.getElementById('f_weight').value = item.weight; document.getElementById('f_qty').value = item.qty; document.getElementById('f_buyprice').value = item.buyprice; document.getElementById('f_blockfee').value = item.blockfee; document.getElementById('f_is_admin').checked = item.isAdminOwner || false; document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; checkExistingProfile(item.buyer); document.getElementById('form-title').innerText = `แก้ไขรายการ`; document.getElementById('btn-submit').innerText = "อัปเดตข้อมูล"; toggleAddTxForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
+        function saveTransaction(e) { e.preventDefault(); const editId = document.getElementById('edit_id').value; let buyerName = document.getElementById('f_buyer').value.trim(); let isAdminOwner = document.getElementById('f_is_admin').checked; if (currentRole === 'user') { buyerName = currentUser.name; isAdminOwner = false; } const isHalfHalf = document.getElementById('f_is_half_half').checked; const base64Img = document.getElementById('form_prof_base64').value; if (base64Img) db.ref('user_profiles/' + buyerName).set(base64Img); const payload = { date: document.getElementById('f_date').value, shop: document.getElementById('f_shop').value, buyer: buyerName, weight: parseFloat(document.getElementById('f_weight').value), qty: parseInt(document.getElementById('f_qty').value), buyprice: parseFloat(document.getElementById('f_buyprice').value), blockfee: parseFloat(document.getElementById('f_blockfee').value), isAdminOwner: isAdminOwner, isHalfHalf: isHalfHalf }; if (editId) { db.ref('gold_portfolio/' + editId).update(payload).then(() => toggleAddTxForm(false)); } else { db.ref('gold_portfolio').push(payload).then(() => toggleAddTxForm(false)); } }
+        function prepareEdit(id) { const item = transactionsData.find(tx => tx.id === id); if(item) { document.getElementById('edit_id').value = item.id; document.getElementById('f_date').value = item.date; document.getElementById('f_shop').value = item.shop; document.getElementById('f_buyer').value = item.buyer; document.getElementById('f_weight').value = item.weight; document.getElementById('f_qty').value = item.qty; document.getElementById('f_buyprice').value = item.buyprice; document.getElementById('f_blockfee').value = item.blockfee; document.getElementById('f_is_admin').checked = item.isAdminOwner || false; document.getElementById('f_is_half_half').checked = item.isHalfHalf || false; document.getElementById('form_prof_base64').value = ""; document.getElementById('form_prof_file').value = ""; checkExistingProfile(item.buyer); document.getElementById('form-title').innerText = `แก้ไขรายการ`; document.getElementById('btn-submit').innerText = "อัปเดตข้อมูล"; toggleAddTxForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
         function deleteTx(id) { if(confirm("ลบรายการนี้ถาวร?")) db.ref('gold_portfolio/' + id).remove(); }
 
         // --- 8. RENDER DATA CARDS ---
@@ -622,7 +636,8 @@
                     let profitPerBahtLabel = tx.profitPerBaht >= 0 ? 'กำไรเฉลี่ยต่อบาท' : 'ขาดทุนเฉลี่ยต่อบาท';
 
                     let dashCard = `
-                        <div onclick="openModal(${index})" class="app-card ${bgTheme} rounded-3xl p-4 border relative overflow-hidden text-white group">
+                        <div onclick="openModal(${index})" class="app-card ${bgTheme} rounded-[1.5rem] p-4 border relative overflow-hidden text-white group">
+                            ${tx.isHalfHalf ? '<div class="absolute top-0 right-0 bg-blue-600/30 px-3 py-1 rounded-bl-2xl text-blue-200 text-[10px] font-black border-b border-l border-blue-500/50 shadow-lg backdrop-blur-md z-20 flex items-center gap-1"><span class="emoji text-xs">🤝</span> คนละครึ่ง</div>' : ''}
                             <div class="flex items-center gap-3 mb-4 relative z-10 mt-1">
                                 <div class="relative inline-block shrink-0"><img src="${tx.profImg}" class="w-16 h-16 rounded-full border-2 border-white object-cover shadow-lg bg-gray-800">${isAdmin ? '<div class="absolute -bottom-1 -right-1 text-xl drop-shadow-md emoji z-20">👑</div>' : ''}</div>
                                 <div class="flex flex-col"><p class="font-black text-2xl tracking-tight leading-none mb-1">${tx.buyer}</p><span class="bg-black/30 px-2.5 py-1 rounded-lg text-[11px] font-bold emoji inline-block w-max">📅 ${tx.date}</span></div>
@@ -655,13 +670,15 @@
                                 <div class="text-right"><p class="text-[11px] md:text-xs text-white/80 uppercase font-bold mb-0.5">${profitLabel}</p><p class="font-black text-2xl md:text-3xl drop-shadow-md ${pCol}">${tx.totalProfit >= 0 ? '+' : ''}${tx.totalProfit.toLocaleString()}</p></div>
                             </div>
                         </div>
-                    `; dashboardContainer.innerHTML += dashCard;
+                    `;
+                    dashboardContainer.innerHTML += dashCard;
                 }
 
                 let txCard = `
                     <div class="bg-gray-800 p-4 rounded-3xl border border-gray-700 shadow-md relative flex flex-col gap-3">
-                        ${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50">Admin Port</div>' : ''}
-                        <div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-1">
+                        ${isAdmin ? '<div class="absolute top-0 right-0 bg-yellow-600/20 px-3 py-1 rounded-bl-xl text-yellow-500 text-[10px] font-bold border-b border-l border-yellow-600/50 z-10">Admin Port</div>' : ''}
+                        ${tx.isHalfHalf ? '<div class="absolute top-0 left-0 bg-blue-600/20 px-3 py-1 rounded-br-xl text-blue-400 text-[10px] font-bold border-b border-r border-blue-600/50 z-10">🤝 โครงการคนละครึ่ง</div>' : ''}
+                        <div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-${tx.isHalfHalf || isAdmin ? '4' : '1'}">
                             <div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><p class="text-[10px] text-gray-500 mt-1">${tx.date}</p></div></div>
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-sm bg-black/30 p-3 rounded-xl border border-white/5">
@@ -681,78 +698,132 @@
 
             // --- SUMMARY SECTION ---
             const summaryContainer = document.getElementById('overall-summary-container');
+            const halfContainer = document.getElementById('half-half-summary-container');
+
             if (currentViewList.length === 0) {
                 summaryContainer.innerHTML = '';
+                halfContainer.innerHTML = '';
             } else {
                 let summaryMap = {};
                 let grandTotal = 0;
+                let grandHalfHalfTotal = 0;
+                let hasHalfHalf = false;
 
                 currentViewList.forEach(tx => {
                     let buyer = tx.buyer;
-                    if (!summaryMap[buyer]) {
-                        summaryMap[buyer] = {
-                            name: buyer,
-                            profImg: tx.profImg,
-                            isAdmin: tx.isAdminOwner,
-                            totalProfit: 0
-                        };
+                    let isUserHiddenFromSummary = false;
+                    
+                    let userObj = null;
+                    for(let key in appUsers) { if(appUsers[key].name === buyer) userObj = appUsers[key]; }
+                    if (userObj && userObj.isHiddenFromSummary) isUserHiddenFromSummary = true;
+
+                    // ถ้าแอดมินปิดตาสรุปภาพรวม ก็ข้ามการคำนวณของตานี้ไป
+                    if (currentRole === 'admin' && isUserHiddenFromSummary && !tx.isAdminOwner) {
+                        return; 
                     }
-                    summaryMap[buyer].totalProfit += tx.totalProfit;
-                    grandTotal += tx.totalProfit;
+
+                    if (tx.isHalfHalf) {
+                        grandHalfHalfTotal += tx.totalProfit;
+                        hasHalfHalf = true;
+                    } else {
+                        // แบบปกติ (บับเบิ้ล)
+                        if (!summaryMap[buyer]) {
+                            summaryMap[buyer] = { name: buyer, profImg: tx.profImg, isAdmin: tx.isAdminOwner, totalProfit: 0 };
+                        }
+                        summaryMap[buyer].totalProfit += tx.totalProfit;
+                        grandTotal += tx.totalProfit;
+                    }
                 });
 
+                // วาดสรุปแบบ Bubble (ปกติ)
                 let summaryKeys = Object.keys(summaryMap);
-                let sortedBuyers = summaryKeys.sort((a, b) => {
-                    let aAdmin = summaryMap[a].isAdmin ? 1 : 0;
-                    let bAdmin = summaryMap[b].isAdmin ? 1 : 0;
-                    return bAdmin - aAdmin; // Admin first
-                });
+                if(summaryKeys.length === 0) { 
+                    summaryContainer.innerHTML = ''; 
+                } else {
+                    let sortedBuyers = summaryKeys.sort((a, b) => {
+                        let aAdmin = summaryMap[a].isAdmin ? 1 : 0;
+                        let bAdmin = summaryMap[b].isAdmin ? 1 : 0;
+                        return bAdmin - aAdmin; // Admin first
+                    });
 
-                let summaryHTML = `<h3 class="text-xl font-black text-white text-center mb-6 drop-shadow-md">สรุปภาพรวมกำไร/ขาดทุน</h3>`;
-                summaryHTML += `<div class="flex flex-wrap justify-center gap-4">`;
+                    let summaryHTML = `<h3 class="text-xl font-black text-white text-center mb-6 drop-shadow-md">สรุปภาพรวมกำไร/ขาดทุน</h3>`;
+                    summaryHTML += `<div class="flex flex-wrap justify-center gap-4">`;
 
-                sortedBuyers.forEach(buyer => {
-                    let data = summaryMap[buyer];
-                    let isSim = simulatedGoldPrice !== null;
-                    let pCol = data.totalProfit >= 0 ? 'text-green-400' : 'text-red-400';
-                    if (isSim && data.totalProfit >= 0) pCol = 'text-yellow-300'; // Match sim colors
-                    
-                    let prefix = data.totalProfit > 0 ? '+' : '';
-                    let icon = data.isAdmin ? '👑' : '👤';
-                    let titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';
-                    
-                    summaryHTML += `
-                        <div class="bg-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-gray-700 shadow-xl transition-transform hover:scale-105 cursor-default">
-                            <img src="${data.profImg}" class="w-14 h-14 rounded-full object-cover border-2 ${data.isAdmin ? 'border-yellow-500' : 'border-blue-400'} bg-gray-800 shrink-0 shadow-inner">
-                            <div class="flex flex-col justify-center">
-                                <div class="${titleColor} text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">${icon}</span> ${data.name}</div>
-                                <div class="text-xl md:text-2xl font-black ${pCol} leading-none tracking-tight">${prefix}${data.totalProfit.toLocaleString()}</div>
+                    sortedBuyers.forEach(buyer => {
+                        let data = summaryMap[buyer];
+                        let isSim = simulatedGoldPrice !== null;
+                        let pCol = data.totalProfit >= 0 ? 'text-green-400' : 'text-red-400';
+                        if (isSim && data.totalProfit >= 0) pCol = 'text-yellow-300';
+                        
+                        let prefix = data.totalProfit > 0 ? '+' : '';
+                        let icon = data.isAdmin ? '👑' : '👤';
+                        let titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';
+                        
+                        summaryHTML += `
+                            <div class="bg-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-gray-700 shadow-xl transition-transform hover:scale-105 cursor-default">
+                                <img src="${data.profImg}" class="w-14 h-14 rounded-full object-cover border-2 ${data.isAdmin ? 'border-yellow-500' : 'border-blue-400'} bg-gray-800 shrink-0 shadow-inner">
+                                <div class="flex flex-col justify-center">
+                                    <div class="${titleColor} text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">${icon}</span> ${data.name}</div>
+                                    <div class="text-xl md:text-2xl font-black ${pCol} leading-none tracking-tight">${prefix}${data.totalProfit.toLocaleString()}</div>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
 
-                if (sortedBuyers.length > 1 && currentRole === 'admin') {
-                    let isSim = simulatedGoldPrice !== null;
-                    let gtCol = grandTotal >= 0 ? 'text-green-400' : 'text-red-400';
-                    if (isSim && grandTotal >= 0) gtCol = 'text-yellow-300';
-                    let gtPrefix = grandTotal > 0 ? '+' : '';
-                    
-                    summaryHTML += `
-                        <div class="bg-gradient-to-r from-gray-800 to-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-yellow-500/30 shadow-xl transition-transform hover:scale-105 cursor-default mt-2 w-full max-w-[300px] mx-auto md:mt-0 md:w-auto md:max-w-none">
-                            <div class="w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
-                                <span class="text-2xl emoji">🪙</span>
+                    if (sortedBuyers.length > 1 && currentRole === 'admin') {
+                        let isSim = simulatedGoldPrice !== null;
+                        let gtCol = grandTotal >= 0 ? 'text-green-400' : 'text-red-400';
+                        if (isSim && grandTotal >= 0) gtCol = 'text-yellow-300';
+                        let gtPrefix = grandTotal > 0 ? '+' : '';
+                        
+                        summaryHTML += `
+                            <div class="bg-gradient-to-r from-gray-800 to-[#1e2330] rounded-full pl-2 pr-6 py-2 flex items-center gap-4 border border-yellow-500/30 shadow-xl transition-transform hover:scale-105 cursor-default mt-2 w-full max-w-[300px] mx-auto md:mt-0 md:w-auto md:max-w-none">
+                                <div class="w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
+                                    <span class="text-2xl emoji">🪙</span>
+                                </div>
+                                <div class="flex flex-col justify-center">
+                                    <div class="text-yellow-400 text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">🌟</span> ผลรวมสุทธิ</div>
+                                    <div class="text-xl md:text-2xl font-black ${gtCol} leading-none tracking-tight">${gtPrefix}${grandTotal.toLocaleString()}</div>
+                                </div>
                             </div>
-                            <div class="flex flex-col justify-center">
-                                <div class="text-yellow-400 text-[11px] font-bold flex items-center gap-1.5 mb-0.5"><span class="emoji">🌟</span> ผลรวมสุทธิ</div>
-                                <div class="text-xl md:text-2xl font-black ${gtCol} leading-none tracking-tight">${gtPrefix}${grandTotal.toLocaleString()}</div>
+                        `;
+                    }
+                    summaryHTML += `</div>`;
+                    summaryContainer.innerHTML = summaryHTML;
+                }
+
+                // วาดสรุปคนละครึ่ง (Floating ไร้กรอบ)
+                if (!hasHalfHalf) {
+                    halfContainer.innerHTML = '';
+                } else {
+                    let halfShare = grandHalfHalfTotal / 2;
+                    let isSim = simulatedGoldPrice !== null;
+                    
+                    let colTotal = grandHalfHalfTotal >= 0 ? 'text-green-400' : 'text-red-400';
+                    let colShare = halfShare >= 0 ? 'text-green-400' : 'text-red-400';
+                    
+                    if (isSim && grandHalfHalfTotal >= 0) colTotal = 'text-yellow-300';
+                    if (isSim && halfShare >= 0) colShare = 'text-yellow-300';
+
+                    halfContainer.innerHTML = `
+                        <div class="mt-12 text-center pb-4 cursor-default">
+                            <p class="text-sm font-black text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.6)] mb-3 flex items-center justify-center gap-2">
+                                <span class="text-xl emoji">🤝</span> สรุปยอดโครงการคนละครึ่ง (รวมทุกรายการ)
+                            </p>
+                            <div class="flex justify-center items-end gap-6 md:gap-10">
+                                <div class="text-right">
+                                    <span class="block text-[11px] text-gray-400 uppercase font-bold tracking-wider mb-1">กำไร/ขาดทุนรวม</span>
+                                    <span class="text-2xl md:text-3xl font-black ${colTotal} drop-shadow-md leading-none tracking-tight">${grandHalfHalfTotal >= 0 ? '+' : ''}${grandHalfHalfTotal.toLocaleString()}</span>
+                                </div>
+                                <div class="w-px h-10 bg-gray-700/50 rounded-full"></div>
+                                <div class="text-left">
+                                    <span class="block text-[11px] text-yellow-500 uppercase font-bold tracking-wider mb-1 flex items-center gap-1"><span class="emoji">👑</span> ส่วนแบ่ง Admin</span>
+                                    <span class="text-3xl md:text-4xl font-black ${colShare} drop-shadow-lg leading-none tracking-tight">${halfShare >= 0 ? '+' : ''}${halfShare.toLocaleString()}</span>
+                                </div>
                             </div>
                         </div>
                     `;
                 }
-
-                summaryHTML += `</div>`;
-                summaryContainer.innerHTML = summaryHTML;
             }
             // --- END SUMMARY SECTION ---
         }
@@ -845,7 +916,7 @@
             if(activeModalIndex === -1 || currentViewList.length === 0) return; let tx = currentViewList[activeModalIndex]; 
             
             let isSim = simulatedGoldPrice !== null;
-            let effectivePrice = isSim ? simulatedGoldPrice : currentGoldBuyPrice; // <-- เพิ่มตัวแปรที่หายไปตรงนี้ครับ
+            let effectivePrice = isSim ? simulatedGoldPrice : currentGoldBuyPrice;
             let bgTheme = tx.totalProfit >= 0 ? 'bg-gradient-to-b from-gray-800 to-gray-900 border-green-500/30' : 'bg-gradient-to-b from-gray-800 to-gray-900 border-red-500/30'; 
             if (isSim) bgTheme = 'bg-gradient-to-b from-purple-900 to-indigo-900 border-purple-500/50';
 
