@@ -582,7 +582,7 @@
                 document.getElementById('menu-manage-users').style.display = 'flex'; document.getElementById('menu-admin-settings').style.display = 'flex'; adminCheckboxSec.style.display = 'flex'; halfHalfSec.style.display = 'flex'; document.getElementById('f_buyer').readOnly = false; btnHideAdmin.classList.remove('hidden'); titleSec.innerHTML = '';
             } else if (currentRole === 'user') {
                 document.getElementById('menu-manage-users').style.display = 'none'; document.getElementById('menu-admin-settings').style.display = 'none'; adminCheckboxSec.style.display = 'none'; halfHalfSec.style.display = 'none';
-                document.getElementById('f_buyer').value = currentUser.name; document.getElementById('f_buyer').readOnly = true; btnHideAdmin.classList.add('hidden'); checkExistingProfile(currentUser.name); titleSec.innerHTML = `ของคุณ <span class="text-yellow-400">(${currentUser.name})</span>`;
+                document.getElementById('f_buyer').value = currentUser.name; document.getElementById('f_buyer').readOnly = true; btnHideAdmin.classList.add('hidden'); checkExistingProfile(currentUser.name); titleSec.innerHTML = `ของ <span class="text-yellow-400">(${currentUser.name})</span>`;
             } else {
                 btnHamburger.style.display = 'none'; btnHideAdmin.classList.add('hidden'); showLoginModal(); titleSec.innerHTML = `<span class="text-gray-400 text-sm block mt-1">(กรุณาล็อกอิน)</span>`;
             }
