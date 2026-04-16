@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta content="dark" name="color-scheme" />
     <meta content="#0f172a" name="theme-color" />
-    <title>พอร์ตทองคำ V6.22 (มีประวัติราคา)</title>
+    <title>พอร์ตทองคำ V6.30 (Bot Synced)</title>
     <meta content="yes" name="mobile-web-app-capable" />
     <meta content="yes" name="apple-mobile-web-app-capable" />
     <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" />
@@ -165,12 +165,15 @@
             <div class="bg-gradient-to-br from-gray-900 to-black rounded-[2rem] shadow-2xl mb-8 border border-gray-800 overflow-hidden relative">
                 <div class="text-center py-4 border-b border-gray-800/50 bg-black/40 relative">
                     <h2 class="text-xl font-black text-yellow-500">ประกาศราคาสมาคมฯ</h2>
-                    <div class="flex flex-col items-center justify-center gap-2 mt-2">
-                        <p class="text-sm text-yellow-300 font-bold bg-gray-800/80 inline-block px-4 py-1 rounded-full border border-gray-600">อัปเดต: <span id="api-date">--</span> | <span id="api-time">--</span></p>
-                        <button onclick="openHistoryModal()" title="ดูประวัติราคา" class="text-sm text-blue-400 font-bold bg-blue-900/40 px-4 py-1.5 rounded-full border border-blue-500/50 shadow-lg transition flex items-center justify-center gap-2 active:scale-95 hover:bg-blue-800/60">
-                            <span id="daily-update-count">อัปเดต 0 ครั้ง</span>
-                            <span class="text-base emoji">↕️</span>
-                        </button>
+                    <div class="flex items-center justify-center mt-3 mx-2">
+                        <div class="flex flex-wrap items-center justify-center gap-2 bg-gray-800/80 px-4 py-2 rounded-full border border-gray-600 shadow-inner">
+                            <p class="text-sm text-yellow-300 font-bold whitespace-nowrap">อัปเดต: <span id="api-date">--</span> | <span id="api-time">--</span> น.</p>
+                            <div class="hidden sm:block w-px h-4 bg-gray-500"></div>
+                            <button onclick="openHistoryModal()" title="ดูประวัติราคา" class="text-xs text-blue-400 font-black bg-blue-900/50 px-3 py-1.5 rounded-full border border-blue-500/50 shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 hover:bg-blue-800/70 whitespace-nowrap">
+                                <span id="daily-update-count">อัปเดต 0 ครั้ง</span>
+                                <span class="text-sm emoji">↕️</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="border-b border-gray-800 p-4 bg-gradient-to-r from-yellow-900/10 to-transparent">
@@ -298,7 +301,7 @@
             <div class="flex flex-col gap-4" id="users-cards-container"></div>
             <div class="mt-8 pb-10 w-full">
                 <button class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-3xl font-black text-lg shadow-[0_10px_30px_rgba(34,197,94,0.4)] transition-transform active:scale-95 flex justify-center items-center gap-2" onclick="openUserModal()">
-                    <svg viewbox="0 0 20 20" fill="currentColor" class="w-6 h-6"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg> เพิ่มผู้ใช้งานใหม่
+                    <svg viewbox="0 0 20 20" fill="currentColor" class="w-6 h-6"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg> เพิ่มผู้ใช้งานใหม่
                 </button>
             </div>
         </div>
@@ -485,7 +488,6 @@
                 loadData(); 
                 loadPriceHistory();
             }
-            fetchGoldFromSheet(); setInterval(fetchGoldFromSheet, 1000); 
         }
 
         function loadPriceHistory() {
@@ -498,6 +500,48 @@
                 updateDailyCount();
                 if(document.getElementById('history-modal').style.display === 'flex') {
                     fetchHistoryByDate();
+                }
+
+                // อัปเดตราคาแสดงผลหน้าจอจากข้อมูลล่าสุดใน Firebase (มาจากบอท)
+                if (allPriceHistory.length > 0) {
+                    let latest = allPriceHistory[0];
+                    let newPrice = latest.price || 0;
+                    let priceChanged = (newPrice !== currentGoldBuyPrice);
+                    
+                    if (newPrice > 0) {
+                        currentGoldBuyPrice = newPrice;
+                        
+                        document.getElementById('api-date').innerText = latest.date || '--';
+                        document.getElementById('api-time').innerText = latest.time || '--';
+                        
+                        let bBuyStr = newPrice.toLocaleString();
+                        let bSellStr = (latest.barSell || 0).toLocaleString();
+                        let oBuyStr = (latest.ornBuy || 0).toLocaleString();
+                        let oSellStr = (latest.ornSell || 0).toLocaleString();
+                        let chgStr = latest.changeStr || '';
+                        
+                        let priceColorClass = 'text-white';
+                        if (chgStr) {
+                            let cel = document.getElementById('api-change');
+                            let chgNum = parseFloat(chgStr.replace(/,/g, ''));
+                            if(chgNum > 0) {
+                                priceColorClass = 'text-green-400';
+                                cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`;
+                            } else if(chgNum < 0) {
+                                priceColorClass = 'text-red-400';
+                                cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`;
+                            } else {
+                                cel.innerText = chgStr;
+                            }
+                        }
+                        
+                        [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => {
+                            let el = document.getElementById(item.id);
+                            if(el && item.val !== '0') { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; }
+                        });
+                        
+                        if(priceChanged && transactionsData.length > 0) renderData();
+                    }
                 }
             });
         }
@@ -734,90 +778,6 @@
             }
         }
 
-        async function fetchGoldFromSheet() { 
-            const sheetId = '1Edz3ycTQofuWH9KvV7mKWNh9yzDjDFmCYglD5MSyn3E'; 
-            const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0&t=${new Date().getTime()}`; 
-            try { 
-                const response = await fetch(csvUrl); 
-                if (!response.ok) return; 
-                const data = await response.text(); 
-                const parseCSV = (str) => { 
-                    let res = [], cur = '', inQ = false; 
-                    for (let i = 0; i < str.length; i++) { 
-                        let c = str[i]; 
-                        if (c === '"') inQ = !inQ; 
-                        else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; } 
-                        else cur += c; 
-                    } 
-                    res.push(cur.trim()); 
-                    return res; 
-                }; 
-                const rows = data.split('\n').map(parseCSV); 
-                const cleanNum = (str) => str ? parseFloat(str.replace(/[^0-9.-]+/g, '')) : 0; 
-                
-                let fetchDate = rows[2] ? rows[2][17] : '--';
-                let fetchTime = rows[2] ? rows[2][19] : '--';
-                
-                document.getElementById('api-date').innerText = fetchDate; 
-                document.getElementById('api-time').innerText = fetchTime; 
-                updateDailyCount(); // อัปเดตตัวเลขการนับเสมอเมื่อเวลาเดิน
-                
-                let bBuyStr = rows[4] ? rows[4][18] : ''; 
-                let bSellStr = rows[4] ? rows[4][19] : ''; 
-                let oBuyStr = rows[6] ? rows[6][18] : ''; 
-                let oSellStr = rows[6] ? rows[6][19] : ''; 
-                let chgStr = rows[3] && rows[3][20] ? rows[3][20].trim() : (rows[4] && rows[4][20] ? rows[4][20].trim() : (rows[2] && rows[2][20] ? rows[2][20].trim() : '')); 
-                
-                let newPrice = cleanNum(bBuyStr); 
-                let priceChanged = (newPrice !== currentGoldBuyPrice); 
-                
-                if (newPrice > 0 && fetchDate !== '--' && fetchTime !== '--' && isHistoryLoaded) {
-                    // ป้องกันการเซฟซ้ำโดยเช็คจาก history ที่โหลดมาแล้ว
-                    let isDuplicate = allPriceHistory.some(h => h.date === fetchDate && h.time === fetchTime);
-                    
-                    if (!isDuplicate && (!isFirstLoad || allPriceHistory.length > 0)) {
-                        let todayISO = formatToISODate(new Date());
-                        if(db) {
-                            db.ref('gold_price_history').push({
-                                price: newPrice,
-                                barSell: cleanNum(bSellStr),
-                                ornBuy: cleanNum(oBuyStr),
-                                ornSell: cleanNum(oSellStr),
-                                changeStr: chgStr,
-                                date: fetchDate,
-                                time: fetchTime,
-                                isoDate: todayISO,
-                                timestamp: firebase.database.ServerValue.TIMESTAMP
-                            });
-                        }
-                    }
-                    if(priceChanged) {
-                        currentGoldBuyPrice = newPrice;
-                        isFirstLoad = false;
-                    }
-                }
-                
-                let priceColorClass = 'text-white'; 
-                if (chgStr) { 
-                    let cel = document.getElementById('api-change'); 
-                    let chgNum = parseFloat(chgStr.replace(/,/g, '')); 
-                    if(chgNum > 0) { 
-                        priceColorClass = 'text-green-400'; 
-                        cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; 
-                    } else if(chgNum < 0) { 
-                        priceColorClass = 'text-red-400'; 
-                        cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; 
-                    } else { 
-                        cel.innerText = chgStr; 
-                    } 
-                } 
-                [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { 
-                    let el = document.getElementById(item.id); 
-                    if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; } 
-                }); 
-                if(priceChanged && transactionsData.length > 0) renderData(); 
-            } catch (error) {} 
-        }
         function loadProfiles() { db.ref('user_profiles').on('value', snap => { userProfiles = snap.val() || {}; updateUIRole(); if(transactionsData.length > 0) renderData(); if(currentView === 'manage-users') renderUsersCards(); }); }
         function getProfileImg(name) { return userProfiles[name] || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=facc15&color=000&rounded=true&bold=true`; }
         function checkExistingProfile(name) { if(name && userProfiles[name]) document.getElementById('form_prof_preview').src = userProfiles[name]; else document.getElementById('form_prof_preview').src = `https://ui-avatars.com/api/?name=${name || 'User'}&background=334155&color=fff`; }
@@ -968,10 +928,9 @@
             `; 
         }
 
-        // --- ระบบกรองและดูประวัติราคาอัปเดตใหม่ ---
         function openHistoryModal() {
             document.getElementById('history-modal').style.display = 'flex';
-            setDateFilter(0); // เริ่มต้นเปิดมาให้โชว์ของวันนี้เลย
+            setDateFilter(0); 
         }
 
         function setDateFilter(offsetDays) {
