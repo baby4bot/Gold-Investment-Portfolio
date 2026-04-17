@@ -969,10 +969,6 @@
         }
 
         // --- ระบบกรองและดูประวัติราคาอัปเดตใหม่ ---
-        function openHistoryModal() {
-            document.getElementById('history-modal').style.display = 'flex';
-            setDateFilter(0); // เริ่มต้นเปิดมาให้โชว์ของวันนี้เลย
-        }
 
         function setDateFilter(offsetDays) {
             let d = new Date();
@@ -981,57 +977,70 @@
             fetchHistoryByDate();
         }
 
-        function fetchHistoryByDate() {
-            let selectedIsoDate = document.getElementById('history-date-filter').value;
-            let container = document.getElementById('history-list-container');
-            container.innerHTML = '';
+// --- ส่วนเชื่อมต่อกับ Google Apps Script API (URL ที่พี่อาร์มเพิ่งได้มา) ---
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxeMUc_Zz6N5cntHhmsSkBlNq9n2soNw0LuYNrazTuwplWT5keHyIacldQ3WlKN1DHxOQ/exec";
 
-            let filteredData = allPriceHistory.filter(h => h.isoDate === selectedIsoDate);
+        async function openHistoryModal() {
+            document.getElementById('history-modal').style.display = 'flex';
+            const container = document.getElementById('history-list-container');
+            container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-8 animate-pulse">กำลังดึงข้อมูลประวัติจาก Google Sheets...</p>';
 
-            if(filteredData.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-8 bg-gray-900 p-4 rounded-xl">ไม่มีประวัติการเปลี่ยนแปลงราคาในวันที่เลือก</p>';
-                return;
-            }
+            try {
+                // ดึงข้อมูลจาก Google Apps Script API
+                const response = await fetch(GAS_API_URL);
+                const historyData = await response.json();
 
-            filteredData.forEach((item) => {
-                let chgText = item.changeStr || '';
-                let priceClass = 'text-white';
-                let diffHtml = '';
-
-                let chgNum = parseFloat(chgText.replace(/,/g, ''));
-                if(chgNum > 0) {
-                    priceClass = 'text-green-400';
-                    diffHtml = `<span class="text-green-400 text-xs font-bold bg-green-900/30 px-2 py-0.5 rounded-full">▲ +${chgNum.toLocaleString()}</span>`;
-                } else if(chgNum < 0) {
-                    priceClass = 'text-red-400';
-                    diffHtml = `<span class="text-red-400 text-xs font-bold bg-red-900/30 px-2 py-0.5 rounded-full">▼ ${chgNum.toLocaleString()}</span>`;
-                } else {
-                    diffHtml = `<span class="text-gray-400 text-xs font-bold">${chgText}</span>`;
+                if (!historyData || historyData.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-8">ยังไม่มีข้อมูลบันทึกในระบบ</p>';
+                    return;
                 }
 
-                container.innerHTML += `
-                    <div class="bg-gray-900 p-4 rounded-2xl border border-gray-700 flex flex-col gap-3 shadow-inner">
-                        <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                            <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px] font-bold mb-1"><span class="emoji">&#x1F4C5;</span> ${item.date}</span>
-                                <span class="text-yellow-400 text-sm font-black"><span class="emoji">&#x23F0;</span> ${item.time} น.</span>
+                // นำข้อมูลมาสร้างเป็นรายการประวัติ
+                container.innerHTML = historyData.map(item => {
+                    let chgText = item.Change || '';
+                    let priceClass = 'text-white';
+                    let diffHtml = '';
+
+                    let chgNum = parseFloat(chgText.replace(/,/g, ''));
+                    if (chgNum > 0) {
+                        priceClass = 'text-green-400';
+                        diffHtml = `<span class="text-green-400 text-xs font-bold bg-green-900/30 px-2 py-0.5 rounded-full">▲ +${chgNum.toLocaleString()}</span>`;
+                    } else if (chgNum < 0) {
+                        priceClass = 'text-red-400';
+                        diffHtml = `<span class="text-red-400 text-xs font-bold bg-red-900/30 px-2 py-0.5 rounded-full">▼ ${chgNum.toLocaleString()}</span>`;
+                    } else {
+                        diffHtml = `<span class="text-gray-400 text-xs font-bold">${chgText || 'ไม่เปลี่ยนแปลง'}</span>`;
+                    }
+
+                    return `
+                        <div class="bg-gray-900 p-4 rounded-2xl border border-gray-700 flex flex-col gap-3 shadow-inner">
+                            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                                <div class="flex flex-col">
+                                    <span class="text-gray-400 text-[10px] font-bold mb-1"><span class="emoji">📅</span> ${item.Date}</span>
+                                    <span class="text-yellow-400 text-sm font-black"><span class="emoji">⏰</span> ${item.Time} น.</span>
+                                </div>
+                                <div class="text-right flex flex-col items-end">
+                                    <div class="text-lg font-black ${priceClass} mb-1">${(item.Price || 0).toLocaleString()}</div>
+                                    ${diffHtml}
+                                </div>
                             </div>
-                            <div class="text-right flex flex-col items-end">
-                                <div class="text-lg font-black ${priceClass} mb-1">${(item.price || 0).toLocaleString()}</div>
-                                ${diffHtml}
+                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-[11px]">
+                                <div class="bg-black/40 p-2 rounded-lg"><span class="text-gray-500">แท่งขายออก:</span> <span class="text-white font-bold float-right">${(item.BarSell || 0).toLocaleString()}</span></div>
+                                <div class="bg-black/40 p-2 rounded-lg"><span class="text-gray-500">รูปพรรณขาย:</span> <span class="text-white font-bold float-right">${(item.OrnSell || 0).toLocaleString()}</span></div>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-[11px]">
-                            <div class="bg-black/40 p-2 rounded-lg"><span class="text-gray-500">แท่งรับซื้อ:</span> <span class="text-white font-bold float-right">${(item.price || 0).toLocaleString()}</span></div>
-                            <div class="bg-black/40 p-2 rounded-lg"><span class="text-gray-500">แท่งขายออก:</span> <span class="text-white font-bold float-right">${(item.barSell || 0).toLocaleString()}</span></div>
-                            <div class="bg-black/40 p-2 rounded-lg"><span class="text-gray-500">รูปพรรณฐาน:</span> <span class="text-white font-bold float-right">${(item.ornBuy || 0).toLocaleString()}</span></div>
-                            <div class="bg-black/40 p-2 rounded-lg"><span class="text-gray-500">รูปพรรณขาย:</span> <span class="text-white font-bold float-right">${(item.ornSell || 0).toLocaleString()}</span></div>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error("Error fetching history:", error);
+                container.innerHTML = '<p class="text-center text-red-400 text-sm mt-8">เกิดข้อผิดพลาดในการดึงข้อมูล กรุณาลองใหม่อีกครั้ง</p>';
+            }
         }
 
+        function closeHistoryModal() {
+            document.getElementById('history-modal').style.display = 'none';
+        }
         function closeHistoryModal() {
             document.getElementById('history-modal').style.display = 'none';
         }
