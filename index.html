@@ -2,7 +2,7 @@
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" content="#0f172a" />
-<title>พอร์ตทองคำ V6.22 (มีประวัติราคา)</title>
+<title>พอร์ตทองคำ V6.27 (Admin Delete Tools)</title>
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -157,12 +157,22 @@
         <div class="bg-gradient-to-br from-gray-900 to-black rounded-[2rem] shadow-2xl mb-8 border border-gray-800 overflow-hidden relative">
             <div class="text-center py-4 border-b border-gray-800/50 bg-black/40 relative">
                 <h2 class="text-xl font-black text-yellow-500">ประกาศราคาสมาคมฯ</h2>
-                <p class="text-sm text-yellow-300 font-bold mt-2 bg-gray-800/80 inline-block px-4 py-1 rounded-full border border-gray-600">
-                    อัปเดต: <span id="api-date">--</span> | <span id="api-time">--</span>
-                </p>
-                <button class="absolute top-4 right-4 bg-gray-800/80 text-yellow-500 hover:text-white w-9 h-9 rounded-full border border-gray-600 shadow-lg transition flex items-center justify-center active:scale-95" title="ดูประวัติราคา" onclick="openHistoryModal()">
-                    <span class="emoji text-base">🕓</span>
-                </button>
+                <div class="mt-3 flex justify-center w-full px-2">
+                    <button onclick="openHistoryModal()" class="group bg-gray-800/80 hover:bg-gray-700 border border-gray-600 rounded-full px-1.5 py-1.5 flex items-center gap-2 shadow-lg transition-all active:scale-95 cursor-pointer max-w-full">
+                        <div class="bg-gray-900 border border-gray-700 text-yellow-300 font-bold px-3 py-1.5 rounded-full text-[11px] md:text-sm whitespace-nowrap shadow-inner">
+                            อัปเดต: <span id="api-date">--</span> | <span id="api-time">--</span>
+                        </div>
+                        <div class="text-white font-bold text-xs md:text-sm whitespace-nowrap hidden sm:block">
+                            เปลี่ยนแปลง <span id="dashboard-history-count" class="text-yellow-400 bg-yellow-500/20 px-1.5 rounded-md">0</span> ครั้ง
+                        </div>
+                        <div class="text-white font-bold text-[11px] md:text-sm whitespace-nowrap sm:hidden">
+                            เปลี่ยน <span id="dashboard-history-count-mobile" class="text-yellow-400 bg-yellow-500/20 px-1.5 rounded-md">0</span> ครั้ง
+                        </div>
+                        <div class="bg-yellow-600/20 text-yellow-500 border border-yellow-500/30 group-hover:bg-yellow-500 group-hover:text-gray-900 w-8 h-8 rounded-full flex items-center justify-center mr-0.5 transition-colors">
+                            <span class="emoji text-sm md:text-base">🕓</span>
+                        </div>
+                    </button>
+                </div>
             </div>
             
             <div class="border-b border-gray-800 p-4 bg-gradient-to-r from-yellow-900/10 to-transparent">
@@ -311,25 +321,31 @@
 </div>
 
 <div id="history-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[500] justify-center items-center px-4 hidden">
-    <div class="bg-gray-800 p-6 rounded-[2rem] shadow-2xl w-full max-w-sm border border-gray-700 relative max-h-[80vh] flex flex-col modal-enter">
+    <div class="bg-gray-800 p-5 rounded-[2rem] shadow-2xl w-full max-w-md border border-gray-700 relative max-h-[85vh] flex flex-col modal-enter">
         <button type="button" onclick="closeHistoryModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-900 w-8 h-8 rounded-full font-bold transition active:scale-95">
             ✕
         </button>
         
-        <h2 class="text-xl font-black mb-3 text-yellow-400 text-center flex items-center justify-center gap-2">
-            <span class="emoji">📈</span> ประวัติราคา
+        <h2 class="text-xl font-black mb-3 text-yellow-400 text-center flex items-center justify-center gap-2 mt-2">
+            <span class="emoji">📈</span> ประวัติราคาทองคำ
         </h2>
 
         <div class="mb-3 px-1">
             <select id="history-date-filter" onchange="renderHistoryList()" class="bg-[#1a1c23] text-sm font-bold text-yellow-400 border border-gray-600 rounded-xl px-3 py-2.5 w-full text-center outline-none focus:border-yellow-500 mb-2 shadow-inner appearance-none cursor-pointer">
                 <option value="">กำลังโหลดวันที่...</option>
             </select>
-            <div class="text-center bg-gray-900/50 rounded-xl py-2 border border-gray-700/50">
+            <div class="text-center mt-2 bg-gray-900/50 rounded-xl py-2 border border-gray-700/50">
                 <p class="text-xs text-gray-400 font-bold">มีการเปลี่ยนแปลงราคา: <span id="history-count" class="text-yellow-400 text-sm font-black bg-yellow-500/10 px-2 py-0.5 rounded-md mx-1">0</span> ครั้ง</p>
+            </div>
+            
+            <div id="admin-history-bulk-actions" class="hidden gap-2 mt-3">
+                <button onclick="executeBulkHistoryDelete('day')" class="flex-1 bg-red-900/40 hover:bg-red-800/60 text-red-400 border border-red-800/50 py-2 rounded-xl text-[11px] md:text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95 shadow-inner"><span class="emoji">🗑️</span> ลบทั้งวัน</button>
+                <button onclick="executeBulkHistoryDelete('month')" class="flex-1 bg-red-900/40 hover:bg-red-800/60 text-red-400 border border-red-800/50 py-2 rounded-xl text-[11px] md:text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95 shadow-inner"><span class="emoji">🗑️</span> ลบทั้งเดือน</button>
+                <button onclick="executeBulkHistoryDelete('year')" class="flex-1 bg-red-900/40 hover:bg-red-800/60 text-red-400 border border-red-800/50 py-2 rounded-xl text-[11px] md:text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95 shadow-inner"><span class="emoji">🗑️</span> ลบทั้งปี</button>
             </div>
         </div>
 
-        <div class="overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-3 pr-2 pb-2" id="history-list-container">
+        <div class="overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-2 pr-2 pb-2 mt-1" id="history-list-container">
             <p class="text-center text-gray-500 text-sm mt-4">กำลังโหลดข้อมูล...</p>
         </div>
     </div>
@@ -440,7 +456,7 @@
         <h3 class="text-xl font-black text-white mb-2" id="confirm-title">ยืนยันการทำรายการ</h3>
         <p class="text-gray-400 text-sm mb-8" id="confirm-message">คุณแน่ใจหรือไม่?</p>
         <div class="flex gap-3">
-            <button onclick="executeConfirmAction()" class="flex-1 bg-red-600 hover:bg-red-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(220,38,38,0.4)]">ยืนยันลบ</button>
+            <button onclick="executeConfirmAction()" class="flex-1 bg-red-600 hover:bg-red-500 text-white py-3.5 rounded-xl font-black transition shadow-[0_5px_15px_rgba(220,38,38,0.4)]" id="confirm-btn-yes">ยืนยัน</button>
             <button onclick="closeConfirmModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3.5 rounded-xl font-black transition">ยกเลิก</button>
         </div>
     </div>
@@ -475,6 +491,7 @@
     let adminDisplayName = 'Master Admin', isHideAdminPort = false;
     let sortableInstance = null, isDraggingUser = false;
     let confirmActionCallback = null;
+    let allHistoryData = []; 
 
     window.addEventListener('load', () => { initApp(); setupDraggableCloseBtn(); });
 
@@ -483,8 +500,48 @@
         if (session) { try { currentUser = JSON.parse(session); currentRole = currentUser.role; } catch(e) { currentRole = 'guest'; currentUser = null; } } 
         else { currentRole = 'guest'; currentUser = null; }
         updateUIRole(); loadAdminSettings(); loadUsers(); loadProfiles(); 
-        if(db) loadData(); 
+        if(db) {
+            loadData();
+            loadHistoryGlobal(); 
+        } 
         fetchGoldFromSheet(); setInterval(fetchGoldFromSheet, 1000); 
+    }
+
+    function loadHistoryGlobal() {
+        if(!db) return;
+        db.ref('gold_price_history').orderByChild('timestamp').limitToLast(150).on('value', snapshot => {
+            allHistoryData = [];
+            if(snapshot.exists()) {
+                snapshot.forEach(child => {
+                    // สำคัญ: เก็บ ID ไว้สำหรับสั่งลบ
+                    allHistoryData.push({ id: child.key, ...child.val() });
+                });
+            }
+            updateDashboardHistoryCount();
+            if(document.getElementById('history-modal').style.display === 'flex') {
+                populateHistoryDropdownAndRender();
+            }
+        });
+    }
+
+    function updateDashboardHistoryCount() {
+        let todayStr = document.getElementById('api-date').innerText;
+        if(todayStr === '--') return;
+        
+        let todayData = allHistoryData.filter(item => 
+            item.date === todayStr &&
+            item.barBuy > 0 && 
+            item.barSell > 0 && 
+            item.ornamentBuy > 0 && 
+            item.ornamentSell > 0
+        );
+        let uniqueTimes = new Set(todayData.map(item => item.time));
+        let count = uniqueTimes.size;
+
+        let el1 = document.getElementById('dashboard-history-count');
+        let el2 = document.getElementById('dashboard-history-count-mobile');
+        if(el1) el1.innerText = count;
+        if(el2) el2.innerText = count;
     }
 
     function openMenu() { document.getElementById('side-menu').classList.remove('pointer-events-none'); document.getElementById('side-menu-bg').classList.remove('opacity-0'); document.getElementById('side-menu-content').classList.remove('translate-x-full'); }
@@ -512,7 +569,7 @@
             document.getElementById('menu-manage-users').style.display = 'flex'; document.getElementById('menu-admin-settings').style.display = 'flex'; adminCheckboxSec.style.display = 'flex'; halfHalfSec.style.display = 'flex'; document.getElementById('f_buyer').readOnly = false; btnHideAdmin.classList.remove('hidden'); titleSec.innerHTML = '';
         } else if (currentRole === 'user') {
             document.getElementById('menu-manage-users').style.display = 'none'; document.getElementById('menu-admin-settings').style.display = 'none'; adminCheckboxSec.style.display = 'none'; halfHalfSec.style.display = 'none';
-            document.getElementById('f_buyer').value = currentUser.name; document.getElementById('f_buyer').readOnly = true; btnHideAdmin.classList.add('hidden'); checkExistingProfile(currentUser.name); titleSec.innerHTML = `ของคุณ <span class="text-yellow-400">(${currentUser.name})</span>`;
+            document.getElementById('f_buyer').value = currentUser.name; document.getElementById('f_buyer').readOnly = true; btnHideAdmin.classList.add('hidden'); checkExistingProfile(currentUser.name); titleSec.innerHTML = ` <span class="text-yellow-400">(${currentUser.name})</span>`;
         } else {
             btnHamburger.style.display = 'none'; btnHideAdmin.classList.add('hidden'); showLoginModal(); titleSec.innerHTML = `<span class="text-gray-400 text-sm block mt-1">(กรุณาล็อกอิน)</span>`;
         }
@@ -732,9 +789,6 @@
             let fetchDate = rows[2] ? rows[2][17] : '--';
             let fetchTime = rows[2] ? rows[2][19] : '--';
             
-            document.getElementById('api-date').innerText = fetchDate; 
-            document.getElementById('api-time').innerText = fetchTime; 
-            
             let bBuyStr = rows[4] ? rows[4][18] : ''; 
             let bSellStr = rows[4] ? rows[4][19] : ''; 
             let oBuyStr = rows[6] ? rows[6][18] : ''; 
@@ -742,44 +796,66 @@
             let chgStr = rows[3] && rows[3][20] ? rows[3][20].trim() : (rows[4] && rows[4][20] ? rows[4][20].trim() : (rows[2] && rows[2][20] ? rows[2][20].trim() : '')); 
             
             let newPrice = cleanNum(bBuyStr); 
-            let priceChanged = (newPrice !== currentGoldBuyPrice); 
             
-            if (newPrice > 0) {
+            let bBuyNum = cleanNum(bBuyStr);
+            let bSellNum = cleanNum(bSellStr);
+            let oBuyNum = cleanNum(oBuyStr);
+            let oSellNum = cleanNum(oSellStr);
+
+            let isDataComplete = (bBuyNum > 0 && bSellNum > 0 && oBuyNum > 0 && oSellNum > 0);
+
+            if (newPrice > 0 && isDataComplete) {
+                let priceChanged = (newPrice !== currentGoldBuyPrice); 
+                
                 if (!isFirstLoad && priceChanged) {
                     if(db && fetchDate !== '--' && fetchTime !== '--') {
-                        db.ref('gold_price_history').push({
+                        let safeDate = fetchDate.replace(/[\s\/]/g, '');
+                        let safeTime = fetchTime.replace(/[\s\.:น]/g, '');
+                        let recordKey = `H_${safeDate}_${safeTime}_${bBuyNum}`;
+
+                        db.ref('gold_price_history/' + recordKey).set({
                             price: newPrice,
+                            barBuy: bBuyNum,
+                            barSell: bSellNum,
+                            ornamentBuy: oBuyNum,
+                            ornamentSell: oSellNum,
                             date: fetchDate,
                             time: fetchTime,
                             timestamp: firebase.database.ServerValue.TIMESTAMP
                         });
                     }
                 }
+                
                 currentGoldBuyPrice = newPrice;
                 isFirstLoad = false;
-            }
-            
-            let priceColorClass = 'text-white'; 
-            if (chgStr) { 
-                let cel = document.getElementById('api-change'); 
-                let chgNum = parseFloat(chgStr.replace(/,/g, '')); 
-                if(chgNum > 0) { 
-                    priceColorClass = 'text-green-400'; 
-                    cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; 
-                } else if(chgNum < 0) { 
-                    priceColorClass = 'text-red-400'; 
-                    cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; 
-                } else { 
-                    cel.innerText = chgStr; 
+                
+                document.getElementById('api-date').innerText = fetchDate; 
+                document.getElementById('api-time').innerText = fetchTime; 
+                updateDashboardHistoryCount(); 
+                
+                let priceColorClass = 'text-white'; 
+                if (chgStr) { 
+                    let cel = document.getElementById('api-change'); 
+                    let chgNum = parseFloat(chgStr.replace(/,/g, '')); 
+                    if(chgNum > 0) { 
+                        priceColorClass = 'text-green-400'; 
+                        cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; 
+                    } else if(chgNum < 0) { 
+                        priceColorClass = 'text-red-400'; 
+                        cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; 
+                    } else { 
+                        cel.innerText = chgStr; 
+                    } 
                 } 
-            } 
-            [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { 
-                let el = document.getElementById(item.id); 
-                if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; } 
-            }); 
-            if(priceChanged && transactionsData.length > 0) renderData(); 
+                [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { 
+                    let el = document.getElementById(item.id); 
+                    if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; } 
+                }); 
+                if(priceChanged && transactionsData.length > 0) renderData(); 
+            }
         } catch (error) {} 
     }
+
     function loadProfiles() { db.ref('user_profiles').on('value', snap => { userProfiles = snap.val() || {}; updateUIRole(); if(transactionsData.length > 0) renderData(); if(currentView === 'manage-users') renderUsersCards(); }); }
     function getProfileImg(name) { return userProfiles[name] || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=facc15&color=000&rounded=true&bold=true`; }
     function checkExistingProfile(name) { if(name && userProfiles[name]) document.getElementById('form_prof_preview').src = userProfiles[name]; else document.getElementById('form_prof_preview').src = `https://ui-avatars.com/api/?name=${name || 'User'}&background=334155&color=fff`; }
@@ -932,59 +1008,66 @@
         `; 
     }
 
-    // --- ฟังก์ชันสำหรับระบบประวัติราคา (อัปเดตใหม่) ---
-    let allHistoryData = []; 
+    // --- ฟังก์ชันสำหรับจัดการประวัติ (ซ่อนปุ่ม Admin ให้คนอื่นไม่เห็น) ---
 
     function openHistoryModal() {
         document.getElementById('history-modal').style.display = 'flex';
+        
+        let bulkActions = document.getElementById('admin-history-bulk-actions');
+        if (currentRole === 'admin') {
+            bulkActions.classList.remove('hidden');
+            bulkActions.classList.add('flex');
+        } else {
+            bulkActions.classList.add('hidden');
+            bulkActions.classList.remove('flex');
+        }
+
+        populateHistoryDropdownAndRender();
+    }
+
+    function populateHistoryDropdownAndRender() {
         const container = document.getElementById('history-list-container');
         const dateSelect = document.getElementById('history-date-filter');
         const countSpan = document.getElementById('history-count');
 
-        container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">กำลังโหลดข้อมูล...</p>';
-        dateSelect.innerHTML = '<option value="">กำลังโหลด...</option>';
-        countSpan.innerText = '0';
+        if (allHistoryData.length === 0) {
+            container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">ยังไม่มีประวัติการเปลี่ยนแปลงราคา</p>';
+            dateSelect.innerHTML = '<option value="">ไม่มีข้อมูล</option>';
+            countSpan.innerText = '0';
+            return;
+        }
 
-        if(!db) return;
-
-        // ดึงข้อมูลเยอะขึ้น (100 รายการ) เพื่อให้คลุมหลายวัน
-        db.ref('gold_price_history').orderByChild('timestamp').limitToLast(100).once('value', snapshot => {
-            if (!snapshot.exists()) {
-                container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">ยังไม่มีประวัติการเปลี่ยนแปลงราคา</p>';
-                dateSelect.innerHTML = '<option value="">ไม่มีข้อมูล</option>';
-                return;
+        let displayData = [...allHistoryData].reverse();
+        let uniqueGlobalData = [];
+        let seen = new Set();
+        
+        displayData.forEach(item => {
+            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
+                let key = item.date + "_" + item.time;
+                if(!seen.has(key)) {
+                    seen.add(key);
+                    uniqueGlobalData.push(item);
+                }
             }
-
-            allHistoryData = [];
-            snapshot.forEach(child => {
-                allHistoryData.push(child.val());
-            });
-
-            // เรียงจากเวลาล่าสุดไปเก่าสุด
-            allHistoryData.reverse();
-
-            // ดึงเฉพาะวันที่ที่ไม่ซ้ำกันออกมาทำ Dropdown
-            const uniqueDates = [...new Set(allHistoryData.map(item => item.date))];
-
-            dateSelect.innerHTML = '';
-            uniqueDates.forEach(date => {
-                // ทำให้ดูง่ายขึ้นว่าคือวันนี้
-                let today = new Date().toLocaleDateString('en-GB'); // รูปแบบ DD/MM/YYYY
-                let label = date;
-                // ถ้าวันที่ตรงกับเครื่อง ให้เติมคำว่า (ล่าสุด)
-                if(date.includes(today.split('/')[0])) label += ' (ล่าสุด)'; 
-                
-                dateSelect.innerHTML += `<option value="${date}">${label}</option>`;
-            });
-
-            // เลือกวันล่าสุดอัตโนมัติ
-            if(uniqueDates.length > 0) {
-                dateSelect.value = uniqueDates[0];
-            }
-
-            // สั่งให้วาดรายการของวันนั้นๆ
-            renderHistoryList();
         });
+
+        const uniqueDates = [...new Set(uniqueGlobalData.map(item => item.date))];
+        dateSelect.innerHTML = '';
+        uniqueDates.forEach(date => {
+            let today = new Date().toLocaleDateString('en-GB');
+            let label = date;
+            if(date.includes(today.split('/')[0])) label += ' (ล่าสุด)'; 
+            
+            dateSelect.innerHTML += `<option value="${date}">${label}</option>`;
+        });
+
+        if(uniqueDates.length > 0) {
+            dateSelect.value = uniqueDates[0];
+        } else {
+            dateSelect.innerHTML = '<option value="">ไม่มีข้อมูลที่สมบูรณ์</option>';
+        }
+
+        renderHistoryList();
     }
 
     function renderHistoryList() {
@@ -993,12 +1076,27 @@
         const countSpan = document.getElementById('history-count');
         const selectedDate = dateSelect.value;
 
-        if (!selectedDate) return;
+        if (!selectedDate) {
+            container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">ไม่มีประวัติข้อมูลที่สมบูรณ์</p>';
+            countSpan.innerText = '0';
+            return;
+        }
 
-        // กรองข้อมูลเอาเฉพาะวันที่เลือก
-        const filteredData = allHistoryData.filter(item => item.date === selectedDate);
+        let displayData = [...allHistoryData].reverse();
+        let uniqueGlobalData = [];
+        let seen = new Set();
         
-        // อัปเดตตัวเลขแสดงจำนวนครั้ง
+        displayData.forEach(item => {
+            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
+                let key = item.date + "_" + item.time;
+                if(!seen.has(key)) {
+                    seen.add(key);
+                    uniqueGlobalData.push(item);
+                }
+            }
+        });
+
+        const filteredData = uniqueGlobalData.filter(item => item.date === selectedDate);
         countSpan.innerText = filteredData.length;
 
         container.innerHTML = '';
@@ -1009,48 +1107,111 @@
 
         filteredData.forEach((item, index) => {
             let diffHtml = '';
-            let priceClass = 'text-white';
             
-            // คำนวณส่วนต่างราคากับครั้งก่อนหน้า
             if (index < filteredData.length - 1) {
-                // เทียบกับรายการก่อนหน้าในวันเดียวกัน
                 let prevPrice = filteredData[index + 1].price;
                 let diff = item.price - prevPrice;
                 if (diff > 0) {
-                    diffHtml = `<span class="text-green-400 text-xs font-bold">▲ +${diff.toLocaleString()}</span>`;
-                    priceClass = 'text-green-400';
+                    diffHtml = `<span class="text-green-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▲</span> +${diff.toLocaleString()}</span>`;
                 } else if (diff < 0) {
-                    diffHtml = `<span class="text-red-400 text-xs font-bold">▼ ${diff.toLocaleString()}</span>`;
-                    priceClass = 'text-red-400';
+                    diffHtml = `<span class="text-red-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▼</span> ${diff.toLocaleString()}</span>`;
                 }
             } else {
-                // ถ้านี่คือรายการสุดท้ายของวัน ให้ไปเทียบกับรายการแรกสุดของวันก่อนหน้า (ข้ามวัน)
-                let globalIndex = allHistoryData.findIndex(h => h.timestamp === item.timestamp);
-                if (globalIndex !== -1 && globalIndex < allHistoryData.length - 1) {
-                    let prevDayPrice = allHistoryData[globalIndex + 1].price;
+                let globalIndex = uniqueGlobalData.findIndex(h => h.date === item.date && h.time === item.time);
+                if (globalIndex !== -1 && globalIndex < uniqueGlobalData.length - 1) {
+                    let prevDayPrice = uniqueGlobalData[globalIndex + 1].price;
                     let diff = item.price - prevDayPrice;
                     if (diff > 0) {
-                        diffHtml = `<span class="text-green-400 text-xs font-bold">▲ +${diff.toLocaleString()}</span>`;
-                        priceClass = 'text-green-400';
+                        diffHtml = `<span class="text-green-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▲</span> +${diff.toLocaleString()}</span>`;
                     } else if (diff < 0) {
-                        diffHtml = `<span class="text-red-400 text-xs font-bold">▼ ${diff.toLocaleString()}</span>`;
-                        priceClass = 'text-red-400';
+                        diffHtml = `<span class="text-red-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▼</span> ${diff.toLocaleString()}</span>`;
                     }
                 }
             }
 
+            // ปุ่มลบรายการสำหรับ Admin
+            let adminDeleteBtn = '';
+            if (currentRole === 'admin') {
+                adminDeleteBtn = `<button onclick="deleteSingleHistory('${item.id}', '${item.time}')" class="ml-2 text-red-500 bg-red-500/10 hover:bg-red-500/30 p-1.5 rounded border border-red-500/20 transition active:scale-95 shadow-inner" title="ลบรายการนี้"><svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>`;
+            }
+
             container.innerHTML += `
-                <div class="bg-gray-900 p-4 rounded-2xl border border-gray-700 flex justify-between items-center shadow-inner mb-2">
-                    <div class="flex flex-col">
-                        <span class="text-gray-400 text-[10px] font-bold"><span class="emoji">&#x1F4C5;</span> ${item.date}</span>
-                        <span class="text-gray-300 text-sm font-black"><span class="emoji">&#x23F0;</span> ${item.time} น.</span>
+                <div class="bg-gray-900 p-3 rounded-2xl border border-gray-700 shadow-inner mb-3">
+                    <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-800">
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-400 text-[11px] font-bold bg-black/40 px-2 py-1 rounded-md"><span class="emoji">&#x1F4C5;</span> ${item.date}</span>
+                            <span class="text-gray-200 text-xs font-black bg-black/40 px-2 py-1 rounded-md"><span class="emoji">&#x23F0;</span> ${item.time} น.</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="text-right bg-gray-800/80 px-2 py-0.5 rounded-lg border border-gray-700">
+                                ${diffHtml}
+                            </div>
+                            ${adminDeleteBtn}
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-lg font-black ${priceClass}">${item.price.toLocaleString()}</div>
-                        ${diffHtml}
+                    
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-black/50 p-2.5 rounded-xl border border-gray-700/50 flex flex-col justify-between">
+                            <div class="text-yellow-500 font-bold mb-1.5 text-[11px] md:text-xs uppercase text-center border-b border-gray-800 pb-1">ทองคำแท่ง 96.5%</div>
+                            <div class="flex justify-between items-center mb-1"><span class="text-gray-400 text-[10px] md:text-[11px]">รับซื้อ</span> <span class="font-black text-green-400 md:text-sm">${item.barBuy.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white md:text-sm">${item.barSell.toLocaleString()}</span></div>
+                        </div>
+                        <div class="bg-black/50 p-2.5 rounded-xl border border-gray-700/50 flex flex-col justify-between">
+                            <div class="text-yellow-500 font-bold mb-1.5 text-[11px] md:text-xs uppercase text-center border-b border-gray-800 pb-1">ทองรูปพรรณ 96.5%</div>
+                            <div class="flex justify-between items-center mb-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ฐานภาษี</span> <span class="font-black text-green-400 md:text-sm">${item.ornamentBuy.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white md:text-sm">${item.ornamentSell.toLocaleString()}</span></div>
+                        </div>
                     </div>
                 </div>
             `;
+        });
+    }
+
+    // --- ฟังก์ชันลบประวัติของ Admin ---
+    function deleteSingleHistory(id, time) {
+        showCustomConfirm('ยืนยันลบประวัติ', `ลบรายการเวลา <span class="text-yellow-400 font-bold text-lg">${time} น.</span> ใช่หรือไม่?<br><span class="text-xs text-red-400 mt-2 block">หากลบแล้วจะไม่สามารถกู้คืนได้</span>`, () => {
+            db.ref('gold_price_history/' + id).remove().then(() => {
+                showWarningToast('🗑️ ลบรายการเรียบร้อย');
+            });
+        });
+    }
+
+    function executeBulkHistoryDelete(matchType) {
+        let selectedDate = document.getElementById('history-date-filter').value;
+        if(!selectedDate) return;
+        
+        let parts = selectedDate.split(' ');
+        let matchStr = selectedDate; 
+        let typeName = "วัน";
+        
+        if (matchType === 'month' && parts.length >= 3) {
+            matchStr = parts[1] + ' ' + parts[2]; // "เมษายน 2569"
+            typeName = "เดือน";
+        } else if (matchType === 'year' && parts.length >= 3) {
+            matchStr = parts[2]; // "2569"
+            typeName = "ปี";
+        }
+        
+        showCustomConfirm('ยืนยันการลบประวัติเหมา', `คุณต้องการลบประวัติทั้งหมดของ${typeName} <span class="text-yellow-400 font-bold text-lg">${matchStr}</span> ใช่หรือไม่?<br><span class="text-xs text-red-400 mt-2 block">ระบบจะล้างข้อมูลที่ตรงกันออกจากฐานข้อมูลถาวร</span>`, () => {
+            db.ref('gold_price_history').once('value', snap => {
+                let updates = {};
+                let count = 0;
+                snap.forEach(child => {
+                    let item = child.val();
+                    if (item.date && item.date.includes(matchStr)) {
+                        updates[child.key] = null;
+                        count++;
+                    }
+                });
+                
+                if(count > 0) {
+                    db.ref('gold_price_history').update(updates).then(() => {
+                        showWarningToast(`🗑️ ลบข้อมูลสำเร็จ ${count} รายการ`);
+                    });
+                } else {
+                    showWarningToast('ไม่พบข้อมูลที่จะลบในฐานข้อมูล');
+                }
+            });
         });
     }
 
