@@ -2,7 +2,7 @@
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" content="#0f172a" />
-<title>พอร์ตทองคำ V6.27 (Admin Delete Tools)</title>
+<title>พอร์ตทองคำ V6.28 (Full History Details)</title>
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -71,8 +71,7 @@
 <datalist id="shop-list"></datalist>
 <datalist id="buyer-list"></datalist> 
 
-<div class="fixed top-20 left-1/2 -translate-x-1/2 z-[800] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container">
-</div>
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-[800] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
 
 <div id="btn-hamburger" class="fixed top-6 right-6 z-[200] cursor-pointer p-2 hidden" onclick="openMenu()">
     <div class="hamburger-line w-7 h-1 bg-yellow-400 rounded-full mb-1.5 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
@@ -335,7 +334,7 @@
                 <option value="">กำลังโหลดวันที่...</option>
             </select>
             <div class="text-center mt-2 bg-gray-900/50 rounded-xl py-2 border border-gray-700/50">
-                <p class="text-xs text-gray-400 font-bold">มีการเปลี่ยนแปลงราคา: <span id="history-count" class="text-yellow-400 text-sm font-black bg-yellow-500/10 px-2 py-0.5 rounded-md mx-1">0</span> ครั้ง</p>
+                <p class="text-xs text-gray-400 font-bold">ประกาศปรับราคา: <span id="history-count" class="text-yellow-400 text-sm font-black bg-yellow-500/10 px-2 py-0.5 rounded-md mx-1">0</span> ครั้ง</p>
             </div>
             
             <div id="admin-history-bulk-actions" class="hidden gap-2 mt-3">
@@ -513,7 +512,6 @@
             allHistoryData = [];
             if(snapshot.exists()) {
                 snapshot.forEach(child => {
-                    // สำคัญ: เก็บ ID ไว้สำหรับสั่งลบ
                     allHistoryData.push({ id: child.key, ...child.val() });
                 });
             }
@@ -1010,7 +1008,7 @@
         `; 
     }
 
-    // --- ฟังก์ชันสำหรับจัดการประวัติ (ซ่อนปุ่ม Admin ให้คนอื่นไม่เห็น) ---
+    // --- ฟังก์ชันสำหรับจัดการประวัติ ---
 
     function openHistoryModal() {
         document.getElementById('history-modal').style.display = 'flex';
@@ -1039,7 +1037,7 @@
             return;
         }
 
-        let displayData = [...allHistoryData].reverse();
+        let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
         let uniqueGlobalData = [];
         let seen = new Set();
         
@@ -1084,7 +1082,7 @@
             return;
         }
 
-        let displayData = [...allHistoryData].reverse();
+        let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
         let uniqueGlobalData = [];
         let seen = new Set();
         
@@ -1095,6 +1093,16 @@
                     seen.add(key);
                     uniqueGlobalData.push(item);
                 }
+            }
+        });
+
+        // คำนวณส่วนต่างราคาทั้งหมดล่วงหน้า โดยเทียบกับรายการก่อนหน้า(ที่เก่ากว่า)
+        uniqueGlobalData.forEach((item, index) => {
+            if (index < uniqueGlobalData.length - 1) {
+                let prevRecord = uniqueGlobalData[index + 1];
+                item.diff = item.price - prevRecord.price;
+            } else {
+                item.diff = null;
             }
         });
 
@@ -1110,58 +1118,51 @@
         filteredData.forEach((item, index) => {
             let diffHtml = '';
             
-            if (index < filteredData.length - 1) {
-                let prevPrice = filteredData[index + 1].price;
-                let diff = item.price - prevPrice;
-                if (diff > 0) {
-                    diffHtml = `<span class="text-green-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▲</span> +${diff.toLocaleString()}</span>`;
-                } else if (diff < 0) {
-                    diffHtml = `<span class="text-red-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▼</span> ${diff.toLocaleString()}</span>`;
-                }
+            if (item.diff > 0) {
+                diffHtml = `<span class="text-green-400 text-[13px] md:text-sm font-black tracking-tight bg-green-500/10 px-2.5 py-1 rounded-lg border border-green-500/20 shadow-inner"><span class="animate-pulse">▲</span> +${item.diff.toLocaleString()}</span>`;
+            } else if (item.diff < 0) {
+                diffHtml = `<span class="text-red-400 text-[13px] md:text-sm font-black tracking-tight bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 shadow-inner"><span class="animate-pulse">▼</span> ${item.diff.toLocaleString()}</span>`;
+            } else if (item.diff === 0) {
+                diffHtml = `<span class="text-gray-300 text-[13px] md:text-sm font-black tracking-tight bg-gray-600/30 px-2.5 py-1 rounded-lg border border-gray-500/30 shadow-inner">= คงที่</span>`;
             } else {
-                let globalIndex = uniqueGlobalData.findIndex(h => h.date === item.date && h.time === item.time);
-                if (globalIndex !== -1 && globalIndex < uniqueGlobalData.length - 1) {
-                    let prevDayPrice = uniqueGlobalData[globalIndex + 1].price;
-                    let diff = item.price - prevDayPrice;
-                    if (diff > 0) {
-                        diffHtml = `<span class="text-green-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▲</span> +${diff.toLocaleString()}</span>`;
-                    } else if (diff < 0) {
-                        diffHtml = `<span class="text-red-400 text-xs md:text-sm font-black tracking-tight"><span class="animate-pulse">▼</span> ${diff.toLocaleString()}</span>`;
-                    }
-                }
+                diffHtml = `<span class="text-gray-500 text-xs font-bold">ไม่มีข้อมูลเปรียบเทียบ</span>`;
             }
 
-            // ปุ่มลบรายการสำหรับ Admin
             let adminDeleteBtn = '';
             if (currentRole === 'admin') {
-                adminDeleteBtn = `<button onclick="deleteSingleHistory('${item.id}', '${item.time}')" class="ml-2 text-red-500 bg-red-500/10 hover:bg-red-500/30 p-1.5 rounded border border-red-500/20 transition active:scale-95 shadow-inner" title="ลบรายการนี้"><svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>`;
+                adminDeleteBtn = `<button onclick="deleteSingleHistory('${item.id}', '${item.time}')" class="ml-2 text-red-500 bg-red-500/10 hover:bg-red-500/30 p-1.5 rounded-lg border border-red-500/20 transition active:scale-95 shadow-inner" title="ลบรายการนี้"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>`;
             }
 
+            // คำนวณ "ครั้งที่..." โดยไล่จากเก่าสุดไปใหม่สุด
+            let announcementNumber = filteredData.length - index;
+
             container.innerHTML += `
-                <div class="bg-gray-900 p-3 rounded-2xl border border-gray-700 shadow-inner mb-3">
-                    <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-800">
+                <div class="bg-gray-900 p-3 rounded-2xl border border-gray-700 shadow-lg mb-3">
+                    <div class="flex justify-between items-center mb-3 pb-3 border-b border-gray-800/80">
                         <div class="flex items-center gap-2">
-                            <span class="text-gray-400 text-[11px] font-bold bg-black/40 px-2 py-1 rounded-md"><span class="emoji">&#x1F4C5;</span> ${item.date}</span>
-                            <span class="text-gray-200 text-xs font-black bg-black/40 px-2 py-1 rounded-md"><span class="emoji">&#x23F0;</span> ${item.time} น.</span>
+                            <span class="text-gray-300 text-[11px] md:text-xs font-black bg-black/60 px-2.5 py-1 rounded-lg border border-gray-700/50 shadow-inner flex items-center gap-1.5">
+                                <span class="emoji text-[10px]">&#x1F4E2;</span> ครั้งที่ ${announcementNumber}
+                            </span>
+                            <span class="text-gray-400 text-[11px] font-bold flex items-center gap-1.5"><span class="emoji">&#x23F0;</span> ${item.time} น.</span>
                         </div>
                         <div class="flex items-center">
-                            <div class="text-right bg-gray-800/80 px-2 py-0.5 rounded-lg border border-gray-700">
-                                ${diffHtml}
-                            </div>
+                            ${diffHtml}
                             ${adminDeleteBtn}
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div class="bg-black/50 p-2.5 rounded-xl border border-gray-700/50 flex flex-col justify-between">
-                            <div class="text-yellow-500 font-bold mb-1.5 text-[11px] md:text-xs uppercase text-center border-b border-gray-800 pb-1">ทองคำแท่ง 96.5%</div>
-                            <div class="flex justify-between items-center mb-1"><span class="text-gray-400 text-[10px] md:text-[11px]">รับซื้อ</span> <span class="font-black text-green-400 md:text-sm">${item.barBuy.toLocaleString()}</span></div>
-                            <div class="flex justify-between items-center"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white md:text-sm">${item.barSell.toLocaleString()}</span></div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-black/40 p-3 rounded-xl border border-gray-700/50 flex flex-col justify-between relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500/50"></div>
+                            <div class="text-yellow-500 font-bold mb-2 text-[11px] md:text-xs uppercase text-center border-b border-gray-800/50 pb-1.5 pl-1">ทองคำแท่ง 96.5%</div>
+                            <div class="flex justify-between items-center mb-1.5 pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">รับซื้อ</span> <span class="font-black text-green-400 text-[13px] md:text-base">${item.barBuy.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white text-[13px] md:text-base">${item.barSell.toLocaleString()}</span></div>
                         </div>
-                        <div class="bg-black/50 p-2.5 rounded-xl border border-gray-700/50 flex flex-col justify-between">
-                            <div class="text-yellow-500 font-bold mb-1.5 text-[11px] md:text-xs uppercase text-center border-b border-gray-800 pb-1">ทองรูปพรรณ 96.5%</div>
-                            <div class="flex justify-between items-center mb-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ฐานภาษี</span> <span class="font-black text-green-400 md:text-sm">${item.ornamentBuy.toLocaleString()}</span></div>
-                            <div class="flex justify-between items-center"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white md:text-sm">${item.ornamentSell.toLocaleString()}</span></div>
+                        <div class="bg-black/40 p-3 rounded-xl border border-gray-700/50 flex flex-col justify-between relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-yellow-600/50"></div>
+                            <div class="text-yellow-600 font-bold mb-2 text-[11px] md:text-xs uppercase text-center border-b border-gray-800/50 pb-1.5 pl-1">ทองรูปพรรณ 96.5%</div>
+                            <div class="flex justify-between items-center mb-1.5 pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ฐานภาษี</span> <span class="font-black text-green-400 text-[13px] md:text-base">${item.ornamentBuy.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white text-[13px] md:text-base">${item.ornamentSell.toLocaleString()}</span></div>
                         </div>
                     </div>
                 </div>
