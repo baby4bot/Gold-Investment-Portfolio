@@ -217,7 +217,7 @@
                 </h3>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="openSimModal()" class="bg-indigo-600/30 text-indigo-400 w-9 h-9 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" title="จำลองราคาทอง">
+                <button id="btn-sim-toggle" onclick="openSimModal()" class="bg-indigo-600/30 text-indigo-400 w-9 h-9 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md" title="จำลองราคาทอง">
                     <span class="emoji text-base">🪄</span>
                 </button>
                 <span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full whitespace-nowrap" id="total-items-count">0 รายการ</span>
@@ -575,7 +575,7 @@
         }
     }
 
-    function openSimModal() { let input = document.getElementById('sim-price-input'); input.value = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice; document.getElementById('sim-modal').style.display = 'flex'; setTimeout(() => { input.focus(); input.select(); }, 100); }
+    function openSimModal() { if (simulatedGoldPrice !== null) { resetSim(); return; } let input = document.getElementById('sim-price-input'); input.value = currentGoldBuyPrice; document.getElementById('sim-modal').style.display = 'flex'; setTimeout(() => { input.focus(); input.select(); }, 100); }
     function closeSimModal() { document.getElementById('sim-modal').style.display = 'none'; }
     function applySim() { let val = parseFloat(document.getElementById('sim-price-input').value); if(isNaN(val) || val <= 0) { showWarningToast('ระบุราคาให้ถูกต้อง!'); return; } simulatedGoldPrice = val; closeSimModal(); renderData(); showWarningToast('&#x1FA84; เปิดโหมดจำลองราคาสำเร็จ!'); }
     function resetSim() { simulatedGoldPrice = null; closeSimModal(); renderData(); showWarningToast('ปิดโหมดจำลองราคาแล้ว'); }
@@ -675,6 +675,8 @@
         dashboardContainer.innerHTML = ''; txContainer.innerHTML = ''; 
         
         let isSim = simulatedGoldPrice !== null;
+        let simBtn = document.getElementById('btn-sim-toggle');
+        if (simBtn) { if (isSim) { simBtn.className = "bg-rose-600/80 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-rose-500 transition border border-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.5)] animate-pulse"; simBtn.innerHTML = '<span class="emoji text-base">❌</span>'; simBtn.title = "ปิดโหมดจำลองราคา"; } else { simBtn.className = "bg-indigo-600/30 text-indigo-400 w-9 h-9 rounded-full flex items-center justify-center hover:bg-indigo-600/50 transition border border-indigo-500/30 shadow-md"; simBtn.innerHTML = '<span class="emoji text-base">🪄</span>'; simBtn.title = "จำลองราคาทอง"; } }
         if (isSim && currentView === 'dashboard') { alertContainer.innerHTML = `<div class="col-span-full bg-purple-900/40 border border-purple-500/50 rounded-xl p-3 text-center mb-4 animate-pulse"><p class="text-yellow-400 font-black text-sm">&#x26A0;&#xFE0F; โหมดจำลองราคา: <span class="text-lg">${simulatedGoldPrice.toLocaleString()}</span> บาท</p></div>`; } else { alertContainer.innerHTML = ''; }
 
         const effectivePrice = simulatedGoldPrice !== null ? simulatedGoldPrice : currentGoldBuyPrice; 
