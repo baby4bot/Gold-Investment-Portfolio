@@ -766,94 +766,93 @@
         }
     }
 
-    // ฟังก์ชันสูบข้อมูลสมาคมทองคำแบบ Multi-Proxy กันพลาด (อัปเดตแกะโครงสร้าง Tailwind ใหม่!)
+    // ฟังก์ชันสูบข้อมูลสมาคมทองคำแบบ Multi-Proxy กันพลาด
     async function fetchGoldDirectly() {
-        let bBuyStr='', bSellStr='', oBuyStr='', oSellStr='', fetchDate='--', fetchTime='--', fetchCount='0', chgStr='--';
+        let bBuyStr='', bSellStr='', oBuyStr='', oSellStr='';
+        let fetchDate='--', fetchTime='--', fetchCount='0', chgStr='--';
         let isSuccess = false;
+        let priceColorClass = 'text-white';
 
-        // Plan A: Direct API fetch without CORS proxy (API allows CORS usually)
-        try {
-            let res = await fetch('https://api.chnwt.dev/thai-gold-api/latest');
-            if (res.ok) {
-                let data = await res.json();
-                if (data && data.status === 'success') {
-                    let p = data.response.price;
-                    bBuyStr = p.gold_bar.buy;
-                    bSellStr = p.gold_bar.sell;
-                    oBuyStr = p.gold.buy;
-                    oSellStr = p.gold.sell;
-                    fetchDate = data.response.date;
+        const proxyList = [
+            'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://goldtraders.or.th'),
+            'https://corsproxy.io/?' + encodeURIComponent('https://goldtraders.or.th')
+        ];
+
+        for (let url of proxyList) {
+            try {
+                let res = await fetch(url);
+                if (!res.ok) continue;
+                let html = await res.text();
+                
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(html, 'text/html');
+
+                const dateSpan = doc.querySelector('span[data-slot="select-value"]');
+                if (dateSpan) {
+                    let timeText = dateSpan.textContent.trim();
+                    let dateMatch = timeText.match(/ประจำวันที่\s+([0-9\/]+)/);
+                    let timeMatch = timeText.match(/เวลา\s+([0-9:]+)/);
+                    let countMatch = timeText.match(/ครั้งที่\s*(\d+)/);
+                    if(dateMatch) fetchDate = dateMatch[1];
+                    if(timeMatch) fetchTime = timeMatch[1];
+                    if(countMatch) fetchCount = countMatch[1];
+                }
+
+                const priceNodes = Array.from(doc.querySelectorAll('span.text-xl.font-bold, span.text-3xl.font-bold, div.text-xl.font-bold'))
+                    .filter(n => /^[0-9]{2,3},[0-9]{3}(\.[0-9]{2})?$/.test(n.textContent.trim()));
                     
-                    let timeRaw = data.response.update_time || '';
-                    if (timeRaw.includes('เวลา')) {
-                        let tParts = timeRaw.split('น.');
-                        fetchTime = tParts[0].replace('เวลา', '').trim();
-                        let cMatch = timeRaw.match(/ครั้งที่\s*(\d+)/);
-                        if(cMatch) fetchCount = cMatch[1];
-                    } else {
-                        fetchTime = timeRaw;
+                if (priceNodes.length >= 4) {
+                    bBuyStr = priceNodes[0].textContent.trim();
+                    bSellStr = priceNodes[1].textContent.trim();
+                    oBuyStr = priceNodes[2].textContent.trim();
+                    oSellStr = priceNodes[3].textContent.trim();
+
+                    let firstClass = priceNodes[0].className || '';
+                    if (firstClass.includes('text-green')) priceColorClass = 'text-green-400';
+                    else if (firstClass.includes('text-red')) priceColorClass = 'text-red-400';
+
+                    for (let node of doc.querySelectorAll('span, div, p')) {
+                        let txt = node.textContent.trim();
+                        if (/^[+-][0-9,]+$/.test(txt) && txt.length < 10) {
+                            chgStr = txt;
+                            break;
+                        }
                     }
                     isSuccess = true;
+                    break;
                 }
-            }
-        } catch(e) { console.log("Plan A API Error", e); }
-
-        // Plan B: Web Scraping via Proxy specifically looking for Tailwind classes
-        if (!isSuccess) {
-            const proxyList = [
-                'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://goldtraders.or.th'),
-                'https://corsproxy.io/?' + encodeURIComponent('https://goldtraders.or.th')
-            ];
-
-            for (let url of proxyList) {
-                try {
-                    let res = await fetch(url);
-                    if (!res.ok) continue;
-                    let html = await res.text();
-                    
-                    let parser = new DOMParser();
-                    let doc = parser.parseFromString(html, 'text/html');
-
-                    // Extract Date, Time, Count
-                    const dateSpan = doc.querySelector('span[data-slot="select-value"]');
-                    if (dateSpan) {
-                        let timeText = dateSpan.textContent.trim();
-                        let dateMatch = timeText.match(/ประจำวันที่\s+([0-9/]+)/);
-                        let timeMatch = timeText.match(/เวลา\s+([0-9:]+)/);
-                        let countMatch = timeText.match(/ครั้งที่\s*(\d+)/);
-                        
-                        if(dateMatch) fetchDate = dateMatch[1];
-                        if(timeMatch) fetchTime = timeMatch[1];
-                        if(countMatch) fetchCount = countMatch[1];
-                    }
-
-                    // Extract Prices: find elements with "text-xl" and "font-bold" that contain numbers
-                    const priceNodes = Array.from(doc.querySelectorAll('span.text-xl.font-bold, span.text-3xl.font-bold, div.text-xl.font-bold'))
-                        .map(n => n.textContent.trim())
-                        .filter(t => /^[0-9]{2,3},[0-9]{3}\.[0-9]{2}$/.test(t));
-                        
-                    if (priceNodes.length >= 4) {
-                        bBuyStr = priceNodes[0];
-                        bSellStr = priceNodes[1];
-                        oBuyStr = priceNodes[2];
-                        oSellStr = priceNodes[3];
-                        
-                        // Extract change
-                        for (let span of doc.querySelectorAll('span, div, p')) {
-                            let txt = span.textContent.trim();
-                            if (/^[+-]\s*\d+(,\d{3})*$/.test(txt) && txt.length < 15) {
-                                chgStr = txt.replace(/\s+/g, ''); 
-                                break;
-                            }
-                        }
-                        isSuccess = true;
-                        break;
-                    }
-                } catch(e) { console.log("Plan B Proxy Error", e); }
-            }
+            } catch(e) { console.log("Proxy error, trying next..."); }
         }
 
-        // Apply results
+        if (!isSuccess) {
+            try {
+                let res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.chnwt.dev/thai-gold-api/latest'));
+                if(res.ok) {
+                    let jsonResponse = await res.json();
+                    let data = JSON.parse(jsonResponse.contents);
+                    
+                    if (data && data.status === 'success') {
+                        let p = data.response.price;
+                        bBuyStr = p.gold_bar.buy;
+                        bSellStr = p.gold_bar.sell;
+                        oBuyStr = p.gold.buy;
+                        oSellStr = p.gold.sell;
+                        fetchDate = data.response.date || data.response.update_date || '--';
+                        let timeRaw = data.response.update_time || '';
+                        if (timeRaw.includes('เวลา')) {
+                            let tParts = timeRaw.split('น.');
+                            fetchTime = tParts[0].replace('เวลา', '').trim();
+                            let cMatch = timeRaw.match(/ครั้งที่\s*(\d+)/);
+                            if(cMatch) fetchCount = cMatch[1];
+                        } else {
+                            fetchTime = timeRaw;
+                        }
+                        isSuccess = true;
+                    }
+                }
+            } catch(e) { console.log("API Backup failed"); }
+        }
+
         if (isSuccess) {
             const cleanNum = (str) => str ? parseFloat(str.replace(/[^0-9.-]+/g, '')) : 0;
             let newPrice = cleanNum(bBuyStr);
@@ -862,9 +861,7 @@
             let oBuyNum = cleanNum(oBuyStr);
             let oSellNum = cleanNum(oSellStr);
 
-            let isDataComplete = (bBuyNum > 0 && bSellNum > 0 && oBuyNum > 0 && oSellNum > 0);
-
-            if (newPrice > 0 && isDataComplete) {
+            if (newPrice > 0 && bBuyNum > 0 && bSellNum > 0) {
                 let priceChanged = (newPrice !== currentGoldBuyPrice);
 
                 if (!isFirstLoad && priceChanged) {
@@ -874,13 +871,9 @@
                         let recordKey = `H_${safeDate}_${safeTime}_${bBuyNum}`;
 
                         db.ref('gold_price_history/' + recordKey).set({
-                            price: newPrice,
-                            barBuy: bBuyNum,
-                            barSell: bSellNum,
-                            ornamentBuy: oBuyNum,
-                            ornamentSell: oSellNum,
-                            date: fetchDate,
-                            time: fetchTime,
+                            price: newPrice, barBuy: bBuyNum, barSell: bSellNum,
+                            ornamentBuy: oBuyNum, ornamentSell: oSellNum,
+                            date: fetchDate, time: fetchTime,
                             timestamp: firebase.database.ServerValue.TIMESTAMP
                         });
                     }
@@ -891,15 +884,14 @@
 
                 document.getElementById('api-date').innerText = fetchDate;
                 document.getElementById('api-time').innerText = fetchTime;
-
+                
                 let elDashboardCount = document.getElementById('dashboard-history-count');
                 let elDashboardCountMobile = document.getElementById('dashboard-history-count-mobile');
                 if(elDashboardCount && fetchCount !== '0') elDashboardCount.innerText = fetchCount;
                 if(elDashboardCountMobile && fetchCount !== '0') elDashboardCountMobile.innerText = fetchCount;
 
-                let priceColorClass = 'text-white';
+                let cel = document.getElementById('api-change');
                 if (chgStr && chgStr !== '--') {
-                    let cel = document.getElementById('api-change');
                     let chgNum = parseFloat(chgStr.replace(/,/g, ''));
                     if(chgNum > 0) {
                         priceColorClass = 'text-green-400';
@@ -908,13 +900,20 @@
                         priceColorClass = 'text-red-400';
                         cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> -${Math.abs(chgNum).toLocaleString()}</span>`;
                     } else {
+                        priceColorClass = 'text-white';
                         cel.innerText = "0";
                     }
+                } else {
+                    cel.innerHTML = `<span class="text-gray-400 font-bold text-sm">ไม่พบค่าผันผวน (API สำรอง)</span>`;
                 }
 
-                [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => {
+                [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, 
+                 {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => {
                     let el = document.getElementById(item.id);
-                    if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; }
+                    if(el && item.val) { 
+                        el.innerText = item.val; 
+                        el.className = `text-2xl font-black ${priceColorClass}`;
+                    }
                 });
                 
                 if(priceChanged && transactionsData.length > 0) renderData();
