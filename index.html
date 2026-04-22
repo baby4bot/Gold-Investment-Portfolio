@@ -843,9 +843,6 @@
         if (!/^[A-Za-z0-9_]+$/.test(username)) return showWarningToast('Username ต้องเป็นภาษาอังกฤษ/ตัวเลข!');
         if(username.toLowerCase() === 'admin') { showWarningToast('สงวนคำว่า admin ไว้ครับ!'); return; }
 
-        // ถอดเงื่อนไขการเช็ครหัสผ่าน 8 หลักออก เพื่อให้ Admin ตั้งค่าอะไรก็ได้
-        // if (password.length !== 8) ... <- เอาออกไปแล้ว
-
         if (base64Img) db.ref('user_profiles/' + name).set(base64Img);
         
         let userOrder = 999; let isFav = false; let isHid = true; let isHidSum = true; let oldName = "";
@@ -1298,6 +1295,8 @@
             bulkActions.classList.remove('flex');
         }
 
+        // รีเซ็ตค่าเพื่อให้ทุกครั้งที่เปิดใหม่ กลับไปวันล่าสุดเสมอ
+        document.getElementById('history-date-filter').value = '';
         populateHistoryDropdownAndRender();
     }
 
@@ -1305,6 +1304,9 @@
         const container = document.getElementById('history-list-container');
         const dateSelect = document.getElementById('history-date-filter');
         const countSpan = document.getElementById('history-count');
+
+        // จำค่าที่เลือกไว้ปัจจุบัน (ถ้ามี) ก่อนที่จะถูกล้างตอนอัปเดต
+        const currentSelectedDate = dateSelect.value;
 
         if (allHistoryData.length === 0) {
             container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">ยังไม่มีประวัติการเปลี่ยนแปลงราคา</p>';
@@ -1327,7 +1329,24 @@
             }
         });
 
-        const uniqueDates = [...new Set(uniqueGlobalData.map(item => item.date))];
+        // ฟังก์ชันแปลงวันที่ภาษาไทย ให้เป็นตัวเลขเพื่อใช้ในการจัดเรียง เช่น "22 เมษายน 2569" -> 25690422
+        function parseThaiDateForSort(thaiDateStr) {
+            if (!thaiDateStr) return 0;
+            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            let parts = thaiDateStr.split(' ');
+            if (parts.length >= 3) {
+                let day = parseInt(parts[0]) || 0;
+                let month = thaiMonths.indexOf(parts[1]) + 1;
+                let year = parseInt(parts[2]) || 0;
+                return (year * 10000) + (month * 100) + day;
+            }
+            return 0;
+        }
+
+        // ดึงวันที่ไม่ซ้ำ แล้วเรียงลำดับตามการแปลงวันที่ (มากไปน้อย = ล่าสุดไปอดีต)
+        const uniqueDates = [...new Set(uniqueGlobalData.map(item => item.date))]
+            .sort((a, b) => parseThaiDateForSort(b) - parseThaiDateForSort(a));
+
         dateSelect.innerHTML = '';
         uniqueDates.forEach(date => {
             let today = new Date().toLocaleDateString('en-GB');
@@ -1338,7 +1357,12 @@
         });
 
         if(uniqueDates.length > 0) {
-            dateSelect.value = uniqueDates[0];
+            // ถ้าเคยเลือกวันไหนไว้ ให้คงค่านั้นไว้ ถ้าเพิ่งเปิดเข้ามาใหม่ ให้เลือกวันล่าสุด
+            if (currentSelectedDate && uniqueDates.includes(currentSelectedDate)) {
+                dateSelect.value = currentSelectedDate;
+            } else {
+                dateSelect.value = uniqueDates[0];
+            }
         } else {
             dateSelect.innerHTML = '<option value="">ไม่มีข้อมูลที่สมบูรณ์</option>';
         }
