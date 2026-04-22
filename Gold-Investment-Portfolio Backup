@@ -503,7 +503,12 @@
             loadData();
             loadHistoryGlobal(); 
         } 
-        fetchGoldFromSheet(); setInterval(fetchGoldFromSheet, 1000); 
+        fetchGoldFromSheet(); 
+        
+        // ----------------------------------------------------
+        // 📍 เปลี่ยนความถี่เป็น 30 วินาที ตามที่คุณอาร์มต้องการ
+        // ----------------------------------------------------
+        setInterval(fetchGoldFromSheet, 30000); 
     }
 
     function loadHistoryGlobal() {
@@ -786,14 +791,18 @@
             const rows = data.split('\n').map(parseCSV); 
             const cleanNum = (str) => str ? parseFloat(str.replace(/[^0-9.-]+/g, '')) : 0; 
             
-            let fetchDate = rows[2] ? rows[2][17] : '--';
-            let fetchTime = rows[2] ? rows[2][19] : '--';
+            // ดึงข้อมูลตามช่องที่กำหนดไว้ใน Apps Script ล่าสุด (R3, T3, U3, S5, T5, S7, T7, U4)
+            // Array ฝั่ง JS จะนับช่องเป็นตัวเลข (A=0, B=1, ... R=17, S=18, T=19, U=20)
+            let fetchDate = rows[2] ? rows[2][17] : '--'; // แถว 3 ช่อง R
+            let fetchTime = rows[2] ? rows[2][19] : '--'; // แถว 3 ช่อง T
             
-            let bBuyStr = rows[4] ? rows[4][18] : ''; 
-            let bSellStr = rows[4] ? rows[4][19] : ''; 
-            let oBuyStr = rows[6] ? rows[6][18] : ''; 
-            let oSellStr = rows[6] ? rows[6][19] : ''; 
-            let chgStr = rows[3] && rows[3][20] ? rows[3][20].trim() : (rows[4] && rows[4][20] ? rows[4][20].trim() : (rows[2] && rows[2][20] ? rows[2][20].trim() : '')); 
+            let bBuyStr   = rows[4] ? rows[4][18] : '';   // แถว 5 ช่อง S
+            let bSellStr  = rows[4] ? rows[4][19] : '';   // แถว 5 ช่อง T
+            
+            let oBuyStr   = rows[6] ? rows[6][18] : '';   // แถว 7 ช่อง S
+            let oSellStr  = rows[6] ? rows[6][19] : '';   // แถว 7 ช่อง T
+            
+            let chgStr    = rows[3] ? rows[3][20] : '';   // แถว 4 ช่อง U (ส่วนต่างราคา)
             
             let newPrice = cleanNum(bBuyStr); 
             
@@ -839,7 +848,7 @@
                     let chgNum = parseFloat(chgStr.replace(/,/g, '')); 
                     if(chgNum > 0) { 
                         priceColorClass = 'text-green-400'; 
-                        cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> ${chgNum.toLocaleString()}</span>`; 
+                        cel.innerHTML = `<span class="text-green-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▲</span> +${chgNum.toLocaleString()}</span>`; 
                     } else if(chgNum < 0) { 
                         priceColorClass = 'text-red-400'; 
                         cel.innerHTML = `<span class="text-red-400 font-black flex items-center gap-2"><span class="animate-pulse text-2xl">▼</span> ${chgNum.toLocaleString()}</span>`; 
@@ -847,9 +856,27 @@
                         cel.innerText = chgStr; 
                     } 
                 } 
+                
+                // ฟังก์ชันเติมคอมม่า
+                const formatNumWithComma = (val) => {
+                    if (!val || val === '--') return val;
+                    let strVal = String(val).replace(/,/g, '');
+                    let numVal = parseFloat(strVal);
+                    if (isNaN(numVal)) return val;
+                    let parts = strVal.split('.');
+                    if (parts.length > 1) {
+                        return numVal.toLocaleString('en-US', {minimumFractionDigits: parts[1].length, maximumFractionDigits: parts[1].length});
+                    }
+                    return numVal.toLocaleString('en-US');
+                };
+
+                // ใส่ลูกน้ำลงไปในช่องหน้าแรกทั้งหมด
                 [{id: 'bar-buy', val: bBuyStr}, {id: 'bar-sell', val: bSellStr}, {id: 'ornament-buy', val: oBuyStr}, {id: 'ornament-sell', val: oSellStr}].forEach(item => { 
                     let el = document.getElementById(item.id); 
-                    if(el && item.val) { el.innerText = item.val; el.className = `text-2xl font-black ${priceColorClass}`; } 
+                    if(el && item.val) { 
+                        el.innerText = formatNumWithComma(item.val); 
+                        el.className = `text-2xl font-black ${priceColorClass}`; 
+                    } 
                 }); 
                 if(priceChanged && transactionsData.length > 0) renderData(); 
             }
@@ -1118,13 +1145,22 @@
         filteredData.forEach((item, index) => {
             let diffHtml = '';
             
+            // ----------------------------------------------------
+            // 📍 จุดลิงก์สี: เช็คว่าขึ้น/ลง แล้วกำหนดสีเดียวกันหมด
+            // ----------------------------------------------------
+            let priceColor = 'text-white'; 
+            
             if (item.diff > 0) {
+                priceColor = 'text-green-400';
                 diffHtml = `<span class="text-green-400 text-[13px] md:text-sm font-black tracking-tight bg-green-500/10 px-2.5 py-1 rounded-lg border border-green-500/20 shadow-inner"><span class="animate-pulse">▲</span> +${item.diff.toLocaleString()}</span>`;
             } else if (item.diff < 0) {
+                priceColor = 'text-red-400';
                 diffHtml = `<span class="text-red-400 text-[13px] md:text-sm font-black tracking-tight bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 shadow-inner"><span class="animate-pulse">▼</span> ${item.diff.toLocaleString()}</span>`;
             } else if (item.diff === 0) {
+                priceColor = 'text-gray-300';
                 diffHtml = `<span class="text-gray-300 text-[13px] md:text-sm font-black tracking-tight bg-gray-600/30 px-2.5 py-1 rounded-lg border border-gray-500/30 shadow-inner">= คงที่</span>`;
             } else {
+                priceColor = 'text-gray-300';
                 diffHtml = `<span class="text-gray-500 text-xs font-bold">ไม่มีข้อมูลเปรียบเทียบ</span>`;
             }
 
@@ -1155,14 +1191,14 @@
                         <div class="bg-black/40 p-3 rounded-xl border border-gray-700/50 flex flex-col justify-between relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500/50"></div>
                             <div class="text-yellow-500 font-bold mb-2 text-[11px] md:text-xs uppercase text-center border-b border-gray-800/50 pb-1.5 pl-1">ทองคำแท่ง 96.5%</div>
-                            <div class="flex justify-between items-center mb-1.5 pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">รับซื้อ</span> <span class="font-black text-green-400 text-[13px] md:text-base">${item.barBuy.toLocaleString()}</span></div>
-                            <div class="flex justify-between items-center pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white text-[13px] md:text-base">${item.barSell.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center mb-1.5 pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">รับซื้อ</span> <span class="font-black ${priceColor} text-[13px] md:text-base">${item.barBuy.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black ${priceColor} text-[13px] md:text-base">${item.barSell.toLocaleString()}</span></div>
                         </div>
                         <div class="bg-black/40 p-3 rounded-xl border border-gray-700/50 flex flex-col justify-between relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1 h-full bg-yellow-600/50"></div>
                             <div class="text-yellow-600 font-bold mb-2 text-[11px] md:text-xs uppercase text-center border-b border-gray-800/50 pb-1.5 pl-1">ทองรูปพรรณ 96.5%</div>
-                            <div class="flex justify-between items-center mb-1.5 pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ฐานภาษี</span> <span class="font-black text-green-400 text-[13px] md:text-base">${item.ornamentBuy.toLocaleString()}</span></div>
-                            <div class="flex justify-between items-center pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black text-white text-[13px] md:text-base">${item.ornamentSell.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center mb-1.5 pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ฐานภาษี</span> <span class="font-black ${priceColor} text-[13px] md:text-base">${item.ornamentBuy.toLocaleString()}</span></div>
+                            <div class="flex justify-between items-center pl-1"><span class="text-gray-400 text-[10px] md:text-[11px]">ขายออก</span> <span class="font-black ${priceColor} text-[13px] md:text-base">${item.ornamentSell.toLocaleString()}</span></div>
                         </div>
                     </div>
                 </div>
