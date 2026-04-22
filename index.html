@@ -569,6 +569,24 @@
         setInterval(fetchGoldFromSheet, 30000); 
     }
 
+    function getHistorySortWeight(dateStr, timeStr) {
+        const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        let dParts = dateStr ? dateStr.split(' ') : [];
+        let dateVal = 0;
+        if (dParts.length >= 3) {
+            let day = parseInt(dParts[0]) || 0;
+            let month = thaiMonths.indexOf(dParts[1]) + 1;
+            let year = parseInt(dParts[2]) || 0;
+            dateVal = (year * 10000) + (month * 100) + day;
+        }
+        let tParts = timeStr ? timeStr.replace(/[^0-9:]/g, '').split(':') : [];
+        let h = parseInt(tParts[0]) || 0;
+        let m = parseInt(tParts[1]) || 0;
+        let s = parseInt(tParts[2]) || 0;
+        let timeVal = (h * 10000) + (m * 100) + s;
+        return (dateVal * 1000000) + timeVal;
+    }
+
     function loadHistoryGlobal() {
         if(!db) return;
         db.ref('gold_price_history').orderByChild('timestamp').limitToLast(150).on('value', snapshot => {
@@ -1318,6 +1336,7 @@
         let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
         let uniqueGlobalData = [];
         let seen = new Set();
+        let dateTimestamps = {}; // เก็บ timestamp ล่าสุดของแต่ละวันเพื่อใช้เรียง
         
         displayData.forEach(item => {
             if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
@@ -1325,6 +1344,10 @@
                 if(!seen.has(key)) {
                     seen.add(key);
                     uniqueGlobalData.push(item);
+                }
+                // หาค่า timestamp ที่ใหม่ที่สุดของแต่ละวันที่
+                if (!dateTimestamps[item.date] || item.timestamp > dateTimestamps[item.date]) {
+                    dateTimestamps[item.date] = item.timestamp;
                 }
             }
         });
@@ -1382,7 +1405,7 @@
             return;
         }
 
-        let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
+        let displayData = [...allHistoryData].sort((a, b) => getHistorySortWeight(b.date, b.time) - getHistorySortWeight(a.date, a.time));
         let uniqueGlobalData = [];
         let seen = new Set();
         
@@ -1399,7 +1422,7 @@
         uniqueGlobalData.forEach((item, index) => {
             if (index < uniqueGlobalData.length - 1) {
                 let prevRecord = uniqueGlobalData[index + 1];
-                item.diff = item.price - prevRecord.price;
+                item.diff = item.barBuy - prevRecord.barBuy; // ใช้ราคารับซื้อลบกัน
             } else {
                 item.diff = null;
             }
