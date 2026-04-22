@@ -572,8 +572,18 @@
     let sortableInstance = null, isDraggingUser = false;
     let confirmActionCallback = null;
     let allHistoryData = []; 
+    
+    // คำนวณวันที่ปัจจุบันของระบบเมื่อโหลดแอป
+    const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+    const now = new Date();
+    const systemTodayStr = `${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
 
-    window.addEventListener('load', () => { initApp(); setupDraggableCloseBtn(); });
+    window.addEventListener('load', () => { 
+        // เซ็ตวันที่ปัจจุบันของระบบให้ป้ายอัปเดตทันที
+        document.getElementById('api-date').innerText = systemTodayStr;
+        initApp(); 
+        setupDraggableCloseBtn(); 
+    });
 
     function initApp() { 
         const session = localStorage.getItem('goldAppSession');
@@ -585,11 +595,10 @@
             loadHistoryGlobal(); 
         } 
         fetchGoldFromSheet(); 
-        setInterval(fetchGoldFromSheet, 1000); 
+        setInterval(fetchGoldFromSheet, 30000); 
     }
 
     function getHistorySortWeight(dateStr, timeStr) {
-        const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
         let dParts = dateStr ? dateStr.split(' ') : [];
         let dateVal = 0;
         if (dParts.length >= 3) {
@@ -624,11 +633,9 @@
     }
 
     function updateDashboardHistoryCount() {
-        let todayStr = document.getElementById('api-date').innerText;
-        if(todayStr === '--') return;
-        
+        // ใช้ systemTodayStr แทนที่จะดึงจากป้าย
         let todayData = allHistoryData.filter(item => 
-            item.date === todayStr &&
+            item.date === systemTodayStr &&
             item.barBuy > 0 && 
             item.barSell > 0 && 
             item.ornamentBuy > 0 && 
@@ -644,8 +651,7 @@
     }
 
     function updateDashboardDailyNet() {
-        let todayStr = document.getElementById('api-date').innerText;
-        if(todayStr === '--' || allHistoryData.length === 0) return;
+        if(allHistoryData.length === 0) return;
 
         let displayData = [...allHistoryData].sort((a, b) => getHistorySortWeight(b.date, b.time) - getHistorySortWeight(a.date, a.time));
         let uniqueGlobalData = [];
@@ -661,11 +667,12 @@
         uniqueGlobalData.forEach((item, index) => {
             if (index < uniqueGlobalData.length - 1) {
                 let prevRecord = uniqueGlobalData[index + 1];
-                item.diff = item.barBuy - prevRecord.barBuy; // คำนวณจากราคารับซื้อแท่ง
+                item.diff = item.barBuy - prevRecord.barBuy; 
             } else { item.diff = null; }
         });
 
-        const filteredData = uniqueGlobalData.filter(item => item.date === todayStr);
+        // ใช้ systemTodayStr แทนที่จะดึงจากป้าย
+        const filteredData = uniqueGlobalData.filter(item => item.date === systemTodayStr);
         let netChange = 0;
         let hasValidDiff = false;
         
@@ -683,6 +690,20 @@
             let color = netChange > 0 ? 'text-green-400' : (netChange < 0 ? 'text-red-400' : 'text-gray-300');
             let prefix = netChange > 0 ? '+' : '';
             el.innerHTML = `<span class="${color}">${prefix}${netChange.toLocaleString()}</span>`;
+        }
+        
+        // อัปเดตเวลาล่าสุดของวันนั้นๆ (ถ้ามี)
+        let timeEl = document.getElementById('api-time');
+        if (filteredData.length > 0) {
+            // เนื่องจาก filteredData เรียงจากใหม่ไปเก่าอยู่แล้ว อันแรกคือล่าสุด
+            timeEl.innerText = filteredData[0].time;
+        } else {
+            // ถ้าวันนี้ยังไม่มีข้อมูลเลย ให้แสดงข้อมูลล่าสุดของเมื่อวาน (หรือวันล่าสุดที่มี)
+            if(uniqueGlobalData.length > 0) {
+                 timeEl.innerText = uniqueGlobalData[0].time + " (ของ " + uniqueGlobalData[0].date + ")";
+            } else {
+                 timeEl.innerText = '--';
+            }
         }
     }
 
@@ -1081,8 +1102,8 @@
             const rows = data.split('\n').map(parseCSV); 
             const cleanNum = (str) => str ? parseFloat(str.replace(/[^0-9.-]+/g, '')) : 0; 
             
-            let fetchDate = rows[2] ? rows[2][17] : '--'; 
-            let fetchTime = rows[2] ? rows[2][19] : '--'; 
+            let csvDate = rows[2] ? rows[2][17] : '--'; 
+            let csvTime = rows[2] ? rows[2][19] : '--'; 
             
             let bBuyStr   = rows[4] ? rows[4][18] : '';   
             let bSellStr  = rows[4] ? rows[4][19] : '';   
@@ -1105,9 +1126,9 @@
                 let priceChanged = (newPrice !== currentGoldBuyPrice); 
                 
                 if (!isFirstLoad && priceChanged) {
-                    if(db && fetchDate !== '--' && fetchTime !== '--') {
-                        let safeDate = fetchDate.replace(/[\s\/]/g, '');
-                        let safeTime = fetchTime.replace(/[\s\.:น]/g, '');
+                    if(db && csvDate !== '--' && csvTime !== '--') {
+                        let safeDate = csvDate.replace(/[\s\/]/g, '');
+                        let safeTime = csvTime.replace(/[\s\.:น]/g, '');
                         let recordKey = `H_${safeDate}_${safeTime}_${bBuyNum}`;
 
                         db.ref('gold_price_history/' + recordKey).set({
@@ -1116,8 +1137,8 @@
                             barSell: bSellNum,
                             ornamentBuy: oBuyNum,
                             ornamentSell: oSellNum,
-                            date: fetchDate,
-                            time: fetchTime,
+                            date: csvDate,
+                            time: csvTime,
                             timestamp: firebase.database.ServerValue.TIMESTAMP
                         });
                     }
@@ -1126,8 +1147,6 @@
                 currentGoldBuyPrice = newPrice;
                 isFirstLoad = false;
                 
-                document.getElementById('api-date').innerText = fetchDate; 
-                document.getElementById('api-time').innerText = fetchTime; 
                 updateDashboardHistoryCount(); 
                 updateDashboardDailyNet();
                 
@@ -1400,7 +1419,7 @@
         let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
         let uniqueGlobalData = [];
         let seen = new Set();
-        let dateTimestamps = {}; // เก็บ timestamp ล่าสุดของแต่ละวันเพื่อใช้เรียง
+        let dateTimestamps = {}; 
         
         displayData.forEach(item => {
             if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
@@ -1409,7 +1428,6 @@
                     seen.add(key);
                     uniqueGlobalData.push(item);
                 }
-                // หาค่า timestamp ที่ใหม่ที่สุดของแต่ละวันที่
                 if (!dateTimestamps[item.date] || item.timestamp > dateTimestamps[item.date]) {
                     dateTimestamps[item.date] = item.timestamp;
                 }
