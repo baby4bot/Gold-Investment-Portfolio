@@ -202,7 +202,7 @@
     </div>
     
     <div id="view-dashboard" class="view-section active">
-        <div class="bg-gradient-to-br from-gray-900 to-black rounded-[2rem] shadow-2xl mb-8 border border-gray-800 overflow-hidden relative">
+        <div class="bg-gradient-to-br from-gray-900 to-black rounded-[2rem] shadow-2xl mb-8 border border-gray-800 overflow-hidden relative flex flex-col">
             <div class="text-center py-4 border-b border-gray-800/50 bg-black/40 relative">
                 <h2 class="text-xl font-black text-yellow-500">ประกาศราคาสมาคมฯ</h2>
                 <div class="mt-3 flex justify-center w-full px-2">
@@ -251,8 +251,18 @@
                 </div>
             </div>
             
-            <div class="bg-black/80 text-center py-4 flex justify-center items-center gap-3">
-                <span id="api-change" class="text-xl font-black tracking-tighter">--</span>
+            <div class="bg-black/90 py-5 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="bg-gray-900/90 px-5 py-2 rounded-full border border-gray-700 shadow-[0_inset_0_2px_4px_rgba(0,0,0,0.4)] flex items-center gap-3 z-10">
+                    <span class="text-gray-400 text-[11px] md:text-xs font-bold tracking-wide uppercase">ราคาผันผวนวันนี้</span>
+                    <span id="dashboard-daily-net" class="font-black text-sm md:text-base">--</span>
+                </div>
+                
+                <div class="flex items-center gap-3 z-10">
+                    <img src="https://i.ibb.co/YBg2PZQ9/price-Change.webp" class="w-10 h-10 md:w-12 md:h-12 object-contain drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]" alt="Fluctuation" />
+                    <div id="api-change" class="text-xl md:text-2xl font-black tracking-tighter">--</div>
+                </div>
             </div>
         </div>
         
@@ -383,11 +393,20 @@
         </h2>
 
         <div class="mb-3 px-1">
-            <select id="history-date-filter" onchange="renderHistoryList()" class="bg-[#1a1c23] text-sm font-bold text-yellow-400 border border-gray-600 rounded-xl px-3 py-2.5 w-full text-center outline-none focus:border-yellow-500 mb-2 shadow-inner appearance-none cursor-pointer">
+            <select id="history-date-filter" onchange="renderHistoryList()" class="bg-[#1a1c23] text-sm font-bold text-yellow-400 border border-gray-600 rounded-xl px-3 py-2.5 w-full text-center outline-none focus:border-yellow-500 mb-3 shadow-inner appearance-none cursor-pointer">
                 <option value="">กำลังโหลดวันที่...</option>
             </select>
-            <div class="text-center mt-2 bg-gray-900/50 rounded-xl py-2 border border-gray-700/50">
-                <p class="text-xs text-gray-400 font-bold">ประกาศปรับราคา: <span id="history-count" class="text-yellow-400 text-sm font-black bg-yellow-500/10 px-2 py-0.5 rounded-md mx-1">0</span> ครั้ง</p>
+            
+            <div class="flex justify-between items-center bg-gray-900/80 rounded-xl py-2.5 px-4 border border-gray-700/50 shadow-inner">
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">ปรับราคา</span>
+                    <p class="text-xs text-gray-300 font-bold"><span id="history-count" class="text-yellow-400 text-sm font-black bg-yellow-500/10 px-1.5 rounded-md mr-1">0</span> ครั้ง</p>
+                </div>
+                <div class="w-px h-6 bg-gray-700"></div>
+                <div class="flex flex-col text-right">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">ค่าผันผวนประจำวัน</span>
+                    <span id="history-daily-net" class="text-sm font-black">--</span>
+                </div>
             </div>
             
             <div id="admin-history-bulk-actions" class="hidden gap-2 mt-3">
@@ -597,6 +616,7 @@
                 });
             }
             updateDashboardHistoryCount();
+            updateDashboardDailyNet();
             if(document.getElementById('history-modal').style.display === 'flex') {
                 populateHistoryDropdownAndRender();
             }
@@ -621,6 +641,49 @@
         let el2 = document.getElementById('dashboard-history-count-mobile');
         if(el1) el1.innerText = count;
         if(el2) el2.innerText = count;
+    }
+
+    function updateDashboardDailyNet() {
+        let todayStr = document.getElementById('api-date').innerText;
+        if(todayStr === '--' || allHistoryData.length === 0) return;
+
+        let displayData = [...allHistoryData].sort((a, b) => getHistorySortWeight(b.date, b.time) - getHistorySortWeight(a.date, a.time));
+        let uniqueGlobalData = [];
+        let seen = new Set();
+        
+        displayData.forEach(item => {
+            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
+                let key = item.date + "_" + item.time;
+                if(!seen.has(key)) { seen.add(key); uniqueGlobalData.push(item); }
+            }
+        });
+
+        uniqueGlobalData.forEach((item, index) => {
+            if (index < uniqueGlobalData.length - 1) {
+                let prevRecord = uniqueGlobalData[index + 1];
+                item.diff = item.barBuy - prevRecord.barBuy; // คำนวณจากราคารับซื้อแท่ง
+            } else { item.diff = null; }
+        });
+
+        const filteredData = uniqueGlobalData.filter(item => item.date === todayStr);
+        let netChange = 0;
+        let hasValidDiff = false;
+        
+        filteredData.forEach(item => {
+            if (item.diff !== null) {
+                netChange += item.diff;
+                hasValidDiff = true;
+            }
+        });
+
+        let el = document.getElementById('dashboard-daily-net');
+        if (!hasValidDiff) {
+            el.innerHTML = '<span class="text-gray-500 text-xs">รอคำนวณ</span>';
+        } else {
+            let color = netChange > 0 ? 'text-green-400' : (netChange < 0 ? 'text-red-400' : 'text-gray-300');
+            let prefix = netChange > 0 ? '+' : '';
+            el.innerHTML = `<span class="${color}">${prefix}${netChange.toLocaleString()}</span>`;
+        }
     }
 
     function openMenu() { document.getElementById('side-menu').classList.remove('pointer-events-none'); document.getElementById('side-menu-bg').classList.remove('opacity-0'); document.getElementById('side-menu-content').classList.remove('translate-x-full'); }
@@ -1066,6 +1129,7 @@
                 document.getElementById('api-date').innerText = fetchDate; 
                 document.getElementById('api-time').innerText = fetchTime; 
                 updateDashboardHistoryCount(); 
+                updateDashboardDailyNet();
                 
                 let priceColorClass = 'text-white'; 
                 if (chgStr) { 
@@ -1430,6 +1494,25 @@
 
         const filteredData = uniqueGlobalData.filter(item => item.date === selectedDate);
         countSpan.innerText = filteredData.length;
+        
+        // คำนวณค่าผันผวนประจำวัน (Daily Net Change)
+        let dailyNetChange = 0;
+        let hasValidDiff = false;
+        filteredData.forEach(item => {
+            if (item.diff !== null) {
+                dailyNetChange += item.diff;
+                hasValidDiff = true;
+            }
+        });
+
+        let historyNetEl = document.getElementById('history-daily-net');
+        if (!hasValidDiff) {
+            historyNetEl.innerHTML = '<span class="text-gray-500 text-xs">รอคำนวณ</span>';
+        } else {
+            let color = dailyNetChange > 0 ? 'text-green-400' : (dailyNetChange < 0 ? 'text-red-400' : 'text-gray-300');
+            let prefix = dailyNetChange > 0 ? '+' : '';
+            historyNetEl.innerHTML = `<span class="${color}">${prefix}${dailyNetChange.toLocaleString()}</span>`;
+        }
 
         container.innerHTML = '';
         if (filteredData.length === 0) {
