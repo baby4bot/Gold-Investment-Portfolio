@@ -208,7 +208,7 @@
                 <div class="mt-3 flex justify-center w-full px-2">
                     <button onclick="openHistoryModal()" class="group bg-gray-800/80 hover:bg-gray-700 border border-gray-600 rounded-full px-1.5 py-1.5 flex items-center gap-2 shadow-lg transition-all active:scale-95 cursor-pointer max-w-full">
                         <div class="bg-gray-900 border border-gray-700 text-yellow-300 font-bold px-3 py-1.5 rounded-full text-[11px] md:text-sm whitespace-nowrap shadow-inner">
-                            อัปเดต: <span id="api-date">--</span> | <span id="api-time">--</span>
+                            อัปเดตล่าสุด : <span id="api-date">--</span> | เวลา <span id="api-time">--</span> น.
                         </div>
                         <div class="text-white font-bold text-xs md:text-sm whitespace-nowrap hidden sm:block">
                             เปลี่ยนแปลง <span id="dashboard-history-count" class="text-yellow-400 bg-yellow-500/20 px-1.5 rounded-md">0</span> ครั้ง
@@ -691,20 +691,6 @@
             let prefix = netChange > 0 ? '+' : '';
             el.innerHTML = `<span class="${color}">${prefix}${netChange.toLocaleString()}</span>`;
         }
-        
-        // อัปเดตเวลาล่าสุดของวันนั้นๆ (ถ้ามี)
-        let timeEl = document.getElementById('api-time');
-        if (filteredData.length > 0) {
-            // เนื่องจาก filteredData เรียงจากใหม่ไปเก่าอยู่แล้ว อันแรกคือล่าสุด
-            timeEl.innerText = filteredData[0].time;
-        } else {
-            // ถ้าวันนี้ยังไม่มีข้อมูลเลย ให้แสดงข้อมูลล่าสุดของเมื่อวาน (หรือวันล่าสุดที่มี)
-            if(uniqueGlobalData.length > 0) {
-                 timeEl.innerText = uniqueGlobalData[0].time + " (ของ " + uniqueGlobalData[0].date + ")";
-            } else {
-                 timeEl.innerText = '--';
-            }
-        }
     }
 
     function openMenu() { document.getElementById('side-menu').classList.remove('pointer-events-none'); document.getElementById('side-menu-bg').classList.remove('opacity-0'); document.getElementById('side-menu-content').classList.remove('translate-x-full'); }
@@ -1123,6 +1109,13 @@
             let isDataComplete = (bBuyNum > 0 && bSellNum > 0 && oBuyNum > 0 && oSellNum > 0);
 
             if (newPrice > 0 && isDataComplete) {
+                
+                // อัปเดตวันและเวลาจาก Google Sheet เลยทันที
+                if (csvDate !== '--' && csvTime !== '--') {
+                    document.getElementById('api-date').innerText = csvDate;
+                    document.getElementById('api-time').innerText = csvTime;
+                }
+
                 let priceChanged = (newPrice !== currentGoldBuyPrice); 
                 
                 if (!isFirstLoad && priceChanged) {
