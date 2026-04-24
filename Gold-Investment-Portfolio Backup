@@ -615,7 +615,8 @@
 
     function loadHistoryGlobal() {
         if(!db) return;
-        db.ref('gold_price_history').orderByChild('timestamp').limitToLast(150).on('value', snapshot => {
+        // ดึงข้อมูลประวัติทั้งหมดที่มีในฐานข้อมูล (เอา .limitToLast ออกแล้ว)
+        db.ref('gold_price_history').orderByChild('timestamp').on('value', snapshot => {
             allHistoryData = [];
             if(snapshot.exists()) {
                 snapshot.forEach(child => {
@@ -1111,16 +1112,12 @@
                     document.getElementById('api-time').innerText = csvTime;
                 }
 
-                // --------- จุดที่ทำการแก้ไข ---------
-                // ยกเลิกการใช้เงื่อนไข !isFirstLoad เปลี่ยนมาใช้วิธีเช็คจาก Firebase โดยตรง
-                // ทันทีที่โหลดข้อมูลจาก Sheet ได้ มันจะมาเช็คก่อนเลยว่า เวลานี้ วันที่นี้ ถูกบันทึกไปหรือยัง
                 if (db && csvDate !== '--' && csvTime !== '--') {
                     let safeDate = csvDate.replace(/[\s\/]/g, '');
                     let safeTime = csvTime.replace(/[\s\.:น]/g, '');
                     let recordKey = `H_${safeDate}_${safeTime}_${bBuyNum}`;
 
                     db.ref('gold_price_history/' + recordKey).once('value').then(snapshot => {
-                        // ถ้ายังไม่มีประวัตินี้ใน Firebase ให้บันทึกลงไปเลย (ช่วยเก็บตกตอนเราเพิ่งเปิดหน้าเว็บ)
                         if (!snapshot.exists()) {
                             db.ref('gold_price_history/' + recordKey).set({
                                 price: newPrice,
@@ -1139,7 +1136,6 @@
                 let priceChanged = (newPrice !== currentGoldBuyPrice); 
                 currentGoldBuyPrice = newPrice;
                 isFirstLoad = false;
-                // ---------------------------------
                 
                 updateDashboardHistoryCount(); 
                 updateDashboardDailyNet();
