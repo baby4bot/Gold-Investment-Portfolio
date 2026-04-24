@@ -2,7 +2,7 @@
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" content="#0f172a" />
-<title>พอร์ตทองคำ V6.36 (Thai Date Display)</title>
+<title>พอร์ตทองคำ V6.37 (Stable History Picker)</title>
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -295,7 +295,7 @@
     
     <div id="view-manage-tx" class="view-section relative min-h-screen">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-black text-blue-400 flex items-center gap-2"><span class="emoji">📝</span> บริหารจัดการข้อมูลทอง</h2>
+            <h2 class="text-2xl font-black text-white flex items-center gap-2"><span class="emoji">📝</span> บริหารจัดการข้อมูลทอง</h2>
             <button id="btn-show-add-tx" onclick="toggleAddTxForm(true)" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-bold shadow-[0_5px_15px_rgba(37,99,235,0.4)] transition flex items-center gap-2 text-sm active:scale-95">
                 <span class="emoji">➕</span> เพิ่มรายการ
             </button>
@@ -405,7 +405,7 @@
                         <span id="display-thai-date-text">กำลังโหลด...</span>
                         <span class="emoji text-gray-400 ml-2">📅</span>
                     </div>
-                    <input type="date" id="history-date-picker" onchange="renderHistoryList()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                    <input type="date" id="history-date-picker" onchange="handleDateSelection()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                 </div>
                 <button type="button" onclick="jumpToLatestHistory()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 rounded-xl font-bold transition shadow-inner text-xs whitespace-nowrap flex items-center gap-1 active:scale-95"><span class="emoji">🔄</span> ล่าสุด</button>
             </div>
@@ -585,6 +585,8 @@
     let sortableInstance = null, isDraggingUser = false;
     let confirmActionCallback = null;
     let allHistoryData = []; 
+    // เพิ่มตัวแปรสำหรับจำวันที่เลือกในหน้าประวัติ
+    let currentSelectedHistoryDateStr = null;
     
     const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
     const now = new Date();
@@ -626,7 +628,6 @@
         return (dateVal * 1000000) + timeVal;
     }
 
-    // ฟังก์ชันแปลงวันที่ ไทย -> สากล (YYYY-MM-DD)
     function convertThaiDateToStandard(thaiDateStr) {
         if (!thaiDateStr) return '';
         let parts = thaiDateStr.split(' ');
@@ -639,7 +640,6 @@
         return `${year}-${month}-${day}`;
     }
 
-    // ฟังก์ชันแปลงวันที่ สากล (YYYY-MM-DD) -> ไทย
     function convertStandardToThaiDate(stdDateStr) {
         if (!stdDateStr) return '';
         let parts = stdDateStr.split('-');
@@ -650,7 +650,6 @@
         return `${day} ${month} ${year}`;
     }
 
-    // ฟังก์ชันค้นหาวันที่ล่าสุดที่มีข้อมูลจริงๆ
     function getLatestValidDate() {
         if (allHistoryData.length === 0) return systemTodayStr;
         let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
@@ -674,13 +673,14 @@
             updateDashboardHistoryCount();
             updateDashboardDailyNet();
             if(document.getElementById('history-modal').style.display === 'flex') {
-                initHistoryPickerAndRender();
+                // ถ้ามีข้อมูลใหม่เข้ามา ให้รีเฟรชหน้าต่างประวัติ โดยคงวันที่เดิมไว้
+                renderHistoryList();
             }
         });
     }
 
     function updateDashboardHistoryCount() {
-        let targetDate = getLatestValidDate(); // ใช้วันที่ล่าสุดที่มีข้อมูลเสมอ
+        let targetDate = getLatestValidDate(); 
         let targetData = allHistoryData.filter(item => 
             item.date === targetDate &&
             item.barBuy > 0 && 
@@ -718,7 +718,7 @@
             } else { item.diff = null; }
         });
 
-        let targetDate = getLatestValidDate(); // ใช้วันที่ล่าสุดที่มีข้อมูลเสมอ
+        let targetDate = getLatestValidDate(); 
         const filteredData = uniqueGlobalData.filter(item => item.date === targetDate);
         let netChange = 0;
         let hasValidDiff = false;
@@ -1424,15 +1424,32 @@
         `; 
     }
 
+    function handleDateSelection() {
+        let stdDate = document.getElementById('history-date-picker').value;
+        let selectedDate = convertStandardToThaiDate(stdDate);
+        if (selectedDate) {
+            currentSelectedHistoryDateStr = selectedDate; // จำวันที่เลือกไว้
+        }
+        renderHistoryList();
+    }
+
     function initHistoryPickerAndRender() {
         if (allHistoryData.length === 0) {
             renderHistoryList();
             return;
         }
         
-        // หาวันที่ล่าสุดที่มีในฐานข้อมูลเพื่อตั้งค่าเป็นค่าเริ่มต้น
-        let latestDate = getLatestValidDate();
-        let stdDate = convertThaiDateToStandard(latestDate);
+        let targetDate = null;
+        if (currentSelectedHistoryDateStr) {
+            // ถ้าเคยเลือกวันไว้แล้ว ให้ใช้วันนั้นต่อ
+            targetDate = currentSelectedHistoryDateStr;
+        } else {
+            // ถ้าเข้ามาครั้งแรก ให้หาวันล่าสุด
+            targetDate = getLatestValidDate();
+            currentSelectedHistoryDateStr = targetDate;
+        }
+        
+        let stdDate = convertThaiDateToStandard(targetDate);
         if (stdDate) {
             document.getElementById('history-date-picker').value = stdDate;
         }
@@ -1440,7 +1457,13 @@
     }
 
     function jumpToLatestHistory() {
-        initHistoryPickerAndRender();
+        let latestDate = getLatestValidDate();
+        currentSelectedHistoryDateStr = latestDate; // รีเซ็ตไปวันล่าสุด
+        let stdDate = convertThaiDateToStandard(latestDate);
+        if (stdDate) {
+            document.getElementById('history-date-picker').value = stdDate;
+        }
+        renderHistoryList();
         showWarningToast('🔄 แสดงข้อมูลล่าสุดเรียบร้อย');
     }
 
@@ -1456,7 +1479,8 @@
             bulkActions.classList.remove('flex');
         }
 
-        // ตั้งค่าหน้าต่างประวัติให้เป็นปฏิทินวันที่ล่าสุดเสมอ
+        // เมื่อเปิดหน้าต่างใหม่ ให้แสดงวันล่าสุดเสมอ
+        currentSelectedHistoryDateStr = null; 
         initHistoryPickerAndRender();
     }
 
@@ -1470,7 +1494,6 @@
         let stdDate = datePicker.value;
         let selectedDate = convertStandardToThaiDate(stdDate);
 
-        // อัปเดตข้อความวันที่ภาษาไทยให้ผู้ใช้เห็น
         if (displayDateText) {
             displayDateText.innerText = selectedDate ? selectedDate : 'เลือกวันที่';
         }
