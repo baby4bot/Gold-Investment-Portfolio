@@ -2,7 +2,7 @@
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" content="#0f172a" />
-<title>พอร์ตทองคำ V6.33 (Password Policy)</title>
+<title>พอร์ตทองคำ V6.35 (Smart Date Sync)</title>
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -44,6 +44,10 @@
     input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     input[type="number"] { -moz-appearance: textfield; }
     #sim-price-input::selection { background-color: rgba(255, 255, 255, 0.1); color: #facc15; }
+    
+    /* แต่งสีไอคอนปฏิทินในโหมดมืดสำหรับ Desktop */
+    input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(1) sepia(100%) saturate(300%) hue-rotate(350deg); opacity: 0.8; }
+    
     .app-card { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
     .app-card:active { transform: scale(0.97); }
     .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
@@ -393,9 +397,11 @@
         </h2>
 
         <div class="mb-3 px-1">
-            <select id="history-date-filter" onchange="renderHistoryList()" class="bg-[#1a1c23] text-sm font-bold text-yellow-400 border border-gray-600 rounded-xl px-3 py-2.5 w-full text-center outline-none focus:border-yellow-500 mb-3 shadow-inner appearance-none cursor-pointer">
-                <option value="">กำลังโหลดวันที่...</option>
-            </select>
+            
+            <div class="flex gap-2 mb-3">
+                <input type="date" id="history-date-picker" onchange="renderHistoryList()" class="bg-[#1a1c23] text-sm font-bold text-yellow-400 border border-gray-600 rounded-xl px-3 py-2.5 w-full text-center outline-none focus:border-yellow-500 shadow-inner cursor-pointer" />
+                <button type="button" onclick="jumpToLatestHistory()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 rounded-xl font-bold transition shadow-inner text-xs whitespace-nowrap flex items-center gap-1 active:scale-95"><span class="emoji">🔄</span> ล่าสุด</button>
+            </div>
             
             <div class="flex justify-between items-center bg-gray-900/80 rounded-xl py-2.5 px-4 border border-gray-700/50 shadow-inner">
                 <div class="flex flex-col">
@@ -613,9 +619,44 @@
         return (dateVal * 1000000) + timeVal;
     }
 
+    // ฟังก์ชันแปลงวันที่ ไทย -> สากล (YYYY-MM-DD)
+    function convertThaiDateToStandard(thaiDateStr) {
+        if (!thaiDateStr) return '';
+        let parts = thaiDateStr.split(' ');
+        if (parts.length < 3) return '';
+        let day = parseInt(parts[0]).toString().padStart(2, '0');
+        let monthIdx = thaiMonths.indexOf(parts[1]);
+        if (monthIdx === -1) return '';
+        let month = (monthIdx + 1).toString().padStart(2, '0');
+        let year = parseInt(parts[2]) - 543;
+        return `${year}-${month}-${day}`;
+    }
+
+    // ฟังก์ชันแปลงวันที่ สากล (YYYY-MM-DD) -> ไทย
+    function convertStandardToThaiDate(stdDateStr) {
+        if (!stdDateStr) return '';
+        let parts = stdDateStr.split('-');
+        if (parts.length < 3) return '';
+        let year = parseInt(parts[0]) + 543;
+        let month = thaiMonths[parseInt(parts[1]) - 1];
+        let day = parseInt(parts[2]).toString();
+        return `${day} ${month} ${year}`;
+    }
+
+    // ฟังก์ชันค้นหาวันที่ล่าสุดที่มีข้อมูลจริงๆ
+    function getLatestValidDate() {
+        if (allHistoryData.length === 0) return systemTodayStr;
+        let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
+        for (let item of displayData) {
+            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
+                return item.date;
+            }
+        }
+        return systemTodayStr;
+    }
+
     function loadHistoryGlobal() {
         if(!db) return;
-        // ดึงข้อมูลประวัติทั้งหมดที่มีในฐานข้อมูล (เอา .limitToLast ออกแล้ว)
         db.ref('gold_price_history').orderByChild('timestamp').on('value', snapshot => {
             allHistoryData = [];
             if(snapshot.exists()) {
@@ -626,20 +667,21 @@
             updateDashboardHistoryCount();
             updateDashboardDailyNet();
             if(document.getElementById('history-modal').style.display === 'flex') {
-                populateHistoryDropdownAndRender();
+                initHistoryPickerAndRender();
             }
         });
     }
 
     function updateDashboardHistoryCount() {
-        let todayData = allHistoryData.filter(item => 
-            item.date === systemTodayStr &&
+        let targetDate = getLatestValidDate(); // ใช้วันที่ล่าสุดที่มีข้อมูลเสมอ
+        let targetData = allHistoryData.filter(item => 
+            item.date === targetDate &&
             item.barBuy > 0 && 
             item.barSell > 0 && 
             item.ornamentBuy > 0 && 
             item.ornamentSell > 0
         );
-        let uniqueTimes = new Set(todayData.map(item => item.time));
+        let uniqueTimes = new Set(targetData.map(item => item.time));
         let count = uniqueTimes.size;
 
         let el1 = document.getElementById('dashboard-history-count');
@@ -669,7 +711,8 @@
             } else { item.diff = null; }
         });
 
-        const filteredData = uniqueGlobalData.filter(item => item.date === systemTodayStr);
+        let targetDate = getLatestValidDate(); // ใช้วันที่ล่าสุดที่มีข้อมูลเสมอ
+        const filteredData = uniqueGlobalData.filter(item => item.date === targetDate);
         let netChange = 0;
         let hasValidDiff = false;
         
@@ -1374,6 +1417,26 @@
         `; 
     }
 
+    function initHistoryPickerAndRender() {
+        if (allHistoryData.length === 0) {
+            renderHistoryList();
+            return;
+        }
+        
+        // หาวันที่ล่าสุดที่มีในฐานข้อมูลเพื่อตั้งค่าเป็นค่าเริ่มต้น
+        let latestDate = getLatestValidDate();
+        let stdDate = convertThaiDateToStandard(latestDate);
+        if (stdDate) {
+            document.getElementById('history-date-picker').value = stdDate;
+        }
+        renderHistoryList();
+    }
+
+    function jumpToLatestHistory() {
+        initHistoryPickerAndRender();
+        showWarningToast('🔄 แสดงข้อมูลล่าสุดเรียบร้อย');
+    }
+
     function openHistoryModal() {
         document.getElementById('history-modal').style.display = 'flex';
         
@@ -1386,89 +1449,23 @@
             bulkActions.classList.remove('flex');
         }
 
-        document.getElementById('history-date-filter').value = '';
-        populateHistoryDropdownAndRender();
-    }
-
-    function populateHistoryDropdownAndRender() {
-        const container = document.getElementById('history-list-container');
-        const dateSelect = document.getElementById('history-date-filter');
-        const countSpan = document.getElementById('history-count');
-
-        const currentSelectedDate = dateSelect.value;
-
-        if (allHistoryData.length === 0) {
-            container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">ยังไม่มีประวัติการเปลี่ยนแปลงราคา</p>';
-            dateSelect.innerHTML = '<option value="">ไม่มีข้อมูล</option>';
-            countSpan.innerText = '0';
-            return;
-        }
-
-        let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
-        let uniqueGlobalData = [];
-        let seen = new Set();
-        let dateTimestamps = {}; 
-        
-        displayData.forEach(item => {
-            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
-                let key = item.date + "_" + item.time;
-                if(!seen.has(key)) {
-                    seen.add(key);
-                    uniqueGlobalData.push(item);
-                }
-                if (!dateTimestamps[item.date] || item.timestamp > dateTimestamps[item.date]) {
-                    dateTimestamps[item.date] = item.timestamp;
-                }
-            }
-        });
-
-        function parseThaiDateForSort(thaiDateStr) {
-            if (!thaiDateStr) return 0;
-            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            let parts = thaiDateStr.split(' ');
-            if (parts.length >= 3) {
-                let day = parseInt(parts[0]) || 0;
-                let month = thaiMonths.indexOf(parts[1]) + 1;
-                let year = parseInt(parts[2]) || 0;
-                return (year * 10000) + (month * 100) + day;
-            }
-            return 0;
-        }
-
-        const uniqueDates = [...new Set(uniqueGlobalData.map(item => item.date))]
-            .sort((a, b) => parseThaiDateForSort(b) - parseThaiDateForSort(a));
-
-        dateSelect.innerHTML = '';
-        uniqueDates.forEach(date => {
-            let today = new Date().toLocaleDateString('en-GB');
-            let label = date;
-            if(date.includes(today.split('/')[0])) label += ' (ล่าสุด)'; 
-            
-            dateSelect.innerHTML += `<option value="${date}">${label}</option>`;
-        });
-
-        if(uniqueDates.length > 0) {
-            if (currentSelectedDate && uniqueDates.includes(currentSelectedDate)) {
-                dateSelect.value = currentSelectedDate;
-            } else {
-                dateSelect.value = uniqueDates[0];
-            }
-        } else {
-            dateSelect.innerHTML = '<option value="">ไม่มีข้อมูลที่สมบูรณ์</option>';
-        }
-
-        renderHistoryList();
+        // ตั้งค่าหน้าต่างประวัติให้เป็นปฏิทินวันที่ล่าสุดเสมอ
+        initHistoryPickerAndRender();
     }
 
     function renderHistoryList() {
         const container = document.getElementById('history-list-container');
-        const dateSelect = document.getElementById('history-date-filter');
+        const datePicker = document.getElementById('history-date-picker');
         const countSpan = document.getElementById('history-count');
-        const selectedDate = dateSelect.value;
+        const historyNetEl = document.getElementById('history-daily-net');
+        
+        let stdDate = datePicker.value;
+        let selectedDate = convertStandardToThaiDate(stdDate);
 
         if (!selectedDate) {
-            container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">ไม่มีประวัติข้อมูลที่สมบูรณ์</p>';
+            container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">กรุณาเลือกวันที่จากปฏิทินด้านบน</p>';
             countSpan.innerText = '0';
+            historyNetEl.innerHTML = '<span class="text-gray-500 text-xs">--</span>';
             return;
         }
 
@@ -1507,7 +1504,6 @@
             }
         });
 
-        let historyNetEl = document.getElementById('history-daily-net');
         if (!hasValidDiff) {
             historyNetEl.innerHTML = '<span class="text-gray-500 text-xs">รอคำนวณ</span>';
         } else {
@@ -1518,7 +1514,7 @@
 
         container.innerHTML = '';
         if (filteredData.length === 0) {
-            container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">ไม่มีประวัติในวันนี้</p>';
+            container.innerHTML = `<p class="text-center text-gray-500 text-sm mt-8">ไม่มีประวัติการอัปเดตราคาในวันที่<br><span class="text-yellow-500 font-bold mt-2 block">${selectedDate}</span></p>`;
             return;
         }
 
@@ -1591,8 +1587,12 @@
     }
 
     function executeBulkHistoryDelete(matchType) {
-        let selectedDate = document.getElementById('history-date-filter').value;
-        if(!selectedDate) return;
+        let stdDate = document.getElementById('history-date-picker').value;
+        let selectedDate = convertStandardToThaiDate(stdDate);
+        if(!selectedDate) {
+            showWarningToast('กรุณาเลือกวันที่ต้องการอ้างอิงก่อน');
+            return;
+        }
         
         let parts = selectedDate.split(' ');
         let matchStr = selectedDate; 
