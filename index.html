@@ -2,7 +2,7 @@
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" content="#0f172a" />
-<title>พอร์ตทองคำ V6.35 (Smart Date Sync)</title>
+<title>พอร์ตทองคำ V6.36 (Thai Date Display)</title>
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -47,7 +47,8 @@
     
     /* แต่งสีไอคอนปฏิทินในโหมดมืดสำหรับ Desktop */
     input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(1) sepia(100%) saturate(300%) hue-rotate(350deg); opacity: 0.8; }
-    
+    #history-date-picker::-webkit-calendar-picker-indicator { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
     .app-card { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
     .app-card:active { transform: scale(0.97); }
     .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
@@ -399,7 +400,13 @@
         <div class="mb-3 px-1">
             
             <div class="flex gap-2 mb-3">
-                <input type="date" id="history-date-picker" onchange="renderHistoryList()" class="bg-[#1a1c23] text-sm font-bold text-yellow-400 border border-gray-600 rounded-xl px-3 py-2.5 w-full text-center outline-none focus:border-yellow-500 shadow-inner cursor-pointer" />
+                <div class="relative w-full flex-1">
+                    <div class="bg-[#1a1c23] text-sm font-bold text-yellow-400 border border-gray-600 rounded-xl px-3 py-2.5 w-full h-full flex justify-between items-center shadow-inner pointer-events-none">
+                        <span id="display-thai-date-text">กำลังโหลด...</span>
+                        <span class="emoji text-gray-400 ml-2">📅</span>
+                    </div>
+                    <input type="date" id="history-date-picker" onchange="renderHistoryList()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                </div>
                 <button type="button" onclick="jumpToLatestHistory()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 rounded-xl font-bold transition shadow-inner text-xs whitespace-nowrap flex items-center gap-1 active:scale-95"><span class="emoji">🔄</span> ล่าสุด</button>
             </div>
             
@@ -1458,9 +1465,15 @@
         const datePicker = document.getElementById('history-date-picker');
         const countSpan = document.getElementById('history-count');
         const historyNetEl = document.getElementById('history-daily-net');
+        const displayDateText = document.getElementById('display-thai-date-text');
         
         let stdDate = datePicker.value;
         let selectedDate = convertStandardToThaiDate(stdDate);
+
+        // อัปเดตข้อความวันที่ภาษาไทยให้ผู้ใช้เห็น
+        if (displayDateText) {
+            displayDateText.innerText = selectedDate ? selectedDate : 'เลือกวันที่';
+        }
 
         if (!selectedDate) {
             container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">กรุณาเลือกวันที่จากปฏิทินด้านบน</p>';
