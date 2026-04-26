@@ -678,9 +678,17 @@
             if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
                 // ทำความสะอาด Date ตัดช่องว่างซ้ำซ้อน
                 let cleanDate = (item.date || "").replace(/\s+/g, ' ').trim();
-                // ดึงเฉพาะ ชั่วโมง:นาที เท่านั้น เพื่อใช้เป็น Key กรองข้อมูล
-                let timeMatch = (item.time || "").match(/\d{1,2}:\d{2}/);
-                let cleanTime = timeMatch ? timeMatch[0] : (item.time || "").trim();
+                
+                // แก้ปัญหาเวลา 9:01 กับ 09:01 ให้เป็นตัวเดียวกัน (เติมเลข 0 ข้างหน้าให้ครบ)
+                let timeMatch = (item.time || "").match(/(\d{1,2}):(\d{2})/);
+                let cleanTime = "";
+                if (timeMatch) {
+                    let h = timeMatch[1].padStart(2, '0');
+                    let m = timeMatch[2];
+                    cleanTime = `${h}:${m}`;
+                } else {
+                    cleanTime = (item.time || "").trim();
+                }
                 
                 let key = cleanDate + "_" + cleanTime;
                 
@@ -690,7 +698,7 @@
                     uniqueData.push({
                         ...item,
                         cleanDate: cleanDate,
-                        displayTime: cleanTime
+                        displayTime: cleanTime // ใช้เวลาที่ format แล้ว เช่น 09:01 ไปแสดงผลเลย
                     });
                 }
             }
