@@ -1540,6 +1540,8 @@
             container.innerHTML = '<p class="text-center text-gray-500 text-sm mt-4">กรุณาเลือกวันที่จากปฏิทินด้านบน</p>';
             countSpan.innerText = '0';
             historyNetEl.innerHTML = '<span class="text-gray-500 text-xs">--</span>';
+            // เลื่อนกลับไปบนสุดเสมอเมื่อเรนเดอร์ข้อมูลใหม่
+            container.scrollTop = 0;
             return;
         }
 
@@ -1569,6 +1571,8 @@
         container.innerHTML = '';
         if (filteredData.length === 0) {
             container.innerHTML = `<p class="text-center text-gray-500 text-sm mt-8">ไม่มีประวัติการอัปเดตราคาในวันที่<br><span class="text-yellow-500 font-bold mt-2 block">${selectedDate}</span></p>`;
+            // เลื่อนกลับไปบนสุดเสมอเมื่อเรนเดอร์ข้อมูลใหม่
+            container.scrollTop = 0;
             return;
         }
 
@@ -1584,7 +1588,6 @@
                 diffHtml = `<span class="text-red-400 text-[13px] md:text-sm font-black tracking-tight bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 shadow-inner"><span class="animate-pulse">▼</span> ${item.diff.toLocaleString()}</span>`;
             } else if (item.diff === 0) {
                 priceColor = 'text-gray-300';
-                // ตัดเครื่องหมาย = ออกตรงนี้ครับ
                 diffHtml = `<span class="text-gray-300 text-[13px] md:text-sm font-black tracking-tight bg-gray-600/30 px-2.5 py-1 rounded-lg border border-gray-500/30 shadow-inner">0</span>`;
             } else {
                 priceColor = 'text-gray-300';
@@ -1630,6 +1633,9 @@
                 </div>
             `;
         });
+
+        // เพิ่มคำสั่งให้เลื่อนหน้าจอกลับไปที่ตำแหน่งบนสุดเสมอ หลังดึงข้อมูลเสร็จ
+        container.scrollTop = 0;
     }
 
     function deleteSingleHistory(id, time) {
