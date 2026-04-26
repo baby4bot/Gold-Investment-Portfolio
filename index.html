@@ -612,7 +612,7 @@
     }
 
     function getHistorySortWeight(dateStr, timeStr) {
-        let dParts = dateStr ? dateStr.split(' ') : [];
+        let dParts = dateStr ? dateStr.trim().split(/\s+/) : [];
         let dateVal = 0;
         if (dParts.length >= 3) {
             let day = parseInt(dParts[0]) || 0;
@@ -630,7 +630,7 @@
 
     function convertThaiDateToStandard(thaiDateStr) {
         if (!thaiDateStr) return '';
-        let parts = thaiDateStr.split(' ');
+        let parts = thaiDateStr.trim().split(/\s+/);
         if (parts.length < 3) return '';
         let day = parseInt(parts[0]).toString().padStart(2, '0');
         let monthIdx = thaiMonths.indexOf(parts[1]);
@@ -652,13 +652,61 @@
 
     function getLatestValidDate() {
         if (allHistoryData.length === 0) return systemTodayStr;
-        let displayData = [...allHistoryData].sort((a, b) => b.timestamp - a.timestamp);
+        let displayData = [...allHistoryData].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         for (let item of displayData) {
             if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
                 return item.date;
             }
         }
         return systemTodayStr;
+    }
+
+    // ฟังก์ชันใหม่! สร้างข้อมูลประวัติที่ถูกกรองความซ้ำซ้อนแล้วเรียบร้อย
+    // (กรองให้เหลือแค่นาทีละ 1 รายการ และคิดคำนวณ diff ให้เสร็จสรรพ)
+    function getProcessedHistoryData() {
+        // 1. เรียงข้อมูลจากล่าสุดไปเก่าสุด
+        let displayData = [...allHistoryData].sort((a, b) => {
+            let weightDiff = getHistorySortWeight(b.date, b.time) - getHistorySortWeight(a.date, a.time);
+            if (weightDiff === 0) return (b.timestamp || 0) - (a.timestamp || 0);
+            return weightDiff;
+        });
+
+        let uniqueData = [];
+        let seen = new Set();
+        
+        displayData.forEach(item => {
+            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
+                // ทำความสะอาด Date ตัดช่องว่างซ้ำซ้อน
+                let cleanDate = (item.date || "").replace(/\s+/g, ' ').trim();
+                // ดึงเฉพาะ ชั่วโมง:นาที เท่านั้น เพื่อใช้เป็น Key กรองข้อมูล
+                let timeMatch = (item.time || "").match(/\d{1,2}:\d{2}/);
+                let cleanTime = timeMatch ? timeMatch[0] : (item.time || "").trim();
+                
+                let key = cleanDate + "_" + cleanTime;
+                
+                // ถ้ารหัสนี้ยังไม่เคยมี (หมายความว่าเราเพิ่งเจอรายการที่ 'ใหม่ที่สุด' ของเวลานี้) ให้เก็บไว้
+                if(!seen.has(key)) {
+                    seen.add(key);
+                    uniqueData.push({
+                        ...item,
+                        cleanDate: cleanDate,
+                        displayTime: cleanTime
+                    });
+                }
+            }
+        });
+
+        // 2. คำนวณส่วนต่าง (diff) โดยเทียบกับรายการที่เก่ากว่า (ซึ่งอยู่ถัดไปใน Array)
+        uniqueData.forEach((item, index) => {
+            if (index < uniqueData.length - 1) {
+                let prevRecord = uniqueData[index + 1];
+                item.diff = item.barBuy - prevRecord.barBuy; 
+            } else {
+                item.diff = null;
+            }
+        });
+
+        return uniqueData;
     }
 
     function loadHistoryGlobal() {
@@ -681,15 +729,11 @@
 
     function updateDashboardHistoryCount() {
         let targetDate = getLatestValidDate(); 
-        let targetData = allHistoryData.filter(item => 
-            item.date === targetDate &&
-            item.barBuy > 0 && 
-            item.barSell > 0 && 
-            item.ornamentBuy > 0 && 
-            item.ornamentSell > 0
-        );
-        let uniqueTimes = new Set(targetData.map(item => item.time));
-        let count = uniqueTimes.size;
+        let cleanTargetDate = (targetDate || "").replace(/\s+/g, ' ').trim();
+        
+        let uniqueGlobalData = getProcessedHistoryData();
+        let targetData = uniqueGlobalData.filter(item => item.cleanDate === cleanTargetDate);
+        let count = targetData.length;
 
         let el1 = document.getElementById('dashboard-history-count');
         let el2 = document.getElementById('dashboard-history-count-mobile');
@@ -700,26 +744,12 @@
     function updateDashboardDailyNet() {
         if(allHistoryData.length === 0) return;
 
-        let displayData = [...allHistoryData].sort((a, b) => getHistorySortWeight(b.date, b.time) - getHistorySortWeight(a.date, a.time));
-        let uniqueGlobalData = [];
-        let seen = new Set();
-        
-        displayData.forEach(item => {
-            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
-                let key = item.date + "_" + item.time;
-                if(!seen.has(key)) { seen.add(key); uniqueGlobalData.push(item); }
-            }
-        });
-
-        uniqueGlobalData.forEach((item, index) => {
-            if (index < uniqueGlobalData.length - 1) {
-                let prevRecord = uniqueGlobalData[index + 1];
-                item.diff = item.barBuy - prevRecord.barBuy; 
-            } else { item.diff = null; }
-        });
-
         let targetDate = getLatestValidDate(); 
-        const filteredData = uniqueGlobalData.filter(item => item.date === targetDate);
+        let cleanTargetDate = (targetDate || "").replace(/\s+/g, ' ').trim();
+        
+        let uniqueGlobalData = getProcessedHistoryData();
+        const filteredData = uniqueGlobalData.filter(item => item.cleanDate === cleanTargetDate);
+        
         let netChange = 0;
         let hasValidDiff = false;
         
@@ -1505,30 +1535,10 @@
             return;
         }
 
-        let displayData = [...allHistoryData].sort((a, b) => getHistorySortWeight(b.date, b.time) - getHistorySortWeight(a.date, a.time));
-        let uniqueGlobalData = [];
-        let seen = new Set();
+        let cleanSelectedDate = (selectedDate || "").replace(/\s+/g, ' ').trim();
+        let uniqueGlobalData = getProcessedHistoryData();
+        const filteredData = uniqueGlobalData.filter(item => item.cleanDate === cleanSelectedDate);
         
-        displayData.forEach(item => {
-            if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
-                let key = item.date + "_" + item.time;
-                if(!seen.has(key)) {
-                    seen.add(key);
-                    uniqueGlobalData.push(item);
-                }
-            }
-        });
-
-        uniqueGlobalData.forEach((item, index) => {
-            if (index < uniqueGlobalData.length - 1) {
-                let prevRecord = uniqueGlobalData[index + 1];
-                item.diff = item.barBuy - prevRecord.barBuy; 
-            } else {
-                item.diff = null;
-            }
-        });
-
-        const filteredData = uniqueGlobalData.filter(item => item.date === selectedDate);
         countSpan.innerText = filteredData.length;
         
         let dailyNetChange = 0;
@@ -1556,7 +1566,6 @@
 
         filteredData.forEach((item, index) => {
             let diffHtml = '';
-            
             let priceColor = 'text-white'; 
             
             if (item.diff > 0) {
@@ -1567,7 +1576,8 @@
                 diffHtml = `<span class="text-red-400 text-[13px] md:text-sm font-black tracking-tight bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 shadow-inner"><span class="animate-pulse">▼</span> ${item.diff.toLocaleString()}</span>`;
             } else if (item.diff === 0) {
                 priceColor = 'text-gray-300';
-                diffHtml = `<span class="text-gray-300 text-[13px] md:text-sm font-black tracking-tight bg-gray-600/30 px-2.5 py-1 rounded-lg border border-gray-500/30 shadow-inner">= คงที่</span>`;
+                // ตัดเครื่องหมาย = ออกตรงนี้ครับ
+                diffHtml = `<span class="text-gray-300 text-[13px] md:text-sm font-black tracking-tight bg-gray-600/30 px-2.5 py-1 rounded-lg border border-gray-500/30 shadow-inner">0</span>`;
             } else {
                 priceColor = 'text-gray-300';
                 diffHtml = `<span class="text-gray-500 text-xs font-bold">ไม่มีข้อมูลเปรียบเทียบ</span>`;
@@ -1575,7 +1585,7 @@
 
             let adminDeleteBtn = '';
             if (currentRole === 'admin') {
-                adminDeleteBtn = `<button onclick="deleteSingleHistory('${item.id}', '${item.time}')" class="ml-2 text-red-500 bg-red-500/10 hover:bg-red-500/30 p-1.5 rounded-lg border border-red-500/20 transition active:scale-95 shadow-inner" title="ลบรายการนี้"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>`;
+                adminDeleteBtn = `<button onclick="deleteSingleHistory('${item.id}', '${item.displayTime || item.time}')" class="ml-2 text-red-500 bg-red-500/10 hover:bg-red-500/30 p-1.5 rounded-lg border border-red-500/20 transition active:scale-95 shadow-inner" title="ลบรายการนี้"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></button>`;
             }
 
             let announcementNumber = filteredData.length - index;
@@ -1587,7 +1597,7 @@
                             <span class="text-gray-300 text-[11px] md:text-xs font-black bg-black/60 px-2.5 py-1 rounded-lg border border-gray-700/50 shadow-inner flex items-center gap-1.5">
                                 <span class="emoji text-[10px]">&#x1F4E2;</span> ครั้งที่ ${announcementNumber}
                             </span>
-                            <span class="text-gray-400 text-[11px] font-bold flex items-center gap-1.5"><span class="emoji">&#x23F0;</span> ${item.time} น.</span>
+                            <span class="text-gray-400 text-[11px] font-bold flex items-center gap-1.5"><span class="emoji">&#x23F0;</span> ${item.displayTime || item.time} น.</span>
                         </div>
                         <div class="flex items-center">
                             ${diffHtml}
