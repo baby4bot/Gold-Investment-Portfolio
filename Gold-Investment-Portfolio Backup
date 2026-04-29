@@ -95,6 +95,7 @@
             <button onclick="switchView('dashboard')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-yellow-400 transition flex items-center gap-3"><span class="emoji">📊</span> หน้าแรก</button>
             <button onclick="switchView('manage-tx')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3"><span class="emoji">📝</span> เพิ่ม/แก้ไข ข้อมูลทอง</button>
             <button id="menu-manage-users" onclick="switchView('manage-users')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-pink-400 transition flex items-center gap-3 hidden"><span class="emoji">👥</span> จัดการบัญชีผู้ใช้งาน</button>
+            <button id="menu-import-history" onclick="switchView('import-history')" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-blue-400 transition flex items-center gap-3 hidden"><span class="emoji">📥</span> นำเข้าประวัติราคาย้อนหลัง</button>
             <button id="menu-admin-settings" onclick="openAdminSettingsModal()" class="text-left px-5 py-4 rounded-2xl text-lg font-bold text-gray-200 hover:bg-gray-800 hover:text-emerald-400 transition flex items-center gap-3 hidden"><span class="emoji">⚙️</span> ตั้งค่าระบบ Admin</button>
         </div>
         <div class="mt-auto p-6 border-t border-gray-800">
@@ -366,6 +367,32 @@
             <button onclick="openUserModal()" class="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-3xl font-black text-lg shadow-[0_10px_30px_rgba(34,197,94,0.4)] transition-transform active:scale-95 flex justify-center items-center gap-2">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path></svg> เพิ่มผู้ใช้งานใหม่
             </button>
+        </div>
+    </div>
+
+    <div id="view-import-history" class="view-section relative">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-black text-white flex items-center gap-2"><span class="emoji">📥</span> นำเข้าประวัติราคาย้อนหลัง</h2>
+        </div>
+        <div class="bg-gray-800 p-6 md:p-8 rounded-3xl shadow-2xl w-full border border-gray-700 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
+            <div class="text-center mb-6">
+                <p class="text-gray-400 text-sm mt-1">
+                    วิธีใช้: ไปที่เว็บประวัติราคาทอง > ลากคลุมตาราง > <span class="text-white font-bold">Copy (Ctrl+C)</span> > นำมา <span class="text-white font-bold">Paste (Ctrl+V)</span> ลงในช่องด้านล่าง
+                </p>
+            </div>
+            <div class="mb-6">
+                <textarea id="paste-area" rows="8" class="w-full bg-[#1a1c23] border border-gray-600 rounded-xl px-4 py-4 text-sm text-yellow-400 font-mono focus:border-blue-400 focus:outline-none shadow-inner" placeholder="วางข้อมูลตารางราคาทองที่นี่..."></textarea>
+            </div>
+            <button class="bg-blue-600 hover:bg-blue-500 text-white font-black py-4 px-8 rounded-2xl w-full transition shadow-[0_10px_20px_rgba(37,99,235,0.3)] text-lg flex justify-center items-center gap-2 active:scale-95" onclick="processImportedData()" id="btn-import">
+                🚀 สกัดข้อมูลและบันทึกลงฐานข้อมูล
+            </button>
+            <div class="mt-6 p-5 bg-[#1a1c23] rounded-2xl border border-gray-700 hidden text-center shadow-inner" id="status-box">
+                <p class="text-yellow-400 font-black text-2xl" id="status-text">
+                    กำลังประมวลผล...
+                </p>
+                <p class="text-gray-400 text-sm mt-2" id="status-detail"></p>
+            </div>
         </div>
     </div>
     
@@ -662,7 +689,6 @@
     }
 
     // ฟังก์ชันใหม่! สร้างข้อมูลประวัติที่ถูกกรองความซ้ำซ้อนแล้วเรียบร้อย
-    // (กรองให้เหลือแค่นาทีละ 1 รายการ และคิดคำนวณ diff ให้เสร็จสรรพ)
     function getProcessedHistoryData() {
         // 1. เรียงข้อมูลจากล่าสุดไปเก่าสุด
         let displayData = [...allHistoryData].sort((a, b) => {
@@ -676,10 +702,7 @@
         
         displayData.forEach(item => {
             if (item.barBuy > 0 && item.barSell > 0 && item.ornamentBuy > 0 && item.ornamentSell > 0) {
-                // ทำความสะอาด Date ตัดช่องว่างซ้ำซ้อน
                 let cleanDate = (item.date || "").replace(/\s+/g, ' ').trim();
-                
-                // แก้ปัญหาเวลา 9:01 กับ 09:01 ให้เป็นตัวเดียวกัน (เติมเลข 0 ข้างหน้าให้ครบ)
                 let timeMatch = (item.time || "").match(/(\d{1,2}):(\d{2})/);
                 let cleanTime = "";
                 if (timeMatch) {
@@ -691,20 +714,18 @@
                 }
                 
                 let key = cleanDate + "_" + cleanTime;
-                
-                // ถ้ารหัสนี้ยังไม่เคยมี (หมายความว่าเราเพิ่งเจอรายการที่ 'ใหม่ที่สุด' ของเวลานี้) ให้เก็บไว้
                 if(!seen.has(key)) {
                     seen.add(key);
                     uniqueData.push({
                         ...item,
                         cleanDate: cleanDate,
-                        displayTime: cleanTime // ใช้เวลาที่ format แล้ว เช่น 09:01 ไปแสดงผลเลย
+                        displayTime: cleanTime
                     });
                 }
             }
         });
 
-        // 2. คำนวณส่วนต่าง (diff) โดยเทียบกับรายการที่เก่ากว่า (ซึ่งอยู่ถัดไปใน Array)
+        // 2. คำนวณส่วนต่าง (diff)
         uniqueData.forEach((item, index) => {
             if (index < uniqueData.length - 1) {
                 let prevRecord = uniqueData[index + 1];
@@ -729,7 +750,6 @@
             updateDashboardHistoryCount();
             updateDashboardDailyNet();
             if(document.getElementById('history-modal').style.display === 'flex') {
-                // ถ้ามีข้อมูลใหม่เข้ามา ให้รีเฟรชหน้าต่างประวัติ โดยคงวันที่เดิมไว้
                 renderHistoryList();
             }
         });
@@ -800,9 +820,15 @@
             sideMenuHeader.innerHTML = `<img src="${profImg}" class="w-12 h-12 rounded-full border-2 border-yellow-500 object-cover shadow-md bg-gray-800"><div class="flex flex-col"><span class="text-white font-black text-lg leading-tight">${currentUser.name}</span><span class="text-xs text-gray-400 font-bold">${currentUser.username}</span></div>`;
         }
         if (currentRole === 'admin') {
-            document.getElementById('menu-manage-users').style.display = 'flex'; document.getElementById('menu-admin-settings').style.display = 'flex'; adminCheckboxSec.style.display = 'flex'; halfHalfSec.style.display = 'flex'; document.getElementById('f_buyer').readOnly = false; btnHideAdmin.classList.remove('hidden'); titleSec.innerHTML = '';
+            document.getElementById('menu-manage-users').style.display = 'flex'; 
+            document.getElementById('menu-admin-settings').style.display = 'flex'; 
+            document.getElementById('menu-import-history').style.display = 'flex'; // แสดงเมนูนำเข้าให้แอดมิน
+            adminCheckboxSec.style.display = 'flex'; halfHalfSec.style.display = 'flex'; document.getElementById('f_buyer').readOnly = false; btnHideAdmin.classList.remove('hidden'); titleSec.innerHTML = '';
         } else if (currentRole === 'user') {
-            document.getElementById('menu-manage-users').style.display = 'none'; document.getElementById('menu-admin-settings').style.display = 'none'; adminCheckboxSec.style.display = 'none'; halfHalfSec.style.display = 'none';
+            document.getElementById('menu-manage-users').style.display = 'none'; 
+            document.getElementById('menu-admin-settings').style.display = 'none'; 
+            document.getElementById('menu-import-history').style.display = 'none'; // ซ่อนเมนูนำเข้าจากยูสเซอร์
+            adminCheckboxSec.style.display = 'none'; halfHalfSec.style.display = 'none';
             document.getElementById('f_buyer').value = currentUser.name; document.getElementById('f_buyer').readOnly = true; btnHideAdmin.classList.add('hidden'); checkExistingProfile(currentUser.name); titleSec.innerHTML = ` <span class="text-yellow-400">(${currentUser.name})</span>`;
         } else {
             btnHamburger.style.display = 'none'; btnHideAdmin.classList.add('hidden'); showLoginModal(); titleSec.innerHTML = `<span class="text-gray-400 text-sm block mt-1">(กรุณาล็อกอิน)</span>`;
@@ -1691,5 +1717,111 @@
 
     function closeHistoryModal() {
         document.getElementById('history-modal').style.display = 'none';
+    }
+
+    // ========== เพิ่มฟังก์ชันสำหรับ นำเข้าประวัติย้อนหลัง ==========
+    function parseDateStr(dtStr) {
+        let parts = dtStr.trim().split(/\s+/);
+        if(parts.length < 2) return null;
+        let datePart = parts[0];
+        let timePart = parts[1];
+        let dParts = datePart.split('/');
+        if(dParts.length < 3) return null;
+        let day = parseInt(dParts[0]);
+        let monthIdx = parseInt(dParts[1]) - 1;
+        let year = parseInt(dParts[2]);
+        let formattedDate = `${day} ${thaiMonths[monthIdx]} ${year}`;
+        
+        let gregYear = year - 543;
+        let tParts = timePart.split(':');
+        let hh = parseInt(tParts[0] || 0);
+        let mm = parseInt(tParts[1] || 0);
+        let d = new Date(gregYear, monthIdx, day, hh, mm, 0);
+        
+        return { date: formattedDate, time: timePart, timestamp: d.getTime() };
+    }
+
+    async function processImportedData() {
+        const btn = document.getElementById('btn-import');
+        const statusBox = document.getElementById('status-box');
+        const statusText = document.getElementById('status-text');
+        const statusDetail = document.getElementById('status-detail');
+        const rawData = document.getElementById('paste-area').value.trim();
+
+        if (rawData === "") {
+            showWarningToast("กรุณาวางข้อมูลลงในช่องก่อนครับ!");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        statusBox.classList.remove('hidden');
+        statusText.innerText = "กำลังประมวลผลข้อมูล...";
+        statusText.className = "text-blue-400 font-black text-2xl animate-pulse";
+        statusDetail.innerText = "กำลังสกัดตัวเลขและเตรียมยิงเข้า Firebase";
+
+        const rows = rawData.split('\n');
+        let updates = {};
+        let count = 0;
+
+        rows.forEach(row => {
+            const cols = row.split('\t').map(c => c.trim());
+            
+            if(cols.length >= 6) {
+                const dtText = cols[0]; 
+                
+                if(/^\d{1,2}\/\d{1,2}\/\d{4}/.test(dtText)) {
+                    const parsed = parseDateStr(dtText);
+                    if(parsed) {
+                        const bBuy = parseFloat(cols[2].replace(/,/g, '')) || 0;
+                        const bSell = parseFloat(cols[3].replace(/,/g, '')) || 0;
+                        const oBuy = parseFloat(cols[4].replace(/,/g, '')) || 0;
+                        const oSell = parseFloat(cols[5].replace(/,/g, '')) || 0;
+
+                        if(bBuy > 0 && bSell > 0 && oBuy > 0 && oSell > 0) {
+                            let safeDate = parsed.date.replace(/[\s\/]/g, '');
+                            let safeTime = parsed.time.replace(/[\s\.:น]/g, '');
+                            let recordKey = `H_${safeDate}_${safeTime}_${bBuy}`;
+
+                            updates['gold_price_history/' + recordKey] = {
+                                price: bBuy, barBuy: bBuy, barSell: bSell,
+                                ornamentBuy: oBuy, ornamentSell: oSell,
+                                date: parsed.date, time: parsed.time, timestamp: parsed.timestamp
+                            };
+                            count++;
+                        }
+                    }
+                }
+            }
+        });
+
+        if (count > 0) {
+            try {
+                // ยิงทีเดียวแบบ Update เพื่อไม่ให้ข้อมูลอื่นหาย
+                await db.ref().update(updates);
+                
+                showWarningToast(`✅ นำเข้าข้อมูลสำเร็จ ${count} รายการ!`);
+                document.getElementById('paste-area').value = ""; // เคลียร์ช่อง
+                
+                // คืนค่าปุ่ม
+                statusBox.classList.add('hidden');
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.disabled = false;
+                
+            } catch (error) {
+                statusText.innerText = "❌ เกิดข้อผิดพลาด";
+                statusText.className = "text-red-400 font-black text-2xl";
+                statusDetail.innerText = error.message;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.disabled = false;
+            }
+        } else {
+            statusText.innerText = "⚠️ ไม่พบข้อมูลที่ถูกต้อง";
+            statusText.className = "text-yellow-400 font-black text-2xl";
+            statusDetail.innerText = "โปรดตรวจสอบว่าก๊อปปี้ตารางมาครบถ้วนและถูกต้องครับ";
+            btn.innerHTML = "ลองใหม่อีกครั้ง";
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            btn.disabled = false;
+        }
     }
 </script>
