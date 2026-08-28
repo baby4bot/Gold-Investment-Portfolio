@@ -877,9 +877,6 @@
         50% { transform: scale(1.1); }
     }
     #dm-unread-badge:not(.hidden) {
-    .pw-toggle-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 18px; padding: 4px; z-index: 2; }
-    .pw-toggle-btn:hover { color: #d4a017; }
-    .pw-input-wrap { position: relative; display: flex; align-items: center; }
         animation: dm-pulse 1.5s ease-in-out infinite;
     }</style>
 
@@ -959,7 +956,7 @@
         
         <div class="block" id="login-pass-section">
             <div class="mb-4"><input placeholder="ชื่อผู้ใช้" id="username" type="text" class="text-lg py-3" /></div>
-            <div class="mb-6 pw-input-wrap"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" style="padding-right:45px;" /><button type="button" class="pw-toggle-btn" onclick="togglePw('password',this)"><i class="ph ph-eye"></i></button></div>
+            <div class="mb-6"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" /></div>
             <button class="w-full font-black py-3.5 text-lg rounded-xl hover:scale-[1.02] transition shadow-lg mb-3" style="background: linear-gradient(135deg, #e8b80d, #d4a017); color: #0c0e14; box-shadow: 0 4px 20px rgba(212,160,23,0.3);" onclick="loginPass()">ล็อกอิน</button>
             <p class="text-center text-xs mb-3"><button onclick="showForgotPassword()" style="color: #d4a017;" class="font-bold hover:underline">🔑 ลืมรหัสผ่าน?</button></p>
             <p class="text-center text-sm" style="color: var(--text-secondary);">ยังไม่มีบัญชี? <button onclick="toggleRegisterForm(true)" class="font-bold hover:underline" style="color: var(--accent-gold);">สมัครใช้งานคลิกที่นี่</button></p>
@@ -1028,7 +1025,7 @@
                     <input required id="reg_displayname" type="text" placeholder="ชื่อที่ใช้แสดง (ได้ทุกภาษา)" />
                 </div>
                 <div>
-                    <div class="pw-input-wrap"><input required id="reg_password" type="password" placeholder="รหัสผ่าน (8 หลัก: อังกฤษ/ตัวเลข/สัญลักษณ์)" minlength="8" maxlength="8" style="padding-right:45px;" /><button type="button" class="pw-toggle-btn" onclick="togglePw('reg_password',this)"><i class="ph ph-eye"></i></button></div>
+                    <input required id="reg_password" type="password" placeholder="รหัสผ่าน (8 หลัก: อังกฤษ/ตัวเลข/สัญลักษณ์)" minlength="8" maxlength="8" />
                 </div>
                 <div>
                     <input required id="reg_phone" type="tel" placeholder="เบอร์โทรศัพท์มือถือ" />
@@ -1515,15 +1512,15 @@
         <div id="pf-pass-fields" class="hidden">
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านเดิม</label>
-                <div class="pw-input-wrap"><input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" class="pw-toggle-btn" onclick="togglePw('pf_old_pass',this)"><i class="ph ph-eye"></i></button></div>
+                <input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
             </div>
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านใหม่</label>
-                <div class="pw-input-wrap"><input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" class="pw-toggle-btn" onclick="togglePw('pf_new_pass',this)"><i class="ph ph-eye"></i></button></div>
+                <input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
             </div>
             <div class="mb-4">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">ยืนยันรหัสผ่านใหม่</label>
-                <div class="pw-input-wrap"><input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" class="pw-toggle-btn" onclick="togglePw('pf_confirm_pass',this)"><i class="ph ph-eye"></i></button></div>
+                <input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
             </div>
             <div id="pf-pass-error" class="text-red-400 text-xs font-bold mb-3 hidden"></div>
             <button onclick="saveNewPassword()" class="w-full py-3 rounded-xl font-black text-sm transition-all active:scale-95" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;letter-spacing:0.3px;"><i class="ph ph-check-circle text-base"></i> ยืนยันเปลี่ยนรหัสผ่าน</button>
@@ -1598,15 +1595,15 @@
                     <form onsubmit="saveAdminPass(event)" class="flex flex-col gap-4 pb-4 px-1">
                         <div>
                             <label class="block text-xs mb-1.5 font-bold" style="color:#94a3b8;">รหัสผ่านเดิม</label>
-                            <div class="pw-input-wrap"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="กรอกรหัสผ่านเดิม" id="setting-old-pass" type="password" required /><button type="button" class="pw-toggle-btn" onclick="togglePw('setting-old-pass',this)"><i class="ph ph-eye"></i></button></div>
+                            <input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; border-radius: 12px;" placeholder="กรอกรหัสผ่านเดิม" id="setting-old-pass" type="password" required />
                         </div>
                         <div>
                             <label class="block text-xs mb-1.5 font-bold" style="color:#94a3b8;">รหัสผ่านใหม่</label>
-                            <div class="pw-input-wrap"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="รหัสผ่าน 8 หลัก" id="setting-new-pass" type="password" required /><button type="button" class="pw-toggle-btn" onclick="togglePw('setting-new-pass',this)"><i class="ph ph-eye"></i></button></div>
+                            <input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; border-radius: 12px;" placeholder="รหัสผ่าน 8 หลัก" id="setting-new-pass" type="password" required />
                         </div>
                         <div>
                             <label class="block text-xs mb-1.5 font-bold" style="color:#94a3b8;">ยืนยันรหัสผ่านใหม่</label>
-                            <div class="pw-input-wrap"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" id="setting-confirm-pass" type="password" required /><button type="button" class="pw-toggle-btn" onclick="togglePw('setting-confirm-pass',this)"><i class="ph ph-eye"></i></button></div>
+                            <input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; border-radius: 12px;" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" id="setting-confirm-pass" type="password" required />
                         </div>
                         <button class="w-full py-3.5 rounded-xl font-black transition flex items-center justify-center gap-2 mt-2" style="background: linear-gradient(135deg, #e8b80d, #d4a017); color: #0c0e14; font-size: 14px;" type="submit"><i class="ph ph-check-circle"></i> ยืนยันเปลี่ยนรหัสผ่าน</button>
                     </form>
@@ -5302,7 +5299,7 @@ function convertToThaiDate(dateStr) {
     function updateAutocomplete() { const shops = [...new Set(transactionsData.map(tx => tx.shop))]; const txBuyers = transactionsData.map(tx => tx.buyer); const appUserNames = Object.values(appUsers).map(u => u.name); const buyers = [...new Set([...txBuyers, ...appUserNames, adminDisplayName])].filter(Boolean); document.getElementById('shop-list').innerHTML = shops.map(s => `<option value="${s}">`).join(''); document.getElementById('buyer-list').innerHTML = buyers.map(b => `<option value="${b}">`).join(''); }
     function handleFormImageUpload(event) { handleImgBase(event, base64Data => { document.getElementById('form_prof_base64').value = base64Data; document.getElementById('form_prof_preview').src = base64Data; }); }
     function handleUserImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('u_prof_base64').value = base64Data; document.getElementById('u_prof_preview').src = base64Data; }); }
-    function handleAdminImgUpload(event) { handleImgBase(event, function(base64Data) { document.getElementById('admin_prof_base64').value = base64Data; document.getElementById('admin_prof_preview').src = base64Data; if (db) { var profileName = (currentRole === 'admin') ? adminDisplayName : (currentUser ? currentUser.name : ''); if (profileName) { db.ref('user_profiles/' + profileName).set(base64Data); } showWarningToast('บันทึกรูปโปรไฟล์แล้ว!'); } }); }
+    function handleAdminImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('admin_prof_base64').value = base64Data; document.getElementById('admin_prof_preview').src = base64Data; if (db) { db.ref('user_profiles/' + adminDisplayName).set(base64Data); showWarningToast('&#x2705; บันทึกรูปโปรไฟล์ Admin แล้ว!'); } }); }
     function handleImgBase(input, callback) { const file = input.target ? input.target.files[0] : (input.files ? input.files[0] : null); if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX_SIZE = 400; let width = img.width; let height = img.height; if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } } canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
     function previewProfileImg(input, imgId, hiddenId) {
         handleImgBase(input, base64 => {
@@ -5337,21 +5334,15 @@ function convertToThaiDate(dateStr) {
         }
     }
     function openAdminSettingsModal() { 
+        // Admin — แสดงทุกแท็บเสมอ
         var tabAccount = document.getElementById('admin-tab-account');
         var tabSystem = document.getElementById('admin-tab-system');
-        if (currentRole === 'admin') {
-            if (tabAccount) tabAccount.classList.remove('hidden');
-            if (tabSystem) tabSystem.classList.remove('hidden');
-        } else {
-            if (tabAccount) tabAccount.classList.add('hidden');
-            if (tabSystem) tabSystem.classList.add('hidden');
-        }
+        if (tabAccount) tabAccount.classList.remove('hidden');
+        if (tabSystem) tabSystem.classList.remove('hidden');
         var m = document.getElementById('admin-settings-modal'); m.classList.remove('hidden'); m.style.display = 'flex'; closeMenu(); switchAdminTab('profile');
-        var profileName = (currentRole === 'admin') ? adminDisplayName : (currentUser ? currentUser.name : '');
-        var profileImg = getProfileImg(profileName);
-        document.getElementById('admin_display_name').value = profileName;
-        document.getElementById('admin_prof_preview').src = profileImg;
-        document.getElementById('admin_prof_base64').value = userProfiles[profileName] || '';
+        document.getElementById('admin_display_name').value = adminDisplayName;
+        document.getElementById('admin_prof_preview').src = getProfileImg(adminDisplayName);
+        document.getElementById('admin_prof_base64').value = userProfiles[adminDisplayName] || '';
         updatePinToggleUI();
         loadPinBanHours();
     }
@@ -5673,23 +5664,7 @@ function convertToThaiDate(dateStr) {
             } 
         }); 
     }
-    function saveAdminProfile() {
-        var newName = document.getElementById('admin_display_name').value.trim();
-        if(newName === '') { showWarningToast('กรุณากรอกชื่อ!'); return; }
-        var base64Img = document.getElementById('admin_prof_base64').value;
-        if (currentRole === 'admin') {
-            if(base64Img) { db.ref('user_profiles/' + newName).set(base64Img); }
-            db.ref('admin_settings').update({ name: newName }).then(function() { showWarningToast('อัปเดตชื่อ Admin สำเร็จ!'); adminDisplayName = newName; });
-        } else if (currentUser) {
-            if(base64Img) { db.ref('user_profiles/' + newName).set(base64Img); db.ref('user_profiles/' + currentUser.name).remove(); }
-            db.ref('app_users/' + currentUser.username + '/name').set(newName).then(function() {
-                showWarningToast('อัปเดตชื่อสำเร็จ!');
-                currentUser.name = newName;
-                if (appUsers[currentUser.username]) appUsers[currentUser.username].name = newName;
-                localStorage.setItem('goldAppSession', JSON.stringify(currentUser));
-            });
-        }
-    }
+    function saveAdminProfile() { const newName = document.getElementById('admin_display_name').value.trim(); if(newName === '') { showWarningToast('กรุณากรอกชื่อ Admin!'); return; } const base64Img = document.getElementById('admin_prof_base64').value; if(base64Img) { db.ref('user_profiles/' + newName).set(base64Img); } db.ref('admin_settings').update({ name: newName }).then(() => { showWarningToast('&#x2705; อัปเดตชื่อ Admin สำเร็จ!'); }); }
 
     function showAdminSetting(mode) {
         // ซ่อนทุกหน้า
@@ -5710,7 +5685,7 @@ function convertToThaiDate(dateStr) {
             resetSettingPin();
         }
     }
-    async function saveAdminPass(e) { e.preventDefault(); if(!db) return; var oldPass = document.getElementById('setting-old-pass').value; var newPass = document.getElementById('setting-new-pass').value; var confPass = document.getElementById('setting-confirm-pass').value; if (newPass !== confPass) { showWarningToast('รหัสผ่านใหม่ไม่ตรงกัน!'); return; } var hashedOld = await hashPassword(oldPass); var hashedNew = await hashPassword(newPass); if (currentRole === 'admin') { if (oldPass !== adminPass && hashedOld !== adminPass) { showWarningToast('รหัสผ่านเก่าไม่ถูกต้อง!'); return; } db.ref('admin_settings/password').set(hashedNew).then(function() { showWarningToast('เปลี่ยนรหัสผ่านสำเร็จ!'); adminPass = hashedNew; closeAdminSettingsModal(); }); } else if (currentUser) { var userData = appUsers[currentUser.username]; if (!userData || (userData.password !== oldPass && userData.password !== hashedOld)) { showWarningToast('รหัสผ่านเก่าไม่ถูกต้อง!'); return; } db.ref('app_users/' + currentUser.username + '/password').set(hashedNew).then(function() { showWarningToast('เปลี่ยนรหัสผ่านสำเร็จ!'); appUsers[currentUser.username].password = hashedNew; closeAdminSettingsModal(); }); } }
+    function saveAdminPass(e) { e.preventDefault(); if(!db) return; const oldPass = document.getElementById('setting-old-pass').value; const newPass = document.getElementById('setting-new-pass').value; const confPass = document.getElementById('setting-confirm-pass').value; if (oldPass !== adminPass) { showWarningToast('รหัสผ่านเก่าไม่ถูกต้อง!'); return; } if (newPass !== confPass) { showWarningToast('รหัสผ่านใหม่ไม่ตรงกัน!'); return; } db.ref('admin_settings').update({password: newPass}).then(() => { showWarningToast('เปลี่ยนรหัสผ่านสำเร็จ!'); adminPass = newPass; closeAdminSettingsModal(); }); }
     function resetSettingPin() { settingPinStep = 1; sOldPin = ''; sNewPin = ''; sConfPin = ''; document.getElementById('setting-pin-title').innerText = 'กรอก PIN ปัจจุบัน'; updateSettingPinUI(); }
     function updateSettingPinUI() { let curLen = settingPinStep === 1 ? sOldPin.length : (settingPinStep === 2 ? sNewPin.length : sConfPin.length); const dots = document.querySelectorAll('.s-pin-dot'); dots.forEach((dot, idx) => { if(idx < curLen) { dot.classList.remove('bg-gray-700'); dot.classList.add('bg-yellow-400'); } else { dot.classList.add('bg-gray-700'); dot.classList.remove('bg-yellow-400'); } }); }
     function enterSettingPin(num) { if(settingPinStep === 1) { if(sOldPin.length < 6) sOldPin += num; updateSettingPinUI(); if(sOldPin.length === 6) setTimeout(() => { if(sOldPin === adminPin) { settingPinStep = 2; document.getElementById('setting-pin-title').innerText = 'ตั้ง PIN ใหม่ 6 หลัก'; updateSettingPinUI(); } else { showWarningToast('PIN ปัจจุบันไม่ถูกต้อง!'); sOldPin = ''; updateSettingPinUI(); } }, 50); } else if(settingPinStep === 2) { if(sNewPin.length < 6) sNewPin += num; updateSettingPinUI(); if(sNewPin.length === 6) setTimeout(() => { settingPinStep = 3; document.getElementById('setting-pin-title').innerText = 'ยืนยัน PIN ใหม่อีกครั้ง'; updateSettingPinUI(); }, 50); } else if(settingPinStep === 3) { if(sConfPin.length < 6) sConfPin += num; updateSettingPinUI(); if(sConfPin.length === 6) setTimeout(() => { if(sNewPin === sConfPin) { db.ref('admin_settings').update({pin: sNewPin}).then(() => { showWarningToast('เปลี่ยนรหัส PIN สำเร็จ!'); adminPin = sNewPin; closeAdminSettingsModal(); }); } else { showWarningToast('PIN ไม่ตรงกัน! กรุณาตั้งใหม่'); settingPinStep = 2; sNewPin = ''; sConfPin = ''; document.getElementById('setting-pin-title').innerText = 'ตั้ง PIN ใหม่ 6 หลัก'; updateSettingPinUI(); } }, 50); } }
@@ -6334,10 +6309,10 @@ function convertToThaiDate(dateStr) {
 </div>
 
 <!-- ==================== ปุ่ม DM + ประกาศ สำหรับแอดมิน ==================== -->
-<button id="btn-open-dm" onclick="openDMSendModal()" style="position:fixed;bottom:72px;right:12px;z-index:99999;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
+<button id="btn-open-dm" onclick="openDMSendModal()" style="position:fixed;bottom:72px;right:12px;z-index:500;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
     <i class="ph ph-paper-plane-tilt" style="font-size:17px;"></i>
 </button>
-<button id="btn-open-announcement" onclick="openAnnouncementModal()" style="position:fixed;bottom:116px;right:12px;z-index:99999;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
+<button id="btn-open-announcement" onclick="openAnnouncementModal()" style="position:fixed;bottom:116px;right:12px;z-index:500;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
     <i class="ph ph-megaphone" style="font-size:17px;"></i>
 </button>
 
@@ -6409,16 +6384,6 @@ function closeAnnouncement() {
 }
 
 // === Custom Alert Modal ===
-function togglePw(inputId, btn) {
-    var input = document.getElementById(inputId);
-    if (!input) return;
-    var isPassword = (input.type === "password");
-    input.type = isPassword ? "text" : "password";
-    var icon = btn.querySelector("i") || btn.getElementsByTagName("i")[0];
-    if (icon) {
-        icon.setAttribute("class", isPassword ? "ph ph-eye-slash" : "ph ph-eye");
-    }
-}
 function showAlert(message, callback) {
     var existing = document.getElementById('custom-alert-modal');
     if (existing) existing.remove();
