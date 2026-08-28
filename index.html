@@ -877,9 +877,9 @@
         50% { transform: scale(1.1); }
     }
     #dm-unread-badge:not(.hidden) {
-    .pw-toggle-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 18px; padding: 4px; z-index: 2; }
+    .pw-toggle-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 18px; padding: 4px; z-index: 2; }
     .pw-toggle-btn:hover { color: #d4a017; }
-    .pw-input-wrap { position: relative; }
+    .pw-input-wrap { position: relative; display: flex; align-items: center; }
         animation: dm-pulse 1.5s ease-in-out infinite;
     }</style>
 
@@ -6412,12 +6412,13 @@ function closeAnnouncement() {
 function togglePw(inputId, btn) {
     var input = document.getElementById(inputId);
     if (!input) return;
+    var icon = btn.querySelector("i");
     if (input.type === "password") {
         input.type = "text";
-        btn.innerHTML = "<i class="ph ph-eye-slash"></i>";
+        if (icon) { icon.className = "ph ph-eye-slash"; }
     } else {
         input.type = "password";
-        btn.innerHTML = "<i class="ph ph-eye"></i>";
+        if (icon) { icon.className = "ph ph-eye"; }
     }
 }
 function showAlert(message, callback) {
