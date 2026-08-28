@@ -857,6 +857,21 @@
     /* Custom scrollbar in light mode */
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-track { background: #f0f0f0; }
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; }
+
+    @keyframes dm-blink {
+        0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+        50% { opacity: 0.6; transform: translateX(-50%) scale(1.02); }
+    }
+    #dm-notification:not(.hidden) {
+        animation: dm-blink 1.5s ease-in-out infinite;
+    }
+    @keyframes dm-glow {
+        0%, 100% { box-shadow: 0 0 8px rgba(168,85,247,0.4); }
+        50% { box-shadow: 0 0 20px rgba(168,85,247,0.8); }
+    }
+    #dm-notification:not(.hidden) > div {
+        animation: dm-glow 1.5s ease-in-out infinite;
+    }
 </style>
 
 <datalist id="shop-list"></datalist>
@@ -2268,6 +2283,48 @@ function convertToThaiDate(dateStr) {
                 osc.stop(ctx.currentTime + i * 0.15 + 0.4);
             });
         } catch(e) { console.warn('Logout sound error:', e); }
+    }
+
+    // === เสียงแจ้งเตือนประกาศ ===
+    function playAnnouncementSound() {
+        if (!soundEnabled) return;
+        try {
+            var ctx = getAudioContext();
+            // เสียงประกาศ: 4 โน้ต ascending (C5-E5-G5-C6)
+            [523.25, 659.25, 783.99, 1046.50].forEach(function(freq, i) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
+                osc.start(ctx.currentTime + i * 0.15);
+                osc.stop(ctx.currentTime + i * 0.15 + 0.4);
+            });
+        } catch(e) { console.warn('Announcement sound error:', e); }
+    }
+
+    // === เสียงแจ้งเตือน DM ===
+    function playDMSound() {
+        if (!soundEnabled) return;
+        try {
+            var ctx = getAudioContext();
+            // เสียง DM: 3 โน้ต (E5-G5-C6)
+            [659.25, 783.99, 1046.50].forEach(function(freq, i) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'triangle';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.12);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.35);
+                osc.start(ctx.currentTime + i * 0.12);
+                osc.stop(ctx.currentTime + i * 0.12 + 0.35);
+            });
+        } catch(e) { console.warn('DM sound error:', e); }
     }
 
     // === Text-to-Speech แจ้งเตือนราคาทองด้วยเสียงพูด ===
@@ -6222,11 +6279,11 @@ function convertToThaiDate(dateStr) {
 </div>
 
 <!-- ==================== ปุ่ม DM + ประกาศ สำหรับแอดมิน ==================== -->
-<button id="btn-open-dm" onclick="openDMSendModal()" style="position:fixed;bottom:80px;right:16px;z-index:500;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,0.4);display:none;align-items:center;justify-content:center;">
-    <i class="ph ph-paper-plane-tilt" style="font-size:22px;"></i>
+<button id="btn-open-dm" onclick="openDMSendModal()" style="position:fixed;bottom:72px;right:12px;z-index:500;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
+    <i class="ph ph-paper-plane-tilt" style="font-size:17px;"></i>
 </button>
-<button id="btn-open-announcement" onclick="openAnnouncementModal()" style="position:fixed;bottom:140px;right:16px;z-index:500;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(212,160,23,0.4);display:none;align-items:center;justify-content:center;">
-    <i class="ph ph-megaphone" style="font-size:22px;"></i>
+<button id="btn-open-announcement" onclick="openAnnouncementModal()" style="position:fixed;bottom:116px;right:12px;z-index:500;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
+    <i class="ph ph-megaphone" style="font-size:17px;"></i>
 </button>
 
 <script>
@@ -6256,6 +6313,7 @@ function showAnnouncementPopup(title, message, announcementId) {
     content.innerHTML = titleHtml + message.replace(/\n/g, '<br>');
     _announcementScrollDone = false;
     closeBtn.style.opacity = '0.3';
+    playAnnouncementSound();
     closeBtn.style.pointerEvents = 'none';
     footer.classList.remove('hidden');
     popup.classList.remove('hidden');
@@ -6395,8 +6453,10 @@ function showDMNotification(dm) {
     senderEl.textContent = 'จาก: ' + dm.from;
     textEl.textContent = dm.message;
     el.classList.remove('hidden');
+    el.style.opacity = '1';
     el._dmId = dm.id;
     el._dmFrom = dm.from;
+    playDMSound();
     setTimeout(function() {
         el.style.transition = 'opacity 0.5s';
         el.style.opacity = '0';
