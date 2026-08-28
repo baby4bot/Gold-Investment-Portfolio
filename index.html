@@ -6292,7 +6292,8 @@ var _announcementScrollDone = false;
 
 function checkAnnouncement() {
     if (!db || !currentUser) return;
-    db.ref('announcements/latest').once('value').then(function(snap) {
+    if (currentRole === 'admin') return;
+    db.ref('announcements/latest').on('value', function(snap) {
         var data = snap.val();
         if (!data || !data.message) return;
         var announcementId = data.id || 'default';
