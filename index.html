@@ -877,9 +877,9 @@
         50% { transform: scale(1.1); }
     }
     #dm-unread-badge:not(.hidden) {
-    .pw-toggle-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 18px; padding: 4px; z-index: 2; display: flex; align-items: center; justify-content: center; }
+    .pw-toggle-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 18px; padding: 4px; z-index: 2; }
     .pw-toggle-btn:hover { color: #d4a017; }
-    .pw-input-wrap { position: relative; } .pw-input-wrap input { width: 100% !important; box-sizing: border-box; }
+    .pw-input-wrap { position: relative; display: flex; align-items: center; }
         animation: dm-pulse 1.5s ease-in-out infinite;
     }</style>
 
@@ -959,7 +959,7 @@
         
         <div class="block" id="login-pass-section">
             <div class="mb-4"><input placeholder="ชื่อผู้ใช้" id="username" type="text" class="text-lg py-3" /></div>
-            <div style="position:relative;"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" style="padding-right:45px;" /><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('password',this)"><i class="ph ph-eye"></i></button></div>
+            <div class="mb-6 pw-input-wrap"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" style="padding-right:45px;" /><button type="button" class="pw-toggle-btn" onclick="togglePw('password',this)"><i class="ph ph-eye"></i></button></div>
             <button class="w-full font-black py-3.5 text-lg rounded-xl hover:scale-[1.02] transition shadow-lg mb-3" style="background: linear-gradient(135deg, #e8b80d, #d4a017); color: #0c0e14; box-shadow: 0 4px 20px rgba(212,160,23,0.3);" onclick="loginPass()">ล็อกอิน</button>
             <p class="text-center text-xs mb-3"><button onclick="showForgotPassword()" style="color: #d4a017;" class="font-bold hover:underline">🔑 ลืมรหัสผ่าน?</button></p>
             <p class="text-center text-sm" style="color: var(--text-secondary);">ยังไม่มีบัญชี? <button onclick="toggleRegisterForm(true)" class="font-bold hover:underline" style="color: var(--accent-gold);">สมัครใช้งานคลิกที่นี่</button></p>
@@ -1028,7 +1028,7 @@
                     <input required id="reg_displayname" type="text" placeholder="ชื่อที่ใช้แสดง (ได้ทุกภาษา)" />
                 </div>
                 <div>
-                    <div style="position:relative;"><input required id="reg_password" type="password" placeholder="รหัสผ่าน (8 หลัก: อังกฤษ/ตัวเลข/สัญลักษณ์)" minlength="8" maxlength="8" style="padding-right:45px;" /><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('reg_password',this)"><i class="ph ph-eye"></i></button></div>
+                    <div class="pw-input-wrap"><input required id="reg_password" type="password" placeholder="รหัสผ่าน (8 หลัก: อังกฤษ/ตัวเลข/สัญลักษณ์)" minlength="8" maxlength="8" style="padding-right:45px;" /><button type="button" class="pw-toggle-btn" onclick="togglePw('reg_password',this)"><i class="ph ph-eye"></i></button></div>
                 </div>
                 <div>
                     <input required id="reg_phone" type="tel" placeholder="เบอร์โทรศัพท์มือถือ" />
@@ -1515,15 +1515,15 @@
         <div id="pf-pass-fields" class="hidden">
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านเดิม</label>
-                <div style="position:relative;"><input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('pf_old_pass',this)"><i class="ph ph-eye"></i></button></div>
+                <div class="pw-input-wrap"><input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" class="pw-toggle-btn" onclick="togglePw('pf_old_pass',this)"><i class="ph ph-eye"></i></button></div>
             </div>
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านใหม่</label>
-                <div style="position:relative;"><input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('pf_new_pass',this)"><i class="ph ph-eye"></i></button></div>
+                <div class="pw-input-wrap"><input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" class="pw-toggle-btn" onclick="togglePw('pf_new_pass',this)"><i class="ph ph-eye"></i></button></div>
             </div>
             <div class="mb-4">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">ยืนยันรหัสผ่านใหม่</label>
-                <div style="position:relative;"><input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('pf_confirm_pass',this)"><i class="ph ph-eye"></i></button></div>
+                <div class="pw-input-wrap"><input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;outline:none;"><button type="button" class="pw-toggle-btn" onclick="togglePw('pf_confirm_pass',this)"><i class="ph ph-eye"></i></button></div>
             </div>
             <div id="pf-pass-error" class="text-red-400 text-xs font-bold mb-3 hidden"></div>
             <button onclick="saveNewPassword()" class="w-full py-3 rounded-xl font-black text-sm transition-all active:scale-95" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;letter-spacing:0.3px;"><i class="ph ph-check-circle text-base"></i> ยืนยันเปลี่ยนรหัสผ่าน</button>
@@ -1598,15 +1598,15 @@
                     <form onsubmit="saveAdminPass(event)" class="flex flex-col gap-4 pb-4 px-1">
                         <div>
                             <label class="block text-xs mb-1.5 font-bold" style="color:#94a3b8;">รหัสผ่านเดิม</label>
-                            <div style="position:relative;"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="กรอกรหัสผ่านเดิม" id="setting-old-pass" type="password" required /><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('setting-old-pass',this)"><i class="ph ph-eye"></i></button></div>
+                            <div class="pw-input-wrap"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="กรอกรหัสผ่านเดิม" id="setting-old-pass" type="password" required /><button type="button" class="pw-toggle-btn" onclick="togglePw('setting-old-pass',this)"><i class="ph ph-eye"></i></button></div>
                         </div>
                         <div>
                             <label class="block text-xs mb-1.5 font-bold" style="color:#94a3b8;">รหัสผ่านใหม่</label>
-                            <div style="position:relative;"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="รหัสผ่าน 8 หลัก" id="setting-new-pass" type="password" required /><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('setting-new-pass',this)"><i class="ph ph-eye"></i></button></div>
+                            <div class="pw-input-wrap"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="รหัสผ่าน 8 หลัก" id="setting-new-pass" type="password" required /><button type="button" class="pw-toggle-btn" onclick="togglePw('setting-new-pass',this)"><i class="ph ph-eye"></i></button></div>
                         </div>
                         <div>
                             <label class="block text-xs mb-1.5 font-bold" style="color:#94a3b8;">ยืนยันรหัสผ่านใหม่</label>
-                            <div style="position:relative;"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" id="setting-confirm-pass" type="password" required /><button type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;padding:4px;z-index:2;display:flex;align-items:center;justify-content:center;" onclick="togglePw('setting-confirm-pass',this)"><i class="ph ph-eye"></i></button></div>
+                            <div class="pw-input-wrap"><input class="w-full text-sm" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; padding: 12px 16px; padding-right:45px; border-radius: 12px;" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" id="setting-confirm-pass" type="password" required /><button type="button" class="pw-toggle-btn" onclick="togglePw('setting-confirm-pass',this)"><i class="ph ph-eye"></i></button></div>
                         </div>
                         <button class="w-full py-3.5 rounded-xl font-black transition flex items-center justify-center gap-2 mt-2" style="background: linear-gradient(135deg, #e8b80d, #d4a017); color: #0c0e14; font-size: 14px;" type="submit"><i class="ph ph-check-circle"></i> ยืนยันเปลี่ยนรหัสผ่าน</button>
                     </form>
@@ -6273,18 +6273,9 @@ function convertToThaiDate(dateStr) {
         }
         cards.innerHTML = html;
     }
-<script>
-function togglePw(inputId, btn) {
-    var input = document.getElementById(inputId);
-    if (!input) return;
-    var isPassword = (input.type === "password");
-    input.type = isPassword ? "text" : "password";
-    var icons = btn.getElementsByTagName("i");
-    if (icons.length > 0) {
-        icons[0].setAttribute("class", isPassword ? "ph ph-eye-slash" : "ph ph-eye");
-    }
-}
 </script>
+<!-- ==================== ระบบประกาศ (Announcement) ==================== -->
+<div id="announcement-popup" class="fixed inset-0 z-[999] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
     <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 80vh; display: flex; flex-direction: column;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
         <div class="flex items-center justify-between p-5 pb-3">
@@ -6418,6 +6409,17 @@ function closeAnnouncement() {
 }
 
 // === Custom Alert Modal ===
+function togglePw(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    var isPassword = (input.type === "password");
+    input.type = isPassword ? "text" : "password";
+    var icon = btn.querySelector("i") || btn.getElementsByTagName("i")[0];
+    if (icon) {
+        icon.setAttribute("class", isPassword ? "ph ph-eye-slash" : "ph ph-eye");
+    }
+}
+function showAlert(message, callback) {
     var existing = document.getElementById('custom-alert-modal');
     if (existing) existing.remove();
     var html = '<div id="custom-alert-modal" class="fixed inset-0 z-[999] justify-center items-center px-4" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">';
