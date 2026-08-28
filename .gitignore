@@ -1,0 +1,24 @@
+# Firebase config (sensitive)
+*.env
+.env.local
+
+# Node modules
+node_modules/
+
+# Android build
+android/app/build/
+android/.gradle/
+android/build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+index - *.html
+
+# Firebase
+.firebase/
