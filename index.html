@@ -6274,7 +6274,17 @@ function convertToThaiDate(dateStr) {
         cards.innerHTML = html;
     }
 </script>
-<!-- ==================== ระบบประกาศ (Announcement) ==================== -->
+<script>
+function togglePw(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    var isPassword = (input.type === "password");
+    input.type = isPassword ? "text" : "password";
+    var icons = btn.getElementsByTagName("i");
+    if (icons.length > 0) {
+        icons[0].setAttribute("class", isPassword ? "ph ph-eye-slash" : "ph ph-eye");
+    }
+}
 <div id="announcement-popup" class="fixed inset-0 z-[999] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
     <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 80vh; display: flex; flex-direction: column;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
@@ -6409,17 +6419,6 @@ function closeAnnouncement() {
 }
 
 // === Custom Alert Modal ===
-function togglePw(inputId, btn) {
-    var input = document.getElementById(inputId);
-    if (!input) return;
-    var isPassword = (input.type === "password");
-    input.type = isPassword ? "text" : "password";
-    var icons = btn.getElementsByTagName("i");
-    if (icons.length > 0) {
-        icons[0].setAttribute("class", isPassword ? "ph ph-eye-slash" : "ph ph-eye");
-    }
-}
-function showAlert(message, callback) {
     var existing = document.getElementById('custom-alert-modal');
     if (existing) existing.remove();
     var html = '<div id="custom-alert-modal" class="fixed inset-0 z-[999] justify-center items-center px-4" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">';
