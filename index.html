@@ -857,28 +857,7 @@
     /* Custom scrollbar in light mode */
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-track { background: #f0f0f0; }
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; }
-
-    @keyframes dm-blink {
-        0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-        50% { opacity: 0.6; transform: translateX(-50%) scale(1.02); }
-    }
-    #dm-notification:not(.hidden) {
-        animation: dm-blink 1.5s ease-in-out infinite;
-    }
-    @keyframes dm-glow {
-        0%, 100% { box-shadow: 0 0 8px rgba(168,85,247,0.4); }
-        50% { box-shadow: 0 0 20px rgba(168,85,247,0.8); }
-    }
-    #dm-notification:not(.hidden) > div {
-        animation: dm-glow 1.5s ease-in-out infinite;
-    }
-    @keyframes dm-pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-    #dm-unread-badge:not(.hidden) {
-        animation: dm-pulse 1.5s ease-in-out infinite;
-    }</style>
+</style>
 
 <datalist id="shop-list"></datalist>
 <datalist id="buyer-list"></datalist> 
@@ -897,10 +876,10 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
-<div id="btn-home" class="fixed top-5 z-[200] cursor-pointer" style="right: 120px; background: #1a1a1a; border: 1px solid #333; border-radius: 14px; padding: 10px 12px;" onclick="switchView('dashboard')">
+<div id="btn-home" class="fixed top-5 z-[200] cursor-pointer hidden" style="right: 120px; background: #1a1a1a; border: 1px solid #333; border-radius: 14px; padding: 10px 12px;" onclick="switchView('dashboard')">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
 </div>
-<div id="btn-share-web" class="fixed top-5 z-[200] cursor-pointer" style="right: 70px; background: #1a1a1a; border: 1px solid #333; border-radius: 14px; padding: 10px 12px;" onclick="shareWebsite()">
+<div id="btn-share-web" class="fixed top-5 z-[200] cursor-pointer hidden" style="right: 70px; background: #1a1a1a; border: 1px solid #333; border-radius: 14px; padding: 10px 12px;" onclick="shareWebsite()">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3" fill="#eab308"/><circle cx="6" cy="12" r="3" fill="#eab308"/><circle cx="18" cy="19" r="3" fill="#eab308"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
 </div>
 
@@ -956,7 +935,7 @@
         
         <div class="block" id="login-pass-section">
             <div class="mb-4"><input placeholder="ชื่อผู้ใช้" id="username" type="text" class="text-lg py-3" /></div>
-            <div class="mb-6" style="position:relative;"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" style="padding-right:45px;box-sizing:border-box;" /><button type="button" onclick="togglePw('password',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
+            <div class="mb-6"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" /></div>
             <button class="w-full font-black py-3.5 text-lg rounded-xl hover:scale-[1.02] transition shadow-lg mb-3" style="background: linear-gradient(135deg, #e8b80d, #d4a017); color: #0c0e14; box-shadow: 0 4px 20px rgba(212,160,23,0.3);" onclick="loginPass()">ล็อกอิน</button>
             <p class="text-center text-xs mb-3"><button onclick="showForgotPassword()" style="color: #d4a017;" class="font-bold hover:underline">🔑 ลืมรหัสผ่าน?</button></p>
             <p class="text-center text-sm" style="color: var(--text-secondary);">ยังไม่มีบัญชี? <button onclick="toggleRegisterForm(true)" class="font-bold hover:underline" style="color: var(--accent-gold);">สมัครใช้งานคลิกที่นี่</button></p>
@@ -1115,13 +1094,7 @@
                     .toggle-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #666; transition: all 0.3s; }
                     .toggle-track.active { background: var(--accent-blue); border-color: var(--accent-blue); }
                     .toggle-track.active::after { left: 18px; background: #fff; }
-                    @keyframes dm-pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-    #dm-unread-badge:not(.hidden) {
-        animation: dm-pulse 1.5s ease-in-out infinite;
-    }</style>
+                </style>
                 <div id="toggle-section" class="mt-2 px-4 mb-3 flex justify-center">
                     <div class="flex items-center justify-center gap-3">
                         <div class="flex items-center gap-2">
@@ -1456,13 +1429,7 @@
     [data-theme="light"] #changelog-modal ul, [data-theme="light"] #changelog-modal li, [data-theme="light"] #changelog-modal .changelog-items { color: #374151 !important; }
     [data-theme="light"] #changelog-modal textarea { background: rgba(0,0,0,0.04) !important; color: #1f2937 !important; border-color: #d1d5db !important; }
 [data-theme="light"] #pull-refresh-indicator { background: linear-gradient(180deg, rgba(184,148,31,0.1), transparent) !important; }
-    @keyframes dm-pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-    #dm-unread-badge:not(.hidden) {
-        animation: dm-pulse 1.5s ease-in-out infinite;
-    }</style>
+</style>
 </div>
 
 <div id="sim-modal" class="fixed inset-0 z-[900] justify-center items-center px-5 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
@@ -1512,15 +1479,15 @@
         <div id="pf-pass-fields" class="hidden">
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านเดิม</label>
-                <div style="position:relative;"><input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;box-sizing:border-box;outline:none;"><button type="button" onclick="togglePw('pf_old_pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
+                <input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
             </div>
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านใหม่</label>
-                <div style="position:relative;"><input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;box-sizing:border-box;outline:none;"><button type="button" onclick="togglePw('pf_new_pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
+                <input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
             </div>
             <div class="mb-4">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">ยืนยันรหัสผ่านใหม่</label>
-                <div style="position:relative;"><input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;box-sizing:border-box;outline:none;"><button type="button" onclick="togglePw('pf_confirm_pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
+                <input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
             </div>
             <div id="pf-pass-error" class="text-red-400 text-xs font-bold mb-3 hidden"></div>
             <button onclick="saveNewPassword()" class="w-full py-3 rounded-xl font-black text-sm transition-all active:scale-95" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;letter-spacing:0.3px;"><i class="ph ph-check-circle text-base"></i> ยืนยันเปลี่ยนรหัสผ่าน</button>
@@ -2301,48 +2268,6 @@ function convertToThaiDate(dateStr) {
                 osc.stop(ctx.currentTime + i * 0.15 + 0.4);
             });
         } catch(e) { console.warn('Logout sound error:', e); }
-    }
-
-    // === เสียงแจ้งเตือนประกาศ ===
-    function playAnnouncementSound() {
-        if (!soundEnabled) return;
-        try {
-            var ctx = getAudioContext();
-            // เสียงประกาศ: 4 โน้ต ascending (C5-E5-G5-C6)
-            [523.25, 659.25, 783.99, 1046.50].forEach(function(freq, i) {
-                var osc = ctx.createOscillator();
-                var gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
-                osc.start(ctx.currentTime + i * 0.15);
-                osc.stop(ctx.currentTime + i * 0.15 + 0.4);
-            });
-        } catch(e) { console.warn('Announcement sound error:', e); }
-    }
-
-    // === เสียงแจ้งเตือน DM ===
-    function playDMSound() {
-        if (!soundEnabled) return;
-        try {
-            var ctx = getAudioContext();
-            // เสียง DM: 3 โน้ต (E5-G5-C6)
-            [659.25, 783.99, 1046.50].forEach(function(freq, i) {
-                var osc = ctx.createOscillator();
-                var gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'triangle';
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.12);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.35);
-                osc.start(ctx.currentTime + i * 0.12);
-                osc.stop(ctx.currentTime + i * 0.12 + 0.35);
-            });
-        } catch(e) { console.warn('DM sound error:', e); }
     }
 
     // === Text-to-Speech แจ้งเตือนราคาทองด้วยเสียงพูด ===
@@ -3764,10 +3689,7 @@ function convertToThaiDate(dateStr) {
                     renderData();
                     setupPresence('admin');
                     logUserLogin('admin');
-                    if (currentRole === 'admin') { setupAdminNotifListener(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; }
-                    listenForDMs();
-                    document.getElementById('dm-badge').style.display='block';
-                    setTimeout(function(){ checkAnnouncement(); }, 2000);
+                    if (currentRole === 'admin') setupAdminNotifListener();
                     loadTheme(); loadPinEnabledSetting();
                 }
             });
@@ -3792,9 +3714,7 @@ function convertToThaiDate(dateStr) {
             loadHistoryGlobal(); 
             if (currentUser) {
                 setupPresence(currentUser.username);
-                if (currentRole === 'admin') { setupAdminNotifListener(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; }
-                listenForDMs();
-                setTimeout(function(){ checkAnnouncement(); }, 2000);
+                if (currentRole === 'admin') setupAdminNotifListener();
                 // Log re-login if session was saved (notify admin only if away > 5 min)
                 const lastSeen = localStorage.getItem('goldAppLastSeen');
                 const awayMs = lastSeen ? Date.now() - parseInt(lastSeen) : 999999999;
@@ -4444,11 +4364,11 @@ function convertToThaiDate(dateStr) {
         const hashedInput = await hashPassword(passStr);
         if (userStr.toLowerCase() === 'admin' && (passStr === adminPass || hashedInput === adminPass)) {
             if (passStr === adminPass && db) { db.ref('admin_settings/adminPass').set(hashedInput); adminPass = hashedInput; }
-            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; listenForDMs(); document.getElementById('dm-badge').style.display='block'; } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
+            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
         } else if (appUsers[userStr] && (appUsers[userStr].password === passStr || appUsers[userStr].password === hashedInput)) {
             if (appUsers[userStr].password === passStr && db) { db.ref('users/' + userStr + '/password').set(hashedInput); appUsers[userStr].password = hashedInput; }
             if (appUsers[userStr].isBanned) { document.getElementById('login-error').innerText = 'บัญชีนี้ถูกแบน! ไม่สามารถเข้าสู่ระบบได้'; document.getElementById('login-error').classList.remove('hidden'); return; }
-            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); notifyAdminLogin(userStr); listenForDMs(); document.getElementById('dm-badge').style.display='block'; setTimeout(function(){ checkAnnouncement(); }, 2000); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
+            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); notifyAdminLogin(userStr); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
         } else { 
             document.getElementById('login-error').innerText = 'ข้อมูลไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); 
         } 
@@ -4460,7 +4380,7 @@ function convertToThaiDate(dateStr) {
         if (currentPinInput === adminPin) { 
             db.ref('admin_settings').update({pinAttempts: 0, pinBanUntil: 0});
             adminPinAttempts = 0; adminPinBanUntil = 0;
-            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setupAdminNotifListener(); loadPinEnabledSetting(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; listenForDMs(); if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
+            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setupAdminNotifListener(); loadPinEnabledSetting(); if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
         } else { 
             adminPinAttempts++;
             if(adminPinAttempts >= 3) {
@@ -6249,409 +6169,3 @@ function convertToThaiDate(dateStr) {
         cards.innerHTML = html;
     }
 </script>
-<!-- ==================== ระบบประกาศ (Announcement) ==================== -->
-<div id="announcement-popup" class="fixed inset-0 z-[999] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
-    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 80vh; display: flex; flex-direction: column;">
-        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
-        <div class="flex items-center justify-between p-5 pb-3">
-            <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-megaphone"></i> ประกาศจากแอดมิน</h3>
-            <button id="announcement-close-btn" onclick="closeAnnouncement()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;opacity:0.3;pointer-events:none;">✕</button>
-        </div>
-        <div id="announcement-content" style="padding: 0 20px 20px 20px; overflow-y: auto; flex: 1; color: #e2e8f0; font-size: 14px; line-height: 1.8;"></div>
-        <div id="announcement-footer" class="text-center pb-5 hidden">
-            <p style="color:#94a3b8;font-size:11px;">เลื่อนลงจนสุดเพื่อปิดประกาศได้</p>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== DM Modal (แอดมินส่งข้อความ) ==================== -->
-<div id="dm-send-modal" class="fixed inset-0 z-[950] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
-    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 85vh; display: flex; flex-direction: column; padding: 20px;">
-        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
-        <div class="flex items-center justify-between mb-4">
-            <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-paper-plane-tilt"></i> ส่งข้อความ</h3>
-            <button onclick="closeDMSendModal()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button>
-        </div>
-        <div id="dm-user-list" style="max-height: 250px; overflow-y: auto; margin-bottom: 16px;"></div>
-        <textarea id="dm-message-input" rows="3" placeholder="พิมพ์ข้อความ..." style="width:100%;background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;font-size:14px;resize:none;margin-bottom:12px;"></textarea>
-        <button onclick="sendDM()" style="width:100%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;border-radius:12px;padding:12px;font-weight:900;font-size:14px;cursor:pointer;"><i class="ph ph-paper-plane-tilt"></i> ส่งข้อความ</button>
-    </div>
-</div>
-
-<!-- ==================== DM Notification Badge ==================== -->
-<!-- ==================== DM Badge Icon (Near home button) ==================== -->
-<div id="dm-badge" class="fixed top-5 z-[200] cursor-pointer" style="right: 170px; background: #1a1a1a; border: 1px solid #333; border-radius: 14px; padding: 10px 12px;" onclick="openDMInbox()">
-    <div style="position:relative;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        <span id="dm-unread-badge" class="hidden" style="position:absolute;top:-6px;right:-8px;background:#ef4444;color:#fff;font-size:9px;font-weight:900;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
-    </div>
-</div>
-
-<!-- ==================== DM Inbox Modal (User reads + replies) ==================== -->
-<div id="dm-inbox-modal" class="fixed inset-0 z-[950] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
-    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 85vh; display: flex; flex-direction: column; padding: 20px;">
-        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
-        <div class="flex items-center justify-between mb-4">
-            <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-envelope-simple"></i> ข้อความ</h3>
-            <button onclick="closeDMInbox()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button>
-        </div>
-        <div id="dm-inbox-list" style="flex:1;overflow-y:auto;margin-bottom:12px;"></div>
-        <div id="dm-reply-area" class="hidden" style="border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;">
-            <p id="dm-reply-to" style="color:#94a3b8;font-size:11px;margin-bottom:8px;"></p>
-            <div style="display:flex;gap:8px;">
-                <input id="dm-reply-input" type="text" placeholder="พิมพ์คำตอบ..." style="flex:1;background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;font-size:13px;">
-                <button onclick="sendDMReply()" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:900;font-size:13px;cursor:pointer;"><i class="ph ph-paper-plane-tilt"></i></button>
-            </div>
-        </div>
-    </div>
-</div>
-
-</div>
-
-<!-- ==================== ปุ่ม DM + ประกาศ สำหรับแอดมิน ==================== -->
-<button id="btn-open-dm" onclick="openDMSendModal()" style="position:fixed;bottom:72px;right:12px;z-index:500;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
-    <i class="ph ph-paper-plane-tilt" style="font-size:17px;"></i>
-</button>
-<button id="btn-open-announcement" onclick="openAnnouncementModal()" style="position:fixed;bottom:116px;right:12px;z-index:500;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;">
-    <i class="ph ph-megaphone" style="font-size:17px;"></i>
-</button>
-
-<script>
-// ==================== ระบบประกาศ (Announcement) ====================
-var _announcementScrollDone = false;
-
-function checkAnnouncement() {
-    if (!db || !currentUser) return;
-    if (currentRole === 'admin') return;
-    db.ref('announcements/latest').on('value', function(snap) {
-        var data = snap.val();
-        if (!data || !data.message) return;
-        var announcementId = data.id || 'default';
-        var lastSeen = localStorage.getItem('announcement_seen_' + announcementId);
-        var today = new Date().toDateString();
-        if (lastSeen === today) return;
-        showAnnouncementPopup(data.title || 'ประกาศ', data.message, announcementId);
-    });
-}
-
-function showAnnouncementPopup(title, message, announcementId) {
-    var popup = document.getElementById('announcement-popup');
-    var content = document.getElementById('announcement-content');
-    var closeBtn = document.getElementById('announcement-close-btn');
-    var footer = document.getElementById('announcement-footer');
-    if (!popup || !content) return;
-    var titleHtml = '<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:#d4a017;font-size:16px;font-weight:900;">' + (title || 'ประกาศ') + '</span></div>';
-    content.innerHTML = titleHtml + message.replace(/\n/g, '<br>');
-    _announcementScrollDone = false;
-    playAnnouncementSound();
-    popup.classList.remove('hidden');
-    content.scrollTop = 0;
-    setTimeout(function() {
-        if (content.scrollHeight <= content.clientHeight + 10) {
-            _announcementScrollDone = true;
-            closeBtn.style.opacity = '1';
-            closeBtn.style.pointerEvents = 'auto';
-            footer.classList.add('hidden');
-        } else {
-            closeBtn.style.opacity = '0.3';
-            closeBtn.style.pointerEvents = 'none';
-            footer.classList.remove('hidden');
-        }
-    }, 100);
-    content.onscroll = function() {
-        if (_announcementScrollDone) return;
-        if (content.scrollTop + content.clientHeight >= content.scrollHeight - 20) {
-            _announcementScrollDone = true;
-            closeBtn.style.opacity = '1';
-            closeBtn.style.pointerEvents = 'auto';
-            footer.classList.add('hidden');
-        }
-    };
-    popup.onclick = function(e) {
-        if (e.target === popup) return;
-    };
-}
-
-function closeAnnouncement() {
-    if (!_announcementScrollDone) return;
-    var popup = document.getElementById('announcement-popup');
-    if (popup) popup.classList.add('hidden');
-    db.ref('announcements/latest').once('value').then(function(snap) {
-        var data = snap.val();
-        var announcementId = (data && data.id) ? data.id : 'default';
-        localStorage.setItem('announcement_seen_' + announcementId, new Date().toDateString());
-    });
-}
-
-// === Custom Alert Modal ===
-
-function togglePw(inputId, btn) {
-    var input = document.getElementById(inputId);
-    if (!input) return;
-    var isPw = (input.type === 'password');
-    input.type = isPw ? 'text' : 'password';
-    var icon = btn.querySelector('i');
-    if (icon) icon.setAttribute('class', isPw ? 'ph ph-eye-slash' : 'ph ph-eye');
-}
-function showAlert(message, callback) {
-    var existing = document.getElementById('custom-alert-modal');
-    if (existing) existing.remove();
-    var html = '<div id="custom-alert-modal" class="fixed inset-0 z-[999] justify-center items-center px-4" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">';
-    html += '<div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm relative modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);padding:24px 20px 20px 20px;">';
-    html += '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>';
-    html += '<div class="text-center mb-5">';
-    html += '<div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,rgba(212,160,23,0.15),rgba(212,160,23,0.05));display:flex;align-items:center;justify-content:center;margin:0 auto 12px auto;border:2px solid rgba(212,160,23,0.3);">';
-    html += '<i class="ph ph-bell-ringing" style="color:#d4a017;font-size:24px;"></i>';
-    html += '</div>';
-    html += '<p style="color:#e2e8f0;font-size:14px;line-height:1.6;">' + message + '</p>';
-    html += '</div>';
-    html += '<button id="custom-alert-ok-btn" style="width:100%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;border-radius:12px;padding:12px;font-weight:900;font-size:14px;cursor:pointer;">ตกลง</button>';
-    html += '</div></div>';
-    document.body.insertAdjacentHTML('beforeend', html);
-    document.getElementById('custom-alert-ok-btn').onclick = function() {
-        var modal = document.getElementById('custom-alert-modal');
-        if (modal) modal.remove();
-        if (callback) callback();
-    };
-}
-
-function openAnnouncementModal() {
-    var existing = document.getElementById('announcement-create-modal');
-    if (existing) existing.remove();
-    var html = '<div id="announcement-create-modal" class="fixed inset-0 z-[960] justify-center items-center px-4" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">';
-    html += '<div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);padding:24px 20px;">';
-    html += '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>';
-    html += '<div class="flex items-center justify-between mb-4">';
-    html += '<h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-megaphone"></i> สร้างประกาศ</h3>';
-    html += '<button onclick="document.getElementById(\'announcement-create-modal\').remove()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button>';
-    html += '</div>';
-    html += '<input id="ann-title-input" type="text" placeholder="ชื่อประกาศ..." style="width:100%;background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:12px;">';
-    html += '<textarea id="ann-message-input" rows="5" placeholder="พิมพ์ข้อความประกาศ..." style="width:100%;background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:14px;resize:vertical;margin-bottom:16px;"></textarea>';
-    html += '<button onclick="submitAnnouncement()" style="width:100%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;border-radius:12px;padding:12px;font-weight:900;font-size:14px;cursor:pointer;"><i class="ph ph-megaphone"></i> ส่งประกาศ</button>';
-    html += '</div></div>';
-    document.body.insertAdjacentHTML('beforeend', html);
-}
-function submitAnnouncement() {
-    var title = document.getElementById('ann-title-input').value.trim();
-    var message = document.getElementById('ann-message-input').value.trim();
-    if (!title || !message) { showAlert('กรุณากรอกข้อมูลให้ครบ'); return; }
-    var announcementId = 'ann_' + Date.now();
-    db.ref('announcements/latest').set({
-        id: announcementId,
-        title: title,
-        message: message,
-        createdAt: Date.now(),
-        createdBy: currentUser ? currentUser.username : 'admin'
-    }).then(function() {
-        var modal = document.getElementById('announcement-create-modal');
-        if (modal) modal.remove();
-        showAlert('ประกาศถูกส่งแล้ว!');
-    });
-}
-
-// ==================== ระบบ Direct Message ====================
-function openDMSendModal() {
-    var modal = document.getElementById('dm-send-modal');
-    var list = document.getElementById('dm-user-list');
-    var input = document.getElementById('dm-message-input');
-    if (!modal || !list) return;
-    input.value = '';
-    var html = '';
-    if (typeof appUsers !== 'undefined') {
-        Object.keys(appUsers).forEach(function(username) {
-            if (currentUser && username === currentUser.username) return;
-            if (appUsers[username].banned) return;
-            var displayName = appUsers[username].name || username;
-            var profileImg = getProfileImg(displayName);
-            html += '<label style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer;margin-bottom:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);">';
-            html += '<input type="checkbox" class="dm-user-check" value="' + username + '" style="width:18px;height:18px;accent-color:#d4a017;">';
-            html += '<img src="' + profileImg + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(212,160,23,0.3);" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(displayName) + '&background=facc15&color=000&rounded=true&bold=true\'">';
-            html += '<div style="flex:1;min-width:0;"><span style="color:#e2e8f0;font-size:13px;font-weight:700;display:block;">' + displayName + '</span><span style="color:#94a3b8;font-size:11px;">@' + username + '</span></div>';
-            html += '</label>';
-        });
-    }
-    list.innerHTML = html || '<p style="color:#94a3b8;font-size:13px;text-align:center;">ไม่มีผู้ใช้ในระบบ</p>';
-    modal.classList.remove('hidden');
-}
-
-function closeDMSendModal() {
-    var modal = document.getElementById('dm-send-modal');
-    if (modal) modal.classList.add('hidden');
-}
-
-function sendDM() {
-    var checkboxes = document.querySelectorAll('.dm-user-check:checked');
-    var message = document.getElementById('dm-message-input').value.trim();
-    if (!message) { showAlert('กรุณาพิมพ์ข้อความ'); return; }
-    if (checkboxes.length === 0) { showAlert('กรุณาเลือกผู้รับ'); return; }
-    var sender = currentUser ? currentUser.username : 'admin';
-    var dmId = 'dm_' + Date.now();
-    var promises = [];
-    checkboxes.forEach(function(cb) {
-        var recipient = cb.value;
-        var oneDm = {
-            id: dmId,
-            from: sender,
-            message: message,
-            read: false,
-            timestamp: Date.now()
-        };
-        promises.push(db.ref('direct_messages/' + recipient + '/' + dmId).set(oneDm));
-    });
-    Promise.all(promises).then(function() {
-        closeDMSendModal();
-        showAlert('ส่งข้อความสำเร็จ! (' + checkboxes.length + ' คน)');
-    });
-}
-
-var _lastNotifiedDM = '';
-function listenForDMs() {
-    if (!db || !currentUser) return;
-    var username = currentUser.username;
-    db.ref('direct_messages/' + username).on('value', function(snap) {
-        var msgs = snap.val();
-        if (!msgs) { _unreadDMCount = 0; _allUnreadDMs = {}; updateDMBadge(); return; }
-        _allUnreadDMs = {};
-        var unreadCount = 0;
-        var latestUnread = null;
-        Object.keys(msgs).forEach(function(key) {
-            if (!msgs[key].read) {
-                _allUnreadDMs[key] = msgs[key];
-                unreadCount++;
-                latestUnread = msgs[key];
-            }
-        });
-        _unreadDMCount = unreadCount;
-        updateDMBadge();
-        if (latestUnread && latestUnread.id !== _lastNotifiedDM) {
-            _lastNotifiedDM = latestUnread.id;
-            showDMNotification(latestUnread);
-        }
-var _allUnreadDMs = {};
-
-function showDMNotification(dm) {
-    playDMSound();
-    _allUnreadDMs[dm.id] = dm;
-    _unreadDMCount = Object.keys(_allUnreadDMs).length;
-    updateDMBadge();
-}
-
-function updateDMBadge() {
-    var badge = document.getElementById('dm-badge');
-    var unreadBadge = document.getElementById('dm-unread-badge');
-    if (!badge) return;
-    if (currentRole !== 'guest' && currentUser) {
-        badge.style.display = 'block';
-    }
-    if (_unreadDMCount > 0) {
-        unreadBadge.textContent = _unreadDMCount;
-        unreadBadge.classList.remove('hidden');
-        unreadBadge.style.display = 'flex';
-    } else {
-        unreadBadge.classList.add('hidden');
-        unreadBadge.style.display = 'none';
-    }
-}
-
-function openDMInbox() {
-    var modal = document.getElementById('dm-inbox-modal');
-    var list = document.getElementById('dm-inbox-list');
-    var replyArea = document.getElementById('dm-reply-area');
-    if (!modal || !list) return;
-    replyArea.classList.add('hidden');
-    if (!db || !currentUser) return;
-    db.ref('direct_messages/' + currentUser.username).orderByChild('timestamp').once('value').then(function(snap) {
-        var msgs = snap.val();
-        var html = '';
-        if (msgs) {
-            var keys = Object.keys(msgs).reverse();
-            keys.forEach(function(key) {
-                var msg = msgs[key];
-                var isRead = msg.read;
-                var bgStyle = isRead ? 'background:rgba(255,255,255,0.03);' : 'background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);';
-                var dot = isRead ? '' : '<span style="width:8px;height:8px;border-radius:50%;background:#a855f7;flex-shrink:0;"></span>';
-                var time = msg.timestamp ? new Date(msg.timestamp).toLocaleString('th-TH', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
-                html += '<div onclick="openDMReply(\'' + key + '\', \'' + msg.from + '\', \'' + (msg.message || '').replace(/'/g, "\'") + '\')" style="' + bgStyle + 'padding:12px;border-radius:12px;margin-bottom:8px;position:relative;">';
-                html += '<div class="flex items-center gap-2 mb-1">';
-                html += '<span style="color:#d4a017;font-size:12px;font-weight:900;">' + msg.from + '</span>';
-                html += '<span style="color:#94a3b8;font-size:10px;">' + time + '</span>';
-                html += dot;
-                html += '</div>';
-                html += '<p style="color:#e2e8f0;font-size:13px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (msg.message || '') + '</p>';
-                html += '</div>';
-                html += '<div onclick="event.stopPropagation();deleteDM(' + key + ')" style="position:absolute;top:8px;right:8px;cursor:pointer;color:rgba(239,68,68,0.5);font-size:14px;z-index:2;"><i class="ph ph-trash"></i></div>';
-                html += '</div>';
-            });
-        }
-        list.innerHTML = html || '<p style="color:#94a3b8;font-size:13px;text-align:center;padding:40px 0;">ยังไม่มีข้อความ</p>';
-        modal.classList.remove('hidden');
-        // Mark all as read
-        if (msgs) {
-            Object.keys(msgs).forEach(function(key) {
-                if (!msgs[key].read) {
-                    db.ref('direct_messages/' + currentUser.username + '/' + key + '/read').set(true);
-                }
-            });
-            _allUnreadDMs = {};
-            _unreadDMCount = 0;
-            updateDMBadge();
-        }
-    });
-}
-
-function openDMReply(dmId, from, message) {
-    var replyArea = document.getElementById('dm-reply-area');
-    var replyTo = document.getElementById('dm-reply-to');
-    var replyInput = document.getElementById('dm-reply-input');
-    if (!replyArea) return;
-    replyTo.textContent = 'ตอบกลับ ' + from + ': "' + message.substring(0, 50) + (message.length > 50 ? '...' : '') + '"';
-    replyInput.value = '';
-    replyArea.classList.remove('hidden');
-    replyArea._dmId = dmId;
-    replyArea._dmFrom = from;
-    replyInput.focus();
-}
-
-function sendDMReply() {
-    var replyArea = document.getElementById('dm-reply-area');
-    var replyInput = document.getElementById('dm-reply-input');
-    if (!replyArea || !replyInput) return;
-    var message = replyInput.value.trim();
-    if (!message) return;
-    var toUser = replyArea._dmFrom;
-    var dmId = 'dm_' + Date.now();
-    var sender = currentUser ? currentUser.username : 'user';
-    db.ref('direct_messages/' + toUser + '/' + dmId).set({
-        id: dmId,
-        from: sender,
-        message: message,
-        read: false,
-        timestamp: Date.now()
-    }).then(function() {
-        replyInput.value = '';
-        replyArea.classList.add('hidden');
-        showAlert('ส่งคำตอบสำเร็จ!');
-    });
-}
-
-function deleteDM(dmId) {
-    if (!db || !currentUser || !currentUser.username) return;
-    var path = 'direct_messages/' + currentUser.username + '/' + dmId;
-    db.ref(path).remove().then(function() {
-        setTimeout(function(){ openDMInbox(); }, 300);
-    }).catch(function(err) {
-        console.error('Delete DM error:', err);
-    });
-}
-
-function closeDMInbox() {
-    var modal = document.getElementById('dm-inbox-modal');
-    if (modal) modal.classList.add('hidden');
-}
-</script>
-
-
-
-
-
-
