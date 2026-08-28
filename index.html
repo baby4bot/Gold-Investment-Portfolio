@@ -6280,7 +6280,7 @@ function convertToThaiDate(dateStr) {
 
 <!-- ==================== DM Notification Badge ==================== -->
 <!-- ==================== DM Badge Icon (Near home button) ==================== -->
-<div id="dm-badge" class="fixed top-5 z-[200] cursor-pointer hidden" style="right: 165px; background: #1a1a1a; border: 1px solid #333; border-radius: 14px; padding: 10px 12px;" onclick="openDMInbox()">
+<div id="dm-badge" class="fixed top-5 z-[200] cursor-pointer hidden" style="right: 170px; background: #1a1a1a; border: 1px solid #333; border-radius: 14px; padding: 10px 12px;" onclick="openDMInbox()">
     <div style="position:relative;">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         <span id="dm-unread-badge" class="hidden" style="position:absolute;top:-6px;right:-8px;background:#ef4444;color:#fff;font-size:9px;font-weight:900;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
@@ -6558,6 +6558,9 @@ function openDMInbox() {
                 html += '</div>';
                 html += '<p style="color:#e2e8f0;font-size:13px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (msg.message || '') + '</p>';
                 html += '</div>';
+                html += '<div style="display:flex;justify-content:flex-end;margin-top:6px;">';
+                html += '<button onclick="event.stopPropagation();deleteDM(' + key + ')" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="ph ph-trash"></i> ลบ</button>';
+                html += '</div>';
             });
         }
         list.innerHTML = html || '<p style="color:#94a3b8;font-size:13px;text-align:center;padding:40px 0;">ยังไม่มีข้อความ</p>';
@@ -6611,11 +6614,20 @@ function sendDMReply() {
     });
 }
 
+function deleteDM(dmId) {
+    if (!db || !currentUser) return;
+    db.ref('direct_messages/' + currentUser.username + '/' + dmId).remove().then(function() {
+        openDMInbox();
+    });
+}
+
 function closeDMInbox() {
     var modal = document.getElementById('dm-inbox-modal');
     if (modal) modal.classList.add('hidden');
 }
 </script>
+
+
 
 
 
