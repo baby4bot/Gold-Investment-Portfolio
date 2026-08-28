@@ -6312,12 +6312,21 @@ function showAnnouncementPopup(title, message, announcementId) {
     var titleHtml = '<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:#d4a017;font-size:16px;font-weight:900;">' + (title || 'ประกาศ') + '</span></div>';
     content.innerHTML = titleHtml + message.replace(/\n/g, '<br>');
     _announcementScrollDone = false;
-    closeBtn.style.opacity = '0.3';
     playAnnouncementSound();
-    closeBtn.style.pointerEvents = 'none';
-    footer.classList.remove('hidden');
     popup.classList.remove('hidden');
     content.scrollTop = 0;
+    setTimeout(function() {
+        if (content.scrollHeight <= content.clientHeight + 10) {
+            _announcementScrollDone = true;
+            closeBtn.style.opacity = '1';
+            closeBtn.style.pointerEvents = 'auto';
+            footer.classList.add('hidden');
+        } else {
+            closeBtn.style.opacity = '0.3';
+            closeBtn.style.pointerEvents = 'none';
+            footer.classList.remove('hidden');
+        }
+    }, 100);
     content.onscroll = function() {
         if (_announcementScrollDone) return;
         if (content.scrollTop + content.clientHeight >= content.scrollHeight - 20) {
