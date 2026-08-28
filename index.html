@@ -6242,17 +6242,18 @@ function checkAnnouncement() {
         var lastSeen = localStorage.getItem('announcement_seen_' + announcementId);
         var today = new Date().toDateString();
         if (lastSeen === today) return;
-        showAnnouncementPopup(data.message, announcementId);
+        showAnnouncementPopup(data.title || 'ประกาศ', data.message, announcementId);
     });
 }
 
-function showAnnouncementPopup(message, announcementId) {
+function showAnnouncementPopup(title, message, announcementId) {
     var popup = document.getElementById('announcement-popup');
     var content = document.getElementById('announcement-content');
     var closeBtn = document.getElementById('announcement-close-btn');
     var footer = document.getElementById('announcement-footer');
     if (!popup || !content) return;
-    content.innerHTML = message.replace(/\n/g, '<br>');
+    var titleHtml = '<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="color:#d4a017;font-size:16px;font-weight:900;">' + (title || 'ประกาศ') + '</span></div>';
+    content.innerHTML = titleHtml + message.replace(/\n/g, '<br>');
     _announcementScrollDone = false;
     closeBtn.style.opacity = '0.3';
     closeBtn.style.pointerEvents = 'none';
@@ -6285,10 +6286,25 @@ function closeAnnouncement() {
 }
 
 function openAnnouncementModal() {
-    var title = prompt('ชื่อประกาศ:');
-    if (!title) return;
-    var message = prompt('ข้อความประกาศ:');
-    if (!message) return;
+    var existing = document.getElementById('announcement-create-modal');
+    if (existing) existing.remove();
+    var html = '<div id="announcement-create-modal" class="fixed inset-0 z-[960] justify-center items-center px-4" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">';
+    html += '<div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);padding:24px 20px;">';
+    html += '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>';
+    html += '<div class="flex items-center justify-between mb-4">';
+    html += '<h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-megaphone"></i> สร้างประกาศ</h3>';
+    html += '<button onclick="document.getElementById(\'announcement-create-modal\').remove()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button>';
+    html += '</div>';
+    html += '<input id="ann-title-input" type="text" placeholder="ชื่อประกาศ..." style="width:100%;background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:12px;">';
+    html += '<textarea id="ann-message-input" rows="5" placeholder="พิมพ์ข้อความประกาศ..." style="width:100%;background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:14px;resize:vertical;margin-bottom:16px;"></textarea>';
+    html += '<button onclick="submitAnnouncement()" style="width:100%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;border-radius:12px;padding:12px;font-weight:900;font-size:14px;cursor:pointer;"><i class="ph ph-megaphone"></i> ส่งประกาศ</button>';
+    html += '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+function submitAnnouncement() {
+    var title = document.getElementById('ann-title-input').value.trim();
+    var message = document.getElementById('ann-message-input').value.trim();
+    if (!title || !message) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
     var announcementId = 'ann_' + Date.now();
     db.ref('announcements/latest').set({
         id: announcementId,
@@ -6297,6 +6313,8 @@ function openAnnouncementModal() {
         createdAt: Date.now(),
         createdBy: currentUser ? currentUser.username : 'admin'
     }).then(function() {
+        var modal = document.getElementById('announcement-create-modal');
+        if (modal) modal.remove();
         alert('ประกาศถูกส่งแล้ว!');
     });
 }
@@ -6313,9 +6331,12 @@ function openDMSendModal() {
         Object.keys(appUsers).forEach(function(username) {
             if (currentUser && username === currentUser.username) return;
             if (appUsers[username].banned) return;
-            html += '<label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;cursor:pointer;margin-bottom:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);">';
+            var displayName = appUsers[username].name || username;
+            var profileImg = getProfileImg(displayName);
+            html += '<label style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer;margin-bottom:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);">';
             html += '<input type="checkbox" class="dm-user-check" value="' + username + '" style="width:18px;height:18px;accent-color:#d4a017;">';
-            html += '<span style="color:#e2e8f0;font-size:13px;font-weight:700;">' + username + '</span>';
+            html += '<img src="' + profileImg + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(212,160,23,0.3);" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(displayName) + '&background=facc15&color=000&rounded=true&bold=true\'">';
+            html += '<div style="flex:1;min-width:0;"><span style="color:#e2e8f0;font-size:13px;font-weight:700;display:block;">' + displayName + '</span><span style="color:#94a3b8;font-size:11px;">@' + username + '</span></div>';
             html += '</label>';
         });
     }
