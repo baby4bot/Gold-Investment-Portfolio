@@ -6495,19 +6495,31 @@ function sendDM() {
     });
 }
 
+var _lastNotifiedDM = '';
 function listenForDMs() {
     if (!db || !currentUser) return;
     var username = currentUser.username;
-    db.ref('direct_messages/' + username).orderByChild('read').equalTo(false).on('value', function(snap) {
+    db.ref('direct_messages/' + username).on('value', function(snap) {
         var msgs = snap.val();
-        if (!msgs) return;
-        var keys = Object.keys(msgs);
-        if (keys.length === 0) return;
-        var latest = msgs[keys[keys.length - 1]];
-        showDMNotification(latest);
+        if (!msgs) { _unreadDMCount = 0; _allUnreadDMs = {}; updateDMBadge(); return; }
+        _allUnreadDMs = {};
+        var unreadCount = 0;
+        var latestUnread = null;
+        Object.keys(msgs).forEach(function(key) {
+            if (!msgs[key].read) {
+                _allUnreadDMs[key] = msgs[key];
+                unreadCount++;
+                latestUnread = msgs[key];
+            }
+        });
+        _unreadDMCount = unreadCount;
+        updateDMBadge();
+        if (latestUnread && latestUnread.id !== _lastNotifiedDM) {
+            _lastNotifiedDM = latestUnread.id;
+            showDMNotification(latestUnread);
+        }
     });
 }
-
 var _unreadDMCount = 0;
 var _allUnreadDMs = {};
 
@@ -6550,7 +6562,7 @@ function openDMInbox() {
                 var bgStyle = isRead ? 'background:rgba(255,255,255,0.03);' : 'background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);';
                 var dot = isRead ? '' : '<span style="width:8px;height:8px;border-radius:50%;background:#a855f7;flex-shrink:0;"></span>';
                 var time = msg.timestamp ? new Date(msg.timestamp).toLocaleString('th-TH', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
-                html += '<div onclick="openDMReply(\'' + key + '\', \'' + msg.from + '\', \'' + (msg.message || '').replace(/'/g, "\'") + '\')" style="' + bgStyle + 'padding:12px;border-radius:12px;margin-bottom:8px;cursor:pointer;">';
+                html += '<div onclick="openDMReply(\'' + key + '\', \'' + msg.from + '\', \'' + (msg.message || '').replace(/'/g, "\'") + '\')" style="' + bgStyle + 'padding:12px;border-radius:12px;margin-bottom:8px;position:relative;">';
                 html += '<div class="flex items-center gap-2 mb-1">';
                 html += '<span style="color:#d4a017;font-size:12px;font-weight:900;">' + msg.from + '</span>';
                 html += '<span style="color:#94a3b8;font-size:10px;">' + time + '</span>';
@@ -6558,8 +6570,7 @@ function openDMInbox() {
                 html += '</div>';
                 html += '<p style="color:#e2e8f0;font-size:13px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (msg.message || '') + '</p>';
                 html += '</div>';
-                html += '<div style="display:flex;justify-content:flex-end;margin-top:6px;">';
-                html += '<button onclick="event.stopPropagation();deleteDM(' + key + ')" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="ph ph-trash"></i> ลบ</button>';
+                html += '<div onclick="event.stopPropagation();deleteDM(' + key + ')" style="position:absolute;top:8px;right:8px;cursor:pointer;color:rgba(239,68,68,0.5);font-size:14px;z-index:2;"><i class="ph ph-trash"></i></div>';
                 html += '</div>';
             });
         }
@@ -6615,9 +6626,12 @@ function sendDMReply() {
 }
 
 function deleteDM(dmId) {
-    if (!db || !currentUser) return;
-    db.ref('direct_messages/' + currentUser.username + '/' + dmId).remove().then(function() {
-        openDMInbox();
+    if (!db || !currentUser || !currentUser.username) return;
+    var path = 'direct_messages/' + currentUser.username + '/' + dmId;
+    db.ref(path).remove().then(function() {
+        setTimeout(function(){ openDMInbox(); }, 300);
+    }).catch(function(err) {
+        console.error('Delete DM error:', err);
     });
 }
 
