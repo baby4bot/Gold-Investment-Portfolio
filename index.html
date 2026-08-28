@@ -956,7 +956,7 @@
         
         <div class="block" id="login-pass-section">
             <div class="mb-4"><input placeholder="ชื่อผู้ใช้" id="username" type="text" class="text-lg py-3" /></div>
-            <div class="mb-6"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" /></div>
+            <div class="mb-6" style="position:relative;"><input onkeypress="if(event.key === 'Enter') loginPass()" placeholder="รหัสผ่าน" id="password" type="password" class="text-lg py-3" style="padding-right:45px;box-sizing:border-box;" /><button type="button" onclick="togglePw('password',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
             <button class="w-full font-black py-3.5 text-lg rounded-xl hover:scale-[1.02] transition shadow-lg mb-3" style="background: linear-gradient(135deg, #e8b80d, #d4a017); color: #0c0e14; box-shadow: 0 4px 20px rgba(212,160,23,0.3);" onclick="loginPass()">ล็อกอิน</button>
             <p class="text-center text-xs mb-3"><button onclick="showForgotPassword()" style="color: #d4a017;" class="font-bold hover:underline">🔑 ลืมรหัสผ่าน?</button></p>
             <p class="text-center text-sm" style="color: var(--text-secondary);">ยังไม่มีบัญชี? <button onclick="toggleRegisterForm(true)" class="font-bold hover:underline" style="color: var(--accent-gold);">สมัครใช้งานคลิกที่นี่</button></p>
@@ -1512,15 +1512,15 @@
         <div id="pf-pass-fields" class="hidden">
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านเดิม</label>
-                <input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
+                <div style="position:relative;"><input id="pf_old_pass" type="password" placeholder="กรอกรหัสผ่านเดิม" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;box-sizing:border-box;outline:none;"><button type="button" onclick="togglePw('pf_old_pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
             </div>
             <div class="mb-3">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">รหัสผ่านใหม่</label>
-                <input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
+                <div style="position:relative;"><input id="pf_new_pass" type="password" placeholder="รหัสผ่าน 8 หลัก" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;box-sizing:border-box;outline:none;"><button type="button" onclick="togglePw('pf_new_pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
             </div>
             <div class="mb-4">
                 <label class="text-xs font-bold block mb-1.5" style="color: #94a3b8;">ยืนยันรหัสผ่านใหม่</label>
-                <input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;outline:none;">
+                <div style="position:relative;"><input id="pf_confirm_pass" type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" maxlength="8" class="text-sm w-full" style="background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;padding-right:45px;box-sizing:border-box;outline:none;"><button type="button" onclick="togglePw('pf_confirm_pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;"><i class="ph ph-eye"></i></button></div>
             </div>
             <div id="pf-pass-error" class="text-red-400 text-xs font-bold mb-3 hidden"></div>
             <button onclick="saveNewPassword()" class="w-full py-3 rounded-xl font-black text-sm transition-all active:scale-95" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;letter-spacing:0.3px;"><i class="ph ph-check-circle text-base"></i> ยืนยันเปลี่ยนรหัสผ่าน</button>
@@ -6384,6 +6384,15 @@ function closeAnnouncement() {
 }
 
 // === Custom Alert Modal ===
+
+function togglePw(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    var isPw = (input.type === 'password');
+    input.type = isPw ? 'text' : 'password';
+    var icon = btn.querySelector('i');
+    if (icon) icon.setAttribute('class', isPw ? 'ph ph-eye-slash' : 'ph ph-eye');
+}
 function showAlert(message, callback) {
     var existing = document.getElementById('custom-alert-modal');
     if (existing) existing.remove();
