@@ -3689,7 +3689,9 @@ function convertToThaiDate(dateStr) {
                     renderData();
                     setupPresence('admin');
                     logUserLogin('admin');
-                    if (currentRole === 'admin') setupAdminNotifListener();
+                    if (currentRole === 'admin') { setupAdminNotifListener(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; }
+                    listenForDMs();
+                    setTimeout(function(){ checkAnnouncement(); }, 2000);
                     loadTheme(); loadPinEnabledSetting();
                 }
             });
@@ -3714,7 +3716,9 @@ function convertToThaiDate(dateStr) {
             loadHistoryGlobal(); 
             if (currentUser) {
                 setupPresence(currentUser.username);
-                if (currentRole === 'admin') setupAdminNotifListener();
+                if (currentRole === 'admin') { setupAdminNotifListener(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; }
+                listenForDMs();
+                setTimeout(function(){ checkAnnouncement(); }, 2000);
                 // Log re-login if session was saved (notify admin only if away > 5 min)
                 const lastSeen = localStorage.getItem('goldAppLastSeen');
                 const awayMs = lastSeen ? Date.now() - parseInt(lastSeen) : 999999999;
@@ -4364,11 +4368,11 @@ function convertToThaiDate(dateStr) {
         const hashedInput = await hashPassword(passStr);
         if (userStr.toLowerCase() === 'admin' && (passStr === adminPass || hashedInput === adminPass)) {
             if (passStr === adminPass && db) { db.ref('admin_settings/adminPass').set(hashedInput); adminPass = hashedInput; }
-            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
+            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; listenForDMs(); } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
         } else if (appUsers[userStr] && (appUsers[userStr].password === passStr || appUsers[userStr].password === hashedInput)) {
             if (appUsers[userStr].password === passStr && db) { db.ref('users/' + userStr + '/password').set(hashedInput); appUsers[userStr].password = hashedInput; }
             if (appUsers[userStr].isBanned) { document.getElementById('login-error').innerText = 'บัญชีนี้ถูกแบน! ไม่สามารถเข้าสู่ระบบได้'; document.getElementById('login-error').classList.remove('hidden'); return; }
-            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); notifyAdminLogin(userStr); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
+            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); notifyAdminLogin(userStr); listenForDMs(); setTimeout(function(){ checkAnnouncement(); }, 2000); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
         } else { 
             document.getElementById('login-error').innerText = 'ข้อมูลไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); 
         } 
@@ -4380,7 +4384,7 @@ function convertToThaiDate(dateStr) {
         if (currentPinInput === adminPin) { 
             db.ref('admin_settings').update({pinAttempts: 0, pinBanUntil: 0});
             adminPinAttempts = 0; adminPinBanUntil = 0;
-            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setupAdminNotifListener(); loadPinEnabledSetting(); if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
+            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setupAdminNotifListener(); loadPinEnabledSetting(); document.getElementById('btn-open-dm').style.display='flex'; document.getElementById('btn-open-announcement').style.display='flex'; listenForDMs(); if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
         } else { 
             adminPinAttempts++;
             if(adminPinAttempts >= 3) {
@@ -6168,4 +6172,229 @@ function convertToThaiDate(dateStr) {
         }
         cards.innerHTML = html;
     }
+</script>
+<!-- ==================== ระบบประกาศ (Announcement) ==================== -->
+<div id="announcement-popup" class="fixed inset-0 z-[999] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 80vh; display: flex; flex-direction: column;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
+        <div class="flex items-center justify-between p-5 pb-3">
+            <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-megaphone"></i> ประกาศจากแอดมิน</h3>
+            <button id="announcement-close-btn" onclick="closeAnnouncement()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;opacity:0.3;pointer-events:none;">✕</button>
+        </div>
+        <div id="announcement-content" style="padding: 0 20px 20px 20px; overflow-y: auto; flex: 1; color: #e2e8f0; font-size: 14px; line-height: 1.8;"></div>
+        <div id="announcement-footer" class="text-center pb-5 hidden">
+            <p style="color:#94a3b8;font-size:11px;">เลื่อนลงจนสุดเพื่อปิดประกาศได้</p>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== DM Modal (แอดมินส่งข้อความ) ==================== -->
+<div id="dm-send-modal" class="fixed inset-0 z-[950] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 85vh; display: flex; flex-direction: column; padding: 20px;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
+        <div class="flex items-center justify-between mb-4">
+            <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-paper-plane-tilt"></i> ส่งข้อความ</h3>
+            <button onclick="closeDMSendModal()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button>
+        </div>
+        <div id="dm-user-list" style="max-height: 250px; overflow-y: auto; margin-bottom: 16px;"></div>
+        <textarea id="dm-message-input" rows="3" placeholder="พิมพ์ข้อความ..." style="width:100%;background:rgba(0,0,0,0.4);color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;font-size:14px;resize:none;margin-bottom:12px;"></textarea>
+        <button onclick="sendDM()" style="width:100%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;border-radius:12px;padding:12px;font-weight:900;font-size:14px;cursor:pointer;"><i class="ph ph-paper-plane-tilt"></i> ส่งข้อความ</button>
+    </div>
+</div>
+
+<!-- ==================== DM Notification Badge ==================== -->
+<div id="dm-notification" class="fixed top-16 left-1/2 -translate-x-1/2 z-[998] hidden" style="max-width: 380px; width: 90%;">
+    <div class="rounded-2xl shadow-2xl p-4" style="background: linear-gradient(135deg, #1c1c24, #2a1f3d); border: 1px solid rgba(168,85,247,0.4);">
+        <div class="flex items-start gap-3">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(168,85,247,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="ph ph-envelope-simple" style="color:#a855f7;font-size:20px;"></i>
+            </div>
+            <div style="flex:1;min-width:0;">
+                <div class="flex items-center justify-between mb-1">
+                    <span style="color:#a855f7;font-size:12px;font-weight:900;">ข้อความใหม่</span>
+                    <button onclick="closeDMNotification()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;">✕</button>
+                </div>
+                <p id="dm-notification-sender" style="color:#d4a017;font-size:11px;font-weight:700;margin-bottom:4px;"></p>
+                <p id="dm-notification-text" style="color:#e2e8f0;font-size:13px;line-height:1.5;word-break:break-word;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ปุ่ม DM + ประกาศ สำหรับแอดมิน ==================== -->
+<button id="btn-open-dm" onclick="openDMSendModal()" style="position:fixed;bottom:80px;right:16px;z-index:500;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,0.4);display:none;align-items:center;justify-content:center;">
+    <i class="ph ph-paper-plane-tilt" style="font-size:22px;"></i>
+</button>
+<button id="btn-open-announcement" onclick="openAnnouncementModal()" style="position:fixed;bottom:140px;right:16px;z-index:500;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(212,160,23,0.4);display:none;align-items:center;justify-content:center;">
+    <i class="ph ph-megaphone" style="font-size:22px;"></i>
+</button>
+
+<script>
+// ==================== ระบบประกาศ (Announcement) ====================
+var _announcementScrollDone = false;
+
+function checkAnnouncement() {
+    if (!db || !currentUser) return;
+    db.ref('announcements/latest').once('value').then(function(snap) {
+        var data = snap.val();
+        if (!data || !data.message) return;
+        var announcementId = data.id || 'default';
+        var lastSeen = localStorage.getItem('announcement_seen_' + announcementId);
+        var today = new Date().toDateString();
+        if (lastSeen === today) return;
+        showAnnouncementPopup(data.message, announcementId);
+    });
+}
+
+function showAnnouncementPopup(message, announcementId) {
+    var popup = document.getElementById('announcement-popup');
+    var content = document.getElementById('announcement-content');
+    var closeBtn = document.getElementById('announcement-close-btn');
+    var footer = document.getElementById('announcement-footer');
+    if (!popup || !content) return;
+    content.innerHTML = message.replace(/\n/g, '<br>');
+    _announcementScrollDone = false;
+    closeBtn.style.opacity = '0.3';
+    closeBtn.style.pointerEvents = 'none';
+    footer.classList.remove('hidden');
+    popup.classList.remove('hidden');
+    content.scrollTop = 0;
+    content.onscroll = function() {
+        if (_announcementScrollDone) return;
+        if (content.scrollTop + content.clientHeight >= content.scrollHeight - 20) {
+            _announcementScrollDone = true;
+            closeBtn.style.opacity = '1';
+            closeBtn.style.pointerEvents = 'auto';
+            footer.classList.add('hidden');
+        }
+    };
+    popup.onclick = function(e) {
+        if (e.target === popup) return;
+    };
+}
+
+function closeAnnouncement() {
+    if (!_announcementScrollDone) return;
+    var popup = document.getElementById('announcement-popup');
+    if (popup) popup.classList.add('hidden');
+    db.ref('announcements/latest').once('value').then(function(snap) {
+        var data = snap.val();
+        var announcementId = (data && data.id) ? data.id : 'default';
+        localStorage.setItem('announcement_seen_' + announcementId, new Date().toDateString());
+    });
+}
+
+function openAnnouncementModal() {
+    var title = prompt('ชื่อประกาศ:');
+    if (!title) return;
+    var message = prompt('ข้อความประกาศ:');
+    if (!message) return;
+    var announcementId = 'ann_' + Date.now();
+    db.ref('announcements/latest').set({
+        id: announcementId,
+        title: title,
+        message: message,
+        createdAt: Date.now(),
+        createdBy: currentUser ? currentUser.username : 'admin'
+    }).then(function() {
+        alert('ประกาศถูกส่งแล้ว!');
+    });
+}
+
+// ==================== ระบบ Direct Message ====================
+function openDMSendModal() {
+    var modal = document.getElementById('dm-send-modal');
+    var list = document.getElementById('dm-user-list');
+    var input = document.getElementById('dm-message-input');
+    if (!modal || !list) return;
+    input.value = '';
+    var html = '';
+    if (typeof appUsers !== 'undefined') {
+        Object.keys(appUsers).forEach(function(username) {
+            if (currentUser && username === currentUser.username) return;
+            if (appUsers[username].banned) return;
+            html += '<label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;cursor:pointer;margin-bottom:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);">';
+            html += '<input type="checkbox" class="dm-user-check" value="' + username + '" style="width:18px;height:18px;accent-color:#d4a017;">';
+            html += '<span style="color:#e2e8f0;font-size:13px;font-weight:700;">' + username + '</span>';
+            html += '</label>';
+        });
+    }
+    list.innerHTML = html || '<p style="color:#94a3b8;font-size:13px;text-align:center;">ไม่มีผู้ใช้ในระบบ</p>';
+    modal.classList.remove('hidden');
+}
+
+function closeDMSendModal() {
+    var modal = document.getElementById('dm-send-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function sendDM() {
+    var checkboxes = document.querySelectorAll('.dm-user-check:checked');
+    var message = document.getElementById('dm-message-input').value.trim();
+    if (!message) { alert('กรุณาพิมพ์ข้อความ'); return; }
+    if (checkboxes.length === 0) { alert('กรุณาเลือกผู้รับ'); return; }
+    var sender = currentUser ? currentUser.username : 'admin';
+    var dmId = 'dm_' + Date.now();
+    var promises = [];
+    checkboxes.forEach(function(cb) {
+        var recipient = cb.value;
+        var oneDm = {
+            id: dmId,
+            from: sender,
+            message: message,
+            read: false,
+            timestamp: Date.now()
+        };
+        promises.push(db.ref('direct_messages/' + recipient + '/' + dmId).set(oneDm));
+    });
+    Promise.all(promises).then(function() {
+        closeDMSendModal();
+        alert('ส่งข้อความสำเร็จ! (' + checkboxes.length + ' คน)');
+    });
+}
+
+function listenForDMs() {
+    if (!db || !currentUser) return;
+    var username = currentUser.username;
+    db.ref('direct_messages/' + username).orderByChild('read').equalTo(false).on('value', function(snap) {
+        var msgs = snap.val();
+        if (!msgs) return;
+        var keys = Object.keys(msgs);
+        if (keys.length === 0) return;
+        var latest = msgs[keys[keys.length - 1]];
+        showDMNotification(latest);
+    });
+}
+
+function showDMNotification(dm) {
+    var el = document.getElementById('dm-notification');
+    var senderEl = document.getElementById('dm-notification-sender');
+    var textEl = document.getElementById('dm-notification-text');
+    if (!el || !senderEl || !textEl) return;
+    senderEl.textContent = 'จาก: ' + dm.from;
+    textEl.textContent = dm.message;
+    el.classList.remove('hidden');
+    el._dmId = dm.id;
+    el._dmFrom = dm.from;
+    setTimeout(function() {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(function() {
+            el.classList.add('hidden');
+            el.style.opacity = '1';
+            el.style.transition = '';
+        }, 500);
+    }, 8000);
+}
+
+function closeDMNotification() {
+    var el = document.getElementById('dm-notification');
+    if (!el) return;
+    var dmId = el._dmId;
+    var dmFrom = el._dmFrom;
+    el.classList.add('hidden');
+    if (dmId && dmFrom && db && currentUser) {
+        db.ref('direct_messages/' + currentUser.username + '/' + dmId + '/read').set(true);
+    }
+}
 </script>
