@@ -5831,24 +5831,23 @@ function convertToThaiDate(dateStr) {
     }
     function saveLocalVersionData(data) { localStorage.setItem(VER_KEY, JSON.stringify(data)); }
     function loadVersionFromFirebase() {
-        // currentVersion is already set to hardcoded value; compare with Firebase
+        // Firebase = single source of truth — all users see the same version
         const hardcodedVer = Object.assign({}, currentVersion);
         if (db) {
-            db.ref('app_settings/version').once('value', snap => {
+            db.ref('app_settings/version').on('value', snap => {
                 const val = snap.val();
                 if (val && val.version) {
                     const fbVer = parseVersion(val.version);
                     // Use whichever is newer: Firebase or hardcoded
                     if (compareVersions(hardcodedVer, fbVer) >= 0) {
                         currentVersion = hardcodedVer;
-                        // Push newer version to Firebase so all users see it
                         db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
                     } else {
                         currentVersion = fbVer;
                     }
                 } else {
-                    const local = loadLocalVersionData();
-                    currentVersion = parseVersion(local.version);
+                    // First time: push hardcoded to Firebase
+                    currentVersion = hardcodedVer;
                     db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
                 }
                 updateVersionDisplay();
