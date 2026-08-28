@@ -6343,6 +6343,29 @@ function closeAnnouncement() {
     });
 }
 
+// === Custom Alert Modal ===
+function showAlert(message, callback) {
+    var existing = document.getElementById('custom-alert-modal');
+    if (existing) existing.remove();
+    var html = '<div id="custom-alert-modal" class="fixed inset-0 z-[999] justify-center items-center px-4" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">';
+    html += '<div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm relative modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);padding:24px 20px 20px 20px;">';
+    html += '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>';
+    html += '<div class="text-center mb-5">';
+    html += '<div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,rgba(212,160,23,0.15),rgba(212,160,23,0.05));display:flex;align-items:center;justify-content:center;margin:0 auto 12px auto;border:2px solid rgba(212,160,23,0.3);">';
+    html += '<i class="ph ph-bell-ringing" style="color:#d4a017;font-size:24px;"></i>';
+    html += '</div>';
+    html += '<p style="color:#e2e8f0;font-size:14px;line-height:1.6;">' + message + '</p>';
+    html += '</div>';
+    html += '<button id="custom-alert-ok-btn" style="width:100%;background:linear-gradient(135deg,#d4a017,#b8860b);color:#0c0e14;border:none;border-radius:12px;padding:12px;font-weight:900;font-size:14px;cursor:pointer;">ตกลง</button>';
+    html += '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+    document.getElementById('custom-alert-ok-btn').onclick = function() {
+        var modal = document.getElementById('custom-alert-modal');
+        if (modal) modal.remove();
+        if (callback) callback();
+    };
+}
+
 function openAnnouncementModal() {
     var existing = document.getElementById('announcement-create-modal');
     if (existing) existing.remove();
@@ -6362,7 +6385,7 @@ function openAnnouncementModal() {
 function submitAnnouncement() {
     var title = document.getElementById('ann-title-input').value.trim();
     var message = document.getElementById('ann-message-input').value.trim();
-    if (!title || !message) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+    if (!title || !message) { showAlert('กรุณากรอกข้อมูลให้ครบ'); return; }
     var announcementId = 'ann_' + Date.now();
     db.ref('announcements/latest').set({
         id: announcementId,
@@ -6373,7 +6396,7 @@ function submitAnnouncement() {
     }).then(function() {
         var modal = document.getElementById('announcement-create-modal');
         if (modal) modal.remove();
-        alert('ประกาศถูกส่งแล้ว!');
+        showAlert('ประกาศถูกส่งแล้ว!');
     });
 }
 
@@ -6410,8 +6433,8 @@ function closeDMSendModal() {
 function sendDM() {
     var checkboxes = document.querySelectorAll('.dm-user-check:checked');
     var message = document.getElementById('dm-message-input').value.trim();
-    if (!message) { alert('กรุณาพิมพ์ข้อความ'); return; }
-    if (checkboxes.length === 0) { alert('กรุณาเลือกผู้รับ'); return; }
+    if (!message) { showAlert('กรุณาพิมพ์ข้อความ'); return; }
+    if (checkboxes.length === 0) { showAlert('กรุณาเลือกผู้รับ'); return; }
     var sender = currentUser ? currentUser.username : 'admin';
     var dmId = 'dm_' + Date.now();
     var promises = [];
@@ -6428,7 +6451,7 @@ function sendDM() {
     });
     Promise.all(promises).then(function() {
         closeDMSendModal();
-        alert('ส่งข้อความสำเร็จ! (' + checkboxes.length + ' คน)');
+        showAlert('ส่งข้อความสำเร็จ! (' + checkboxes.length + ' คน)');
     });
 }
 
