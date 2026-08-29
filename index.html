@@ -1408,12 +1408,12 @@
         
         <div id="add-tx-form-container" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); border-radius: 1.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; overflow-x: hidden; overflow-y: auto; max-height: 90vh;" class="p-5 sm:p-8 form-collapse">
             <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
-            <div class="flex justify-between items-center mb-6 pb-4" style="border-bottom: 1px solid rgba(255,255,255,0.06); position:sticky; top:0; z-index:10; background: linear-gradient(180deg, #1c1c24 80%, transparent); padding-top: 4px;">
+            <div style="position:sticky; top:0; z-index:10; display:flex; justify-content:flex-end; pointer-events:none; padding:4px 0 8px 0;"><button type="button" onclick="toggleAddTxForm(false)" style="pointer-events:all; background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button></div>
+            <div class="flex justify-between items-center mb-6 pb-4" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #d4a017, #b8941f);"><i id="form-title-icon" class="ph ph-plus-circle text-xl" style="color: #0c0e14;"></i></div>
                     <h3 style="color:#d4a017;font-size:18px;font-weight:900;" id="form-title">เพิ่มรายการใหม่</h3>
                 </div>
-                <button type="button" onclick="toggleAddTxForm(false)" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button>
             </div>
             
             <input value="" id="edit_id" type="hidden" />
