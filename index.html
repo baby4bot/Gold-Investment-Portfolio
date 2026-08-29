@@ -388,6 +388,7 @@
     .pin-dot, .s-pin-dot { transition: all 0.2s ease-in-out; }
     #item-modal { overscroll-behavior: contain; }
     #view-manage-tx.active { height: calc(100vh - 60px); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+
     #view-manage-tx.active #manage-tx-sticky-header { top: 0 !important; }
     #view-manage-tx.active #add-tx-form-container.form-collapse { display: none !important; }
     #view-manage-tx.active #add-tx-form-container.form-expand { display: block !important; max-height: none !important; opacity: 1 !important; }
@@ -4295,6 +4296,8 @@ function convertToThaiDate(dateStr) {
         currentView = viewName; closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' });
         // Lock pull-to-refresh on non-dashboard views
         document.body.style.overscrollBehaviorY = (viewName === 'dashboard') ? 'auto' : 'none';
+        document.body.style.overflow = (viewName === 'manage-tx') ? 'hidden' : '';
+        document.documentElement.style.overflow = (viewName === 'manage-tx') ? 'hidden' : '';
         if(viewName === 'dashboard') renderData();
         if(viewName === 'manage-tx') toggleAddTxForm(false);        if(viewName === 'manage-users') { renderUsersCards(); updateBannedCount(); }
         if(viewName === 'analytics') renderAnalyticsTab('portfolio');
