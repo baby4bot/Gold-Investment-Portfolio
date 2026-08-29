@@ -1015,8 +1015,8 @@
     .pw-toggle-wrap { position: relative; display: block; width: 100%; }
     .pw-toggle-wrap input[type="password"],
     .pw-toggle-wrap input[type="text"] { padding-right: 44px !important; }
-    .pw-toggle-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 10px; border: none; background: rgba(255,255,255,0.08); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; z-index: 2; }
-    .pw-toggle-btn:hover { background: rgba(255,255,255,0.15); color: var(--text-primary); }
+    .pw-toggle-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 10px; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; z-index: 2; }
+    .pw-toggle-btn:hover { background: transparent; color: var(--text-primary); }
     .pw-toggle-btn:active { transform: translateY(-50%) scale(0.9); }
     [data-theme="light"] .pw-toggle-btn { background: rgba(0,0,0,0.06); color: #666; }
     [data-theme="light"] .pw-toggle-btn:hover { background: rgba(0,0,0,0.1); color: #333; }
@@ -7169,7 +7169,7 @@ function convertToThaiDate(dateStr) {
     }
     const _origToggleRegisterForm = window.toggleRegisterForm;
     if (typeof _origToggleRegisterForm === 'function') {
-        window.toggleRegisterForm = function() { _origToggleRegisterForm(); setTimeout(initPasswordToggles, 100); };
+        window.toggleRegisterForm = function() { _origToggleRegisterForm.apply(this, arguments); setTimeout(initPasswordToggles, 100); };
     }
 
     // ---------- INTEGRATE WITH EXISTING SYSTEMS ----------
