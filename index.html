@@ -949,6 +949,14 @@
     .golden-hour-ring::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: var(--bg-primary); }
     .golden-hour-ring .gh-time { position: relative; z-index: 1; font-size: 16px; font-weight: 800; color: #d4a017; }
 
+    /* ========== AI PREDICTION ========== */
+    .prediction-card { background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(59,130,246,0.05)); border: 1px solid rgba(139,92,246,0.25); border-radius: 16px; padding: 16px; }
+    .prediction-up { border-color: rgba(34,197,94,0.4); background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.02)); }
+    .prediction-down { border-color: rgba(239,68,68,0.4); background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.02)); }
+    .prediction-stable { border-color: rgba(234,179,8,0.4); background: linear-gradient(135deg, rgba(234,179,8,0.08), rgba(234,179,8,0.02)); }
+    @keyframes predictionPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .prediction-pulse { animation: predictionPulse 2s ease-in-out infinite; }
+
     /* ========== ONBOARDING ========== */
     .onboarding-overlay { position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 20px; }
     .onboarding-card { background: linear-gradient(135deg, #1c1c24, #2a2520); border: 1px solid rgba(212,160,23,0.3); border-radius: 20px; padding: 30px 24px; max-width: 340px; width: 100%; text-align: center; position: relative; overflow: hidden; }
@@ -1318,6 +1326,22 @@
                                 <p class="text-sm font-bold mb-1" style="color:var(--text-primary);">เวลาที่ทองมักเปลี่ยนมาก</p>
                                 <p class="text-[11px]" style="color:var(--text-secondary);">ช่วง 09:00-11:00 และ 14:00-16:00</p>
                                 <p class="text-[10px] mt-1" style="color:var(--text-muted);">⏱ เวลาที่เหลือ: <span id="gh-countdown" class="font-bold" style="color:#d4a017;">--:--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== AI PRICE PREDICTION ========== -->
+                <div class="px-4 pb-3" id="prediction-section">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-magic-wand"></i> ทำนายราคาทอง (AI Prediction)</span>
+                            <span id="prediction-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background: rgba(139,92,246,0.2); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3);">🔮 วิเคราะห์อัตโนมัติ</span>
+                        </div>
+                        <div id="prediction-content">
+                            <div class="flex items-center justify-center py-6">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--accent-gold);"></div>
+                                <span class="ml-2 text-xs" style="color: var(--text-secondary);">กำลังวิเคราะห์...</span>
                             </div>
                         </div>
                     </div>
@@ -3705,6 +3729,91 @@ function convertToThaiDate(dateStr) {
         return new Date(yearCE, monthIdx, day, h || 0, m || 0).getTime();
     }
 
+    // ===== AI PRICE PREDICTION =====
+    function calculatePricePrediction() {
+        const container = document.getElementById('prediction-content');
+        if (!container || !allHistoryData || allHistoryData.length < 3) {
+            if (container) container.innerHTML = '<div class="text-center py-4"><p class="text-xs" style="color: var(--text-muted);">ต้องมีข้อมูลอย่างน้อย 3 รายการเพื่อวิเคราะห์</p></div>';
+            return;
+        }
+        // Get sorted prices (barBuy)
+        const sortedData = allHistoryData
+            .filter(d => d.barBuy && d.barBuy > 0)
+            .sort((a, b) => a.timestamp - b.timestamp);
+        if (sortedData.length < 3) {
+            container.innerHTML = '<div class="text-center py-4"><p class="text-xs" style="color: var(--text-muted);">ข้อมูลไม่เพียงพอสำหรับวิเคราะห์</p></div>';
+            return;
+        }
+        const prices = sortedData.map(d => d.barBuy);
+        const latestPrice = prices[prices.length - 1];
+        // Simple Moving Average (SMA)
+        const sma5 = prices.slice(-5).reduce((a, b) => a + b, 0) / Math.min(5, prices.length);
+        const sma10 = prices.slice(-10).reduce((a, b) => a + b, 0) / Math.min(10, prices.length);
+        // Momentum (rate of change)
+        const shortMom = prices.length >= 2 ? ((prices[prices.length - 1] - prices[prices.length - 2]) / prices[prices.length - 2]) * 100 : 0;
+        const longMom = prices.length >= 5 ? ((prices[prices.length - 1] - prices[prices.length - 5]) / prices[prices.length - 5]) * 100 : 0;
+        // Trend analysis
+        let trendScore = 0;
+        if (latestPrice > sma5) trendScore += 2;
+        if (latestPrice > sma10) trendScore += 1;
+        if (shortMom > 0) trendScore += 1.5;
+        if (longMom > 0) trendScore += 1;
+        // Prediction
+        const avgMomentum = (shortMom * 0.6 + longMom * 0.4);
+        const predictedChange = latestPrice * (avgMomentum / 100);
+        const predictedPrice = latestPrice + predictedChange;
+        const confidence = Math.min(95, Math.max(40, 50 + Math.abs(trendScore - 4) * 5));
+        let direction, directionText, directionColor, directionIcon, cardClass;
+        if (predictedChange > 50) {
+            direction = 'up'; directionText = 'แนวโน้มขาขึ้น'; directionColor = '#22c55e'; directionIcon = '📈'; cardClass = 'prediction-up';
+        } else if (predictedChange < -50) {
+            direction = 'down'; directionText = 'แนวโน้มขาลง'; directionColor = '#ef4444'; directionIcon = '📉'; cardClass = 'prediction-down';
+        } else {
+            direction = 'stable'; directionText = 'ราคาทรงตัว'; directionColor = '#eab308'; directionIcon = '➡️'; cardClass = 'prediction-stable';
+        }
+        const changeAbs = Math.abs(predictedChange).toFixed(0);
+        const changePercent = Math.abs(avgMomentum).toFixed(2);
+        container.innerHTML = `
+            <div class="prediction-card ${cardClass}">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">${directionIcon}</span>
+                        <div>
+                            <p class="text-sm font-black" style="color: ${directionColor};">${directionText}</p>
+                            <p class="text-[10px]" style="color: var(--text-muted);">คาดการณ์พรุ่งนี้</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-black" style="color: ${directionColor};">${predictedPrice.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}</p>
+                        <p class="text-[10px] font-bold" style="color: ${directionColor};">${predictedChange >= 0 ? '+' : ''}${changeAbs} บาท (${changePercent}%)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                    <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.03);">
+                        <p class="text-[10px]" style="color: var(--text-muted);">ราคาปัจจุบัน</p>
+                        <p class="text-xs font-bold" style="color: var(--text-primary);">${latestPrice.toLocaleString()}</p>
+                    </div>
+                    <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.03);">
+                        <p class="text-[10px]" style="color: var(--text-muted);">SMA 5</p>
+                        <p class="text-xs font-bold" style="color: #a78bfa;">${sma5.toFixed(0)}</p>
+                    </div>
+                    <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.03);">
+                        <p class="text-[10px]" style="color: var(--text-muted);">ความมั่นใจ</p>
+                        <p class="text-xs font-bold" style="color: #8b5cf6;">${confidence.toFixed(0)}%</p>
+                    </div>
+                </div>
+                <div class="mt-3 pt-2" style="border-top: 1px solid rgba(255,255,255,0.06);">
+                    <p class="text-[10px] text-center prediction-pulse" style="color: var(--text-muted);">🔮 วิเคราะห์จาก ${sortedData.length} รายการ | SMA + Momentum</p>
+                </div>
+            </div>
+        `;
+    }
+    // Auto-update prediction when history changes
+    function schedulePredictionUpdate() {
+        clearTimeout(window._predictionTimer);
+        window._predictionTimer = setTimeout(calculatePricePrediction, 2000);
+    }
+
     function renderGoldChart() {
         const canvas = document.getElementById('gold-price-chart');
         if (!canvas || !allHistoryData || allHistoryData.length === 0) return;
@@ -4233,6 +4342,7 @@ function convertToThaiDate(dateStr) {
             // Render ทุกครั้งที่มีข้อมูล (รวมครั้งแรก)
             renderGoldChart();
             updateChangeDisplays();
+            schedulePredictionUpdate();
             _lastHistoryLen = allHistoryData.length;
         });
     }
