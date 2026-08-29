@@ -971,7 +971,9 @@
     .user-card-info { flex: 1; min-width: 0; }
     .user-card-name { font-size: 15px; font-weight: 800; color: var(--text-primary); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .user-card-username { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 1px; }
-    .user-card-phone { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.1); padding: 2px 8px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(34,197,94,0.2); }
+    .user-card-phone { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.1); padding: 3px 10px; border-radius: 8px; margin-top: 6px; border: 1px solid rgba(34,197,94,0.2); text-decoration: none; transition: all 0.15s; }
+    .user-card-phone:hover { background: rgba(34,197,94,0.2); transform: scale(1.02); }
+    .user-card-phone:active { transform: scale(0.98); }
     .user-card-actions { display: flex; gap: 3px; flex-shrink: 0; }
     .user-card-actions button { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; border: 1px solid transparent; }
     .user-card-actions button:hover { transform: scale(1.1); }
@@ -5244,7 +5246,7 @@ function convertToThaiDate(dateStr) {
                     <div class="user-card-info">
                         <div class="user-card-name">${u.name}</div>
                         <div class="user-card-username">@${u.username}</div>
-                        ${u.phone ? `<div class="user-card-phone"><span>📞</span> ${u.phone}</div>` : ''}
+                        ${u.phone ? `<a href="tel:${u.phone}" class="user-card-phone"><span>📞</span> ${u.phone}</a>` : ''}
                     </div>
                     <div class="user-card-actions">
                         <button onclick="toggleFav('${u.username}')" class="btn-fav" title="${u.isFavorite ? 'ยกเลิกถูกใจ' : 'ถูกใจ'}">${u.isFavorite ? '⭐' : '☆'}</button>
