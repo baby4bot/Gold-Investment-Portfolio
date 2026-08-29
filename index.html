@@ -387,6 +387,8 @@
     .form-expand { max-height: 2000px; opacity: 1; }
     .pin-dot, .s-pin-dot { transition: all 0.2s ease-in-out; }
     #item-modal { overscroll-behavior: contain; }
+    #view-manage-tx.active { height: calc(100vh - 60px); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+    #view-manage-tx.active #manage-tx-sticky-header { top: 0 !important; }
     #price-history-modal { overscroll-behavior: contain; }
     #price-history-list { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
     #price-history-modal > div { position: relative; z-index: 1; }
