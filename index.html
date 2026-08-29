@@ -847,6 +847,123 @@
     /* Custom scrollbar in light mode */
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-track { background: #f0f0f0; }
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; }
+
+    /* ========== GOLDEN PARTICLE SYSTEM ========== */
+    #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99998; }
+    .gold-particle { position: fixed; pointer-events: none; z-index: 99998; font-size: 14px; animation: particleFloat 2s ease-out forwards; }
+    @keyframes particleFloat { 0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); } 100% { opacity: 0; transform: translateY(-120px) scale(0.3) rotate(360deg); } }
+    .gold-particle-down { animation: particleFall 2s ease-in forwards; }
+    @keyframes particleFall { 0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); } 100% { opacity: 0; transform: translateY(120px) scale(0.3) rotate(-360deg); } }
+
+    /* ========== ANIMATED NUMBER TICKER ========== */
+    .ticker-digit { display: inline-block; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease; }
+    .ticker-digit.tick-up { animation: tickUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); color: #22c55e !important; text-shadow: 0 0 12px rgba(34,197,94,0.5); }
+    .ticker-digit.tick-down { animation: tickDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); color: #ef4444 !important; text-shadow: 0 0 12px rgba(239,68,68,0.5); }
+    @keyframes tickUp { 0% { transform: translateY(0); } 30% { transform: translateY(-8px); } 60% { transform: translateY(2px); } 100% { transform: translateY(0); } }
+    @keyframes tickDown { 0% { transform: translateY(0); } 30% { transform: translateY(8px); } 60% { transform: translateY(-2px); } 100% { transform: translateY(0); } }
+
+    /* ========== GOLD RUSH MODE ========== */
+    .gold-rush-overlay { position: fixed; inset: 0; z-index: 99990; pointer-events: none; opacity: 0; transition: opacity 0.5s; }
+    .gold-rush-overlay.active { opacity: 1; }
+    .gold-rush-border { position: absolute; inset: 0; border: 3px solid transparent; border-image: linear-gradient(45deg, #f59e0b, #ef4444, #f59e0b, #ef4444) 1; animation: goldRushPulse 0.5s ease infinite; pointer-events: none; }
+    @keyframes goldRushPulse { 0%, 100% { opacity: 0.6; border-width: 3px; } 50% { opacity: 1; border-width: 5px; } }
+    .gold-rush-shake { animation: goldRushShake 0.3s ease infinite; }
+    @keyframes goldRushShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px) rotate(-0.5deg); } 75% { transform: translateX(3px) rotate(0.5deg); } }
+    .gold-rush-fire { position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(to top, rgba(239,68,68,0.3), transparent); animation: fireFlicker 0.3s ease infinite alternate; pointer-events: none; }
+    @keyframes fireFlicker { 0% { opacity: 0.5; transform: scaleY(1); } 100% { opacity: 1; transform: scaleY(1.1); } }
+
+    /* ========== NIGHT SKY BACKGROUND ========== */
+    #night-sky { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
+    #night-sky.active { opacity: 1; }
+    .sky-star { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; animation: starTwinkle var(--dur) ease-in-out infinite alternate; }
+    @keyframes starTwinkle { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
+    .sky-cloud { position: absolute; background: rgba(255,255,255,0.03); border-radius: 50%; animation: cloudFloat var(--dur) linear infinite; }
+    @keyframes cloudFloat { 0% { transform: translateX(-200px); } 100% { transform: translateX(calc(100vw + 200px)); } }
+
+    /* ========== ACHIEVEMENT BADGES ========== */
+    .achievement-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid rgba(212,160,23,0.3); background: rgba(212,160,23,0.1); color: #d4a017; transition: all 0.3s ease; }
+    .achievement-badge.unlocked { background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(245,158,11,0.15)); border-color: #d4a017; box-shadow: 0 0 12px rgba(212,160,23,0.3); }
+    .achievement-badge.locked { opacity: 0.4; filter: grayscale(1); }
+    .achievement-unlock { animation: achievementUnlock 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes achievementUnlock { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 60% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+    .achievement-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; background: linear-gradient(135deg, #1c1c24, #2a2520); border: 2px solid #d4a017; border-radius: 16px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 40px rgba(212,160,23,0.3); animation: popupSlideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes popupSlideDown { 0% { transform: translateX(-50%) translateY(-100px); opacity: 0; } 100% { transform: translateX(-50%) translateY(0); opacity: 1; } }
+
+    /* ========== STREAK COUNTER ========== */
+    .streak-fire { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 800; color: #f97316; }
+    .streak-fire .fire-icon { animation: fireGlow 1s ease infinite alternate; }
+    @keyframes fireGlow { 0% { filter: brightness(1); transform: scale(1); } 100% { filter: brightness(1.3); transform: scale(1.15); } }
+
+    /* ========== FEAR & GREED INDEX ========== */
+    .fear-greed-ring { width: 120px; height: 120px; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; }
+    .fear-greed-ring svg { position: absolute; transform: rotate(-90deg); }
+    .fear-greed-ring .fg-value { font-size: 28px; font-weight: 900; z-index: 1; }
+    .fear-greed-ring .fg-label { font-size: 10px; font-weight: 600; z-index: 1; margin-top: -4px; }
+
+    /* ========== MOOD BOARD ========== */
+    .mood-item { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s; font-size: 24px; }
+    .mood-item:hover { background: rgba(212,160,23,0.1); border-color: rgba(212,160,23,0.3); transform: scale(1.1); }
+    .mood-item.selected { background: rgba(212,160,23,0.2); border-color: #d4a017; box-shadow: 0 0 12px rgba(212,160,23,0.3); }
+    .mood-item span { font-size: 10px; color: var(--text-secondary); }
+
+    /* ========== PRICE ALERT ========== */
+    .price-alert-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px; }
+    .price-alert-item.triggered { border-color: #22c55e; background: rgba(34,197,94,0.1); animation: alertPulse 1s ease infinite; }
+    @keyframes alertPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
+
+    /* ========== TOAST ENHANCEMENTS ========== */
+    .toast-enter { animation: toastSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .toast-exit { animation: toastSlideOut 0.3s ease-in forwards; }
+    @keyframes toastSlideIn { 0% { transform: translateX(120%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+    @keyframes toastSlideOut { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(120%); opacity: 0; } }
+    .toast-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .toast-icon.success { background: rgba(34,197,94,0.2); color: #22c55e; }
+    .toast-icon.warning { background: rgba(245,158,11,0.2); color: #f59e0b; }
+    .toast-icon.error { background: rgba(239,68,68,0.2); color: #ef4444; }
+
+    /* ========== SKELETON ENHANCEMENTS ========== */
+    .skeleton-shimmer { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.5s ease infinite; border-radius: 8px; }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    [data-theme="light"] .skeleton-shimmer { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; }
+
+    /* ========== 3D PAGE FLIP ========== */
+    .view-section { perspective: 1200px; }
+    .view-section.flip-enter { animation: pageFlipIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; transform-origin: left center; }
+    @keyframes pageFlipIn { 0% { transform: rotateY(-90deg); opacity: 0; } 100% { transform: rotateY(0); opacity: 1; } }
+
+    /* ========== PULL TO REFRESH ========== */
+    .pull-refresh-indicator { position: fixed; top: -60px; left: 50%; transform: translateX(-50%); z-index: 999; width: 40px; height: 40px; border-radius: 50%; background: rgba(212,160,23,0.2); border: 2px solid #d4a017; display: flex; align-items: center; justify-content: center; transition: top 0.3s ease; }
+    .pull-refresh-indicator.visible { top: 20px; }
+    .pull-refresh-indicator .spinner { width: 20px; height: 20px; border: 2px solid transparent; border-top-color: #d4a017; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* ========== GOLDEN HOUR TIMER ========== */
+    .golden-hour-ring { width: 80px; height: 80px; border-radius: 50%; background: conic-gradient(#d4a017 var(--pct), rgba(255,255,255,0.1) var(--pct)); display: flex; align-items: center; justify-content: center; position: relative; }
+    .golden-hour-ring::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: var(--bg-primary); }
+    .golden-hour-ring .gh-time { position: relative; z-index: 1; font-size: 16px; font-weight: 800; color: #d4a017; }
+
+    /* ========== ONBOARDING ========== */
+    .onboarding-overlay { position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .onboarding-card { background: linear-gradient(135deg, #1c1c24, #2a2520); border: 1px solid rgba(212,160,23,0.3); border-radius: 20px; padding: 30px 24px; max-width: 340px; width: 100%; text-align: center; position: relative; overflow: hidden; }
+    .onboarding-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #d4a017, transparent); }
+    .onboarding-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s; }
+    .onboarding-dot.active { background: #d4a017; width: 24px; border-radius: 4px; }
+
+    /* ========== MINI GAME ========== */
+    .game-card { padding: 20px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); text-align: center; transition: all 0.3s; cursor: pointer; }
+    .game-card:hover { border-color: rgba(212,160,23,0.3); background: rgba(212,160,23,0.05); transform: translateY(-2px); }
+    .game-result { font-size: 48px; animation: gameResultPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes gameResultPop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+    .game-coins { display: flex; gap: 4px; justify-content: center; }
+    .game-coin { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #d4a017, #f59e0b); border: 2px solid #b8941f; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #000; }
+
+    /* ========== PIE CHART ========== */
+    .pie-chart-container { width: 160px; height: 160px; border-radius: 50%; position: relative; margin: 0 auto; }
+    .pie-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    .pie-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ========== DARK MODE TRANSITION ========== */
+    body.theme-transitioning * { transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important; }
 </style>
 
 <datalist id="shop-list"></datalist>
@@ -1078,7 +1195,58 @@
                     </div>
                 </div>
                 </div><!-- end gold-capture-area -->
-                <!-- Toggles + Price Alert -->
+
+                <!-- ========== FEAR & GREED INDEX ========== -->
+                <div class="px-4 py-3">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-compass"></i> ดัชนีความกลัว & ความโลภ</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="fear-greed-ring" id="fg-ring">
+                                <svg width="120" height="120"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/><circle id="fg-arc" cx="60" cy="60" r="52" fill="none" stroke="#22c55e" stroke-width="10" stroke-dasharray="327" stroke-dashoffset="163" stroke-linecap="round"/></svg>
+                                <div style="text-align:center;"><div class="fg-value" id="fg-value">50</div><div class="fg-label" id="fg-label" style="color:var(--text-secondary);">เป็นกลาง</div></div>
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <div class="flex justify-between text-[11px]" style="color:var(--text-secondary);"><span>😭 กลัวมาก</span><span>🤑 โลภมาก</span></div>
+                                <div style="height:6px;border-radius:3px;background:linear-gradient(90deg,#22c55e,#eab308,#ef4444);position:relative;"><div id="fg-marker" style="position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--accent-gold);left:50%;transform:translateX(-50%);transition:left 0.5s ease;"></div></div>
+                                <p class="text-[10px]" id="fg-desc" style="color:var(--text-muted);"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== GOLDEN HOUR TIMER ========== -->
+                <div class="px-4 pb-3">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-clock"></i> จับเวลาทอง (Golden Hour)</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="golden-hour-ring" id="gh-ring" style="--pct:75%;">
+                                <span class="gh-time" id="gh-time">02:30</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold mb-1" style="color:var(--text-primary);">เวลาที่ทองมักเปลี่ยนมาก</p>
+                                <p class="text-[11px]" style="color:var(--text-secondary);">ช่วง 09:00-11:00 และ 14:00-16:00</p>
+                                <p class="text-[10px] mt-1" style="color:var(--text-muted);">⏱ เวลาที่เหลือ: <span id="gh-countdown" class="font-bold" style="color:#d4a017;">--:--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+n                <!-- ========== PORTFOLIO PIE CHART ========== -->
+                <div class="px-4 pb-3" id="portfolio-pie-section">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-chart-pie-slice"></i> สัดส่วนพอร์ตลงทุน</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="pie-chart-container" id="portfolio-pie"></div>
+                            <div id="pie-legend" class="flex-1 space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+n                <!-- Toggles + Price Alert -->
                 <style>
                     .toggle-track { width: 36px; height: 20px; border-radius: 10px; background: var(--bg-elevated); border: 1px solid var(--border-primary); position: relative; cursor: pointer; transition: all 0.3s; }
                     .toggle-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #666; transition: all 0.3s; }
@@ -1127,6 +1295,18 @@
             <div class="flex items-center gap-3">
                         <button type="button" id="btn-sim-toggle" onclick="openSimModal()" class="gold-action-btn" aria-label="จำลอง" title="จำลองราคาทอง">
                             <i class="ph ph-magic-wand text-base"></i>
+                        </button>
+                        <button type="button" onclick="openPriceAlertModal()" class="gold-action-btn" aria-label="แจ้งเตือน" title="แจ้งเตือนราคาทอง">
+                            <i class="ph ph-bell-ringing text-base"></i>
+                        </button>
+                        <button type="button" onclick="openMoodModal()" class="gold-action-btn" aria-label="อารมณ์" title="อารมณ์นักเทรด">
+                            <i class="ph ph-smiley text-base"></i>
+                        </button>
+                        <button type="button" onclick="openMiniGameModal()" class="gold-action-btn" aria-label="เกม" title="เกมทายราคาทอง">
+                            <i class="ph ph-game-controller text-base"></i>
+                        </button>
+                        <button type="button" onclick="openAchievementModal()" class="gold-action-btn" aria-label="รางวัล" title="รางวัลของฉัน">
+                            <i class="ph ph-trophy text-base"></i>
                         </button>
                 <span class="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap" style="background: #eab308; color: #0c0e14;" id="total-items-count">0 รายการ</span>
 
@@ -1799,6 +1979,128 @@
         <div class="flex gap-3">
             <button onclick="executeConfirmAction()" class="flex-1 py-3.5 rounded-xl font-black text-sm transition-all active:scale-95" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;letter-spacing:0.3px;">ยืนยัน</button>
             <button onclick="closeConfirmModal()" class="flex-1 py-3.5 rounded-xl font-black text-sm transition-all active:scale-95" style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.08);">ยกเลิก</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== NIGHT SKY BACKGROUND ========== -->
+<div id="night-sky"></div>
+
+<!-- ========== GOLDEN PARTICLE CANVAS ========== -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ========== GOLD RUSH OVERLAY ========== -->
+<div id="gold-rush-overlay" class="gold-rush-overlay">
+    <div class="gold-rush-border"></div>
+    <div class="gold-rush-fire"></div>
+</div>
+
+<!-- ========== PULL TO REFRESH INDICATOR ========== -->
+<div id="pull-refresh-indicator" class="pull-refresh-indicator"><div class="spinner"></div></div>
+
+<!-- ========== ACHIEVEMENT POPUP CONTAINER ========== -->
+<div id="achievement-popup-container"></div>
+
+<!-- ========== PRICE ALERT MODAL ========== -->
+<div id="price-alert-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);padding:8px;">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm relative max-h-[85vh] overflow-y-auto custom-scrollbar modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-bell-ringing"></i> แจ้งเตือนราคาทอง</h3>
+                <button class="modal-close-btn" onclick="closePriceAlertModal()">&times;</button>
+            </div>
+            <div id="price-alert-list" class="mb-4"></div>
+            <div class="space-y-3">
+                <select id="alert-direction" class="w-full" style="background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-primary);border-radius:12px;padding:10px;">
+                    <option value="above">📈 ราคาสูงกว่า</option>
+                    <option value="below">📉 ราคาต่ำกว่า</option>
+                </select>
+                <input type="number" id="alert-price" placeholder="ราคาเป้าหมาย (บาท)" class="w-full" style="background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-primary);border-radius:12px;padding:10px;">
+                <button onclick="addPriceAlert()" class="w-full py-3 rounded-xl font-bold text-sm" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#000;">เพิ่มแจ้งเตือน</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MOOD BOARD MODAL ========== -->
+<div id="mood-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);padding:8px;">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 style="color:#d4a017;font-size:18px;font-weight:900;">🎭 อารมณ์นักเทรดวันนี้</h3>
+                <button class="modal-close-btn" onclick="closeMoodModal()">&times;</button>
+            </div>
+            <div id="mood-grid" class="grid grid-cols-4 gap-3 mb-4"></div>
+            <div id="mood-result" class="text-center hidden">
+                <p class="text-lg font-bold mb-2" style="color:var(--text-primary);">อารมณ์ของคุณวันนี้</p>
+                <div id="mood-selected-emoji" class="text-5xl mb-2"></div>
+                <p id="mood-selected-text" class="text-sm" style="color:var(--text-secondary);"></p>
+                <button onclick="shareMood()" class="mt-3 px-6 py-2 rounded-xl text-sm font-bold" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#000;">แชร์อารมณ์</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MINI GAME MODAL ========== -->
+<div id="mini-game-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);padding:8px;">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 style="color:#d4a017;font-size:18px;font-weight:900;">🎮 เกมทายราคาทอง</h3>
+                <button class="modal-close-btn" onclick="closeMiniGameModal()">&times;</button>
+            </div>
+            <div class="text-center mb-4">
+                <div class="flex justify-center gap-1 mb-3" id="game-coins-display"></div>
+                <p class="text-sm" style="color:var(--text-secondary);">เหรียญของคุณ: <span id="game-coins-count" class="font-bold" style="color:#d4a017;">10</span></p>
+            </div>
+            <div class="text-center mb-4">
+                <p class="text-xs mb-2" style="color:var(--text-secondary);">ราคาทองตอนนี้</p>
+                <p id="game-current-price" class="text-2xl font-black" style="color:var(--accent-gold);"></p>
+            </div>
+            <p class="text-center text-sm font-bold mb-3" style="color:var(--text-primary);">พรุ่งนี้ราคาจะ...</p>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button onclick="playGame('up')" class="game-card">
+                    <div class="text-3xl mb-1">📈</div>
+                    <div class="font-bold text-sm" style="color:#22c55e;">ขึ้น</div>
+                </button>
+                <button onclick="playGame('down')" class="game-card">
+                    <div class="text-3xl mb-1">📉</div>
+                    <div class="font-bold text-sm" style="color:#ef4444;">ลง</div>
+                </button>
+            </div>
+            <div id="game-result" class="text-center hidden"></div>
+            <div class="text-center mt-3">
+                <p class="text-xs" style="color:var(--text-secondary);">🏆 คะแนนสูงสุด: <span id="game-high-score" class="font-bold" style="color:#d4a017;">0</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== ONBOARDING OVERLAY ========== -->
+<div id="onboarding-overlay" class="onboarding-overlay hidden">
+    <div class="onboarding-card">
+        <div id="onboarding-content" class="mb-6"></div>
+        <div class="flex justify-center gap-2 mb-4" id="onboarding-dots"></div>
+        <div class="flex gap-3">
+            <button onclick="skipOnboarding()" class="flex-1 py-3 rounded-xl text-sm font-bold" style="background:rgba(255,255,255,0.1);color:var(--text-secondary);border:1px solid rgba(255,255,255,0.1);">ข้าม</button>
+            <button onclick="nextOnboarding()" class="flex-1 py-3 rounded-xl text-sm font-bold" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#000;">ถัดไป</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== ACHIEVEMENT MODAL ========== -->
+<div id="achievement-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);padding:8px;">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm max-h-[85vh] overflow-y-auto custom-scrollbar modal-enter" style="background:linear-gradient(180deg,#1c1c24 0%,#141418 100%);border:1px solid rgba(212,160,23,0.25);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 style="color:#d4a017;font-size:18px;font-weight:900;">🏆 รางวัลของฉัน</h3>
+                <button class="modal-close-btn" onclick="closeAchievementModal()">&times;</button>
+            </div>
+            <div id="achievement-list" class="space-y-3"></div>
         </div>
     </div>
 </div>
@@ -6160,4 +6462,629 @@ function convertToThaiDate(dateStr) {
         }
         cards.innerHTML = html;
     }
+
+    // ================================================================
+    // ========== NEW FEATURES: Sound FX, Particles, Achievements ======
+    // ================================================================
+
+    // ---------- SOUND FX SYSTEM (Web Audio API) ----------
+    let _audioCtx = null;
+    function getAudioCtx() { if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return _audioCtx; }
+    function playSfx(type) {
+        try {
+            const ctx = getAudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            gain.gain.value = 0.15;
+            switch(type) {
+                case 'coin_up':
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
+                    break;
+                case 'coin_down':
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(600, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.3);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.4);
+                    break;case 'success':
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(523, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.4);
+                    break;
+                case 'bell':
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(1200, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.5);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.6);
+                    break;
+                case 'click':
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(1000, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+                    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.05);
+                    break;
+            }
+        } catch(e) {}
+    }
+    let soundFxEnabled = localStorage.getItem('sound_fx_enabled') !== 'false';
+    function sfx(type) { if (soundFxEnabled) playSfx(type); }
+
+    // ---------- HAPTIC FEEDBACK ----------
+    function haptic(ms) { try { if (navigator.vibrate) navigator.vibrate(ms || 10); } catch(e) {} }
+
+    // ---------- GOLDEN PARTICLE SYSTEM ----------
+    let particleCanvas, particleCtx;
+    function initParticles() {
+        particleCanvas = document.getElementById('particle-canvas');
+        if (!particleCanvas) return;
+        particleCanvas.width = window.innerWidth;
+        particleCanvas.height = window.innerHeight;
+        particleCtx = particleCanvas.getContext('2d');
+        window.addEventListener('resize', () => {
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+        });
+    }
+    const _particles = [];
+    function spawnParticles(count, direction) {
+        const emojis = ['🪙', '💰', '✨', '⭐'];
+        for (let i = 0; i < count; i++) {
+            _particles.push({
+                x: Math.random() * window.innerWidth,
+                y: direction === 'up' ? window.innerHeight : 0,
+                vx: (Math.random() - 0.5) * 3,
+                vy: direction === 'up' ? -(Math.random() * 4 + 2) : (Math.random() * 4 + 2),
+                life: 1,
+                decay: 0.008 + Math.random() * 0.01,
+                size: 10 + Math.random() * 10,
+                emoji: emojis[Math.floor(Math.random() * emojis.length)],
+                rotation: Math.random() * 360,
+                rotSpeed: (Math.random() - 0.5) * 5
+            });
+        }
+    }
+    function animateParticles() {
+        if (!particleCtx) { requestAnimationFrame(animateParticles); return; }
+        particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+        for (let i = _particles.length - 1; i >= 0; i--) {
+            const p = _particles[i];
+            p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life -= p.decay; p.rotation += p.rotSpeed;
+            if (p.life <= 0) { _particles.splice(i, 1); continue; }
+            particleCtx.save();
+            particleCtx.globalAlpha = p.life;
+            particleCtx.translate(p.x, p.y);
+            particleCtx.rotate(p.rotation * Math.PI / 180);
+            particleCtx.font = p.size + 'px serif';
+            particleCtx.textAlign = 'center';
+            particleCtx.fillText(p.emoji, 0, 0);
+            particleCtx.restore();
+        }
+        requestAnimationFrame(animateParticles);
+    }
+    requestAnimationFrame(animateParticles);
+
+    // ---------- ANIMATED NUMBER TICKER ----------
+    let _prevPriceValue = 0;
+    function animatePriceTicker(newPrice) {
+        const el = document.getElementById('gold-price-buy');
+        if (!el || _prevPriceValue === 0) { _prevPriceValue = newPrice; return; }
+        if (newPrice === _prevPriceValue) return;
+        const direction = newPrice > _prevPriceValue ? 'up' : 'down';
+        el.classList.remove('tick-up', 'tick-down');
+        void el.offsetWidth;
+        el.classList.add(direction === 'up' ? 'tick-up' : 'tick-down');
+        sfx(direction === 'up' ? 'coin_up' : 'coin_down');
+        haptic(30);
+        spawnParticles(8, direction);
+        _prevPriceValue = newPrice;
+        setTimeout(() => el.classList.remove('tick-up', 'tick-down'), 600);
+    }
+
+    // ---------- STREAK COUNTER ----------
+    function getStreak() {
+        try {
+            const data = JSON.parse(localStorage.getItem('login_streak') || '{}');
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            if (data.lastDate === today) return data.count || 1;
+            if (data.lastDate === yesterday) return (data.count || 0);
+            return 0;
+        } catch(e) { return 0; }
+    }
+    function updateStreak() {
+        try {
+            const data = JSON.parse(localStorage.getItem('login_streak') || '{}');
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            if (data.lastDate === today) return data.count || 1;
+            if (data.lastDate === yesterday) { data.count = (data.count || 0) + 1; }
+            else { data.count = 1; }
+            data.lastDate = today;
+            localStorage.setItem('login_streak', JSON.stringify(data));
+            return data.count;
+        } catch(e) { return 1; }
+    }
+
+    // ---------- ACHIEVEMENT SYSTEM ----------
+    const ACHIEVEMENTS = [
+        { id: 'first_trade', name: '💰 ธุรกรรมแรก', desc: 'ทำธุรกรรมครั้งแรก', icon: '💰' },
+        { id: 'trades_10', name: '📊 นักลงทุนมือใหม่', desc: 'ทำธุรกรรม 10 ครั้ง', icon: '📊' },
+        { id: 'trades_100', name: '🏆 นักลงทุนมือทอง', desc: 'ทำธุรกรรม 100 ครั้ง', icon: '🏆' },
+        { id: 'streak_7', name: '🔥 ต่อเนื่อง 7 วัน', desc: 'เข้าใช้ 7 วันติด', icon: '🔥' },
+        { id: 'streak_30', name: '🌙 นักเทรดขยัน', desc: 'เข้าใช้ 30 วันติด', icon: '🌙' },
+        { id: 'night_owl', name: '🦉 นักเทรดกลางคืน', desc: 'เข้าใช้หลังเที่ยงคืน', icon: '🦉' },
+        { id: 'profit_50k', name: '💎 กำไร 50,000', desc: 'กำไรเกิน 50,000 บาท', icon: '💎' },
+        { id: 'profit_100k', name: '👑 กำไร 100,000', desc: 'กำไรเกิน 100,000 บาท', icon: '👑' },
+        { id: 'share_first', name: '📤 แชร์แรก', desc: 'แชร์ราคาทองครั้งแรก', icon: '📤' },
+        { id: 'theme_toggle', name: '🌓 คนชอบเปลี่ยน', desc: 'เปลี่ยนธีม 10 ครั้ง', icon: '🌓' },
+        { id: 'game_win_5', name: '🎮 นักพนัน', desc: 'ทายถูก 5 ครั้งติด', icon: '🎮' },
+        { id: 'price_alert', name: '🔔 นักตั้งเตือน', desc: 'ตั้งแจ้งเตือนราคา 5 ครั้ง', icon: '🔔' },
+    ];
+    function getUnlockedAchievements() {
+        try { return JSON.parse(localStorage.getItem('unlocked_achievements') || '[]'); } catch(e) { return []; }
+    }
+    function unlockAchievement(id) {
+        const unlocked = getUnlockedAchievements();
+        if (unlocked.includes(id)) return;
+        unlocked.push(id);
+        localStorage.setItem('unlocked_achievements', JSON.stringify(unlocked));
+        const achievement = ACHIEVEMENTS.find(a => a.id === id);
+        if (!achievement) return;
+        showAchievementPopup(achievement);
+        sfx('success'); haptic(50);
+    }
+    function showAchievementPopup(a) {
+        const container = document.getElementById('achievement-popup-container');
+        if (!container) return;
+        const popup = document.createElement('div');
+        popup.className = 'achievement-popup';
+        popup.innerHTML = `<div style="font-size:32px;">${a.icon}</div><div><p style="color:#d4a017;font-weight:900;font-size:14px;">🏆 ปลดล็อค!</p><p style="color:var(--text-primary);font-size:12px;font-weight:600;">${a.name}</p><p style="color:var(--text-secondary);font-size:10px;">${a.desc}</p></div>`;
+        container.appendChild(popup);
+        setTimeout(() => popup.remove(), 4000);
+    }
+    function openAchievementModal() {
+        const modal = document.getElementById('achievement-modal');
+        const list = document.getElementById('achievement-list');
+        if (!modal || !list) return;
+        const unlocked = getUnlockedAchievements();
+        list.innerHTML = ACHIEVEMENTS.map(a => {
+            const isUnlocked = unlocked.includes(a.id);
+            return `<div class="achievement-badge ${isUnlocked ? 'unlocked' : 'locked'}" style="width:100%;padding:12px;border-radius:12px;justify-content:flex-start;">
+                <span style="font-size:24px;">${a.icon}</span>
+                <div><p style="font-weight:700;font-size:13px;color:var(--text-primary);">${a.name}</p><p style="font-size:11px;color:var(--text-secondary);">${a.desc}</p></div>
+                ${isUnlocked ? '<span style="margin-left:auto;color:#22c55e;font-size:16px;">✓</span>' : '<span style="margin-left:auto;color:var(--text-muted);font-size:16px;">🔒</span>'}
+            </div>`;
+        }).join('');
+        modal.classList.remove('hidden');
+    }
+    function closeAchievementModal() { document.getElementById('achievement-modal')?.classList.add('hidden'); }
+
+    // Check achievements on load
+    function checkAchievements() {
+        const streak = updateStreak();
+        if (streak >= 7) unlockAchievement('streak_7');
+        if (streak >= 30) unlockAchievement('streak_30');
+        const hour = new Date().getHours();
+        if (hour >= 0 && hour < 5) unlockAchievement('night_owl');
+        const txCount = transactionsData ? transactionsData.length : 0;
+        if (txCount >= 1) unlockAchievement('first_trade');
+        if (txCount >= 10) unlockAchievement('trades_10');
+        if (txCount >= 100) unlockAchievement('trades_100');
+        try {
+            const themeChanges = parseInt(localStorage.getItem('theme_changes') || '0');
+            if (themeChanges >= 10) unlockAchievement('theme_toggle');
+        } catch(e) {}
+    }
+
+    // ---------- GOLD RUSH MODE ----------
+    let _goldRushActive = false;
+    let _lastGoldRushCheck = 0;
+    function checkGoldRush(newPrice) {
+        const now = Date.now();
+        if (now - _lastGoldRushCheck < 5000) return;
+        _lastGoldRushCheck = now;
+        const diff = Math.abs(newPrice - _prevPriceValue);
+        if (diff >= 500 && !_goldRushActive) {
+            activateGoldRush();
+        }
+    }
+    function activateGoldRush() {
+        _goldRushActive = true;
+        const overlay = document.getElementById('gold-rush-overlay');
+        const body = document.body;
+        if (overlay) overlay.classList.add('active');
+        body.classList.add('gold-rush-shake');
+        sfx('bell'); haptic(100);
+        spawnParticles(20, 'up');
+        setTimeout(() => { deactivateGoldRush(); }, 5000);
+    }
+    function deactivateGoldRush() {
+        _goldRushActive = false;
+        const overlay = document.getElementById('gold-rush-overlay');
+        if (overlay) overlay.classList.remove('active');
+        document.body.classList.remove('gold-rush-shake');
+    }
+
+    // ---------- NIGHT SKY BACKGROUND ----------
+    function initNightSky() {
+        const sky = document.getElementById('night-sky');
+        if (!sky) return;
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        if (!isDark) { sky.classList.remove('active'); return; }
+        sky.classList.add('active');
+        if (sky.children.length > 0) return;
+        for (let i = 0; i < 80; i++) {
+            const star = document.createElement('div');
+            star.className = 'sky-star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--dur', (1 + Math.random() * 3) + 's');
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.width = (1 + Math.random() * 2) + 'px';
+            star.style.height = star.style.width;
+            sky.appendChild(star);
+        }
+        for (let i = 0; i < 3; i++) {
+            const cloud = document.createElement('div');
+            cloud.className = 'sky-cloud';
+            cloud.style.width = (80 + Math.random() * 120) + 'px';
+            cloud.style.height = (20 + Math.random() * 30) + 'px';
+            cloud.style.top = (10 + Math.random() * 60) + '%';
+            cloud.style.setProperty('--dur', (30 + Math.random() * 40) + 's');
+            cloud.style.animationDelay = Math.random() * 30 + 's';
+            sky.appendChild(cloud);
+        }
+    }
+
+    // ---------- FEAR & GREED INDEX ----------
+    function updateFearGreedIndex() {
+        const changeToday = _goldChangeToday || 0;
+        const latestChange = _goldLatestChange || 0;
+        const combined = changeToday + latestChange;
+        let score = 50 + combined * 0.5;
+        score = Math.max(0, Math.min(100, score));
+        const arc = document.getElementById('fg-arc');
+        const val = document.getElementById('fg-value');
+        const label = document.getElementById('fg-label');
+        const marker = document.getElementById('fg-marker');
+        const desc = document.getElementById('fg-desc');
+        if (!arc || !val) return;
+        const circumference = 2 * Math.PI * 52;
+        const offset = circumference - (score / 100) * circumference;
+        arc.style.strokeDashoffset = offset;
+        val.textContent = Math.round(score);
+        let color, text, description;
+        if (score < 20) { color = '#22c55e'; text = 'กลัวมาก'; description = 'นักลงทุนกำลังตื่นตระหนก — อาจเป็นโอกาสซื้อ'; }
+        else if (score < 40) { color = '#86efac'; text = 'กลัว'; description = 'ความเชื่อมั่นต่ำ — ราคาอาจฟื้นตัว'; }
+        else if (score < 60) { color = '#eab308'; text = 'เป็นกลาง'; description = 'ตลาดสมดุล — รอสัญญาณที่ชัดเจน'; }
+        else if (score < 80) { color = '#f97316'; text = 'โลภ'; description = 'นักลงทุนมั่นใจ — ระวังการซื้อที่แพงเกิน'; }
+        else { color = '#ef4444'; text = 'โลภมาก'; description = 'ความโลภสูง — อาจถึงเวลาขาย'; }
+        arc.style.stroke = color;
+        if (label) { label.textContent = text; label.style.color = color; }
+        if (marker) marker.style.left = score + '%';
+        if (desc) desc.textContent = description;
+    }
+
+    // ---------- GOLDEN HOUR TIMER ----------
+    function updateGoldenHour() {
+        const now = new Date();
+        const h = now.getHours(), m = now.getMinutes();
+        const goldenWindows = [
+            { start: 9, end: 11 },
+            { start: 14, end: 16 },
+        ];
+        let nextWindow = null, minDiff = Infinity;
+        for (const gw of goldenWindows) {
+            const startMin = gw.start * 60;
+            const endMin = gw.end * 60;
+            const nowMin = h * 60 + m;
+            if (nowMin >= startMin && nowMin < endMin) {
+                const remaining = endMin - nowMin;
+                if (remaining < minDiff) { minDiff = remaining; nextWindow = gw; }
+            } else if (nowMin < startMin) {
+                const until = startMin - nowMin;
+                if (until < minDiff) { minDiff = until; nextWindow = gw; }
+            }
+        }
+        const countdownEl = document.getElementById('gh-countdown');
+        const ringEl = document.getElementById('gh-ring');
+        const timeEl = document.getElementById('gh-time');
+        if (!countdownEl) return;
+        if (nextWindow && minDiff < Infinity) {
+            const rh = Math.floor(minDiff / 60);
+            const rm = minDiff % 60;
+            countdownEl.textContent = String(rh).padStart(2, '0') + ':' + String(rm).padStart(2, '0');
+            if (timeEl) timeEl.textContent = String(nextWindow.start).padStart(2, '0') + ':00';
+            const isNow = (h >= nextWindow.start && h < nextWindow.end);
+            if (ringEl) ringEl.style.background = isNow
+                ? 'conic-gradient(#d4a017 ' + ((minDiff / ((nextWindow.end - nextWindow.start) * 60)) * 100) + '%, rgba(255,255,255,0.1) ' + ((minDiff / ((nextWindow.end - nextWindow.start) * 60)) * 100) + '%)'
+                : 'conic-gradient(#f59e0b var(--pct), rgba(255,255,255,0.1) var(--pct))';
+        } else {
+            countdownEl.textContent = 'หมดเวลาแล้ว';
+            if (timeEl) timeEl.textContent = '--:--';
+        }
+    }
+
+    // ---------- PORTFOLIO PIE CHART ----------
+    function updatePortfolioPie() {
+        const container = document.getElementById('portfolio-pie');
+        const legend = document.getElementById('pie-legend');
+        if (!container || !legend) return;
+        if (!transactionsData || transactionsData.length === 0) {
+            container.style.background = 'conic-gradient(rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.05) 100%)';
+            legend.innerHTML = '<p class="text-xs" style="color:var(--text-muted);">ยังไม่มีข้อมูล</p>';
+            return;
+        }
+        const buyerTotals = {};
+        transactionsData.forEach(tx => {
+            const name = tx.buyer || 'ไม่ทราบ';
+            const total = (tx.weight || 0) * (tx.buyPrice || 0);
+            buyerTotals[name] = (buyerTotals[name] || 0) + total;
+        });
+        const sorted = Object.entries(buyerTotals).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const total = sorted.reduce((sum, [, v]) => sum + v, 0);
+        if (total === 0) { container.style.background = 'conic-gradient(rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.05) 100%)'; return; }
+        const colors = ['#d4a017', '#22c55e', '#3b82f6', '#ef4444', '#a855f7'];
+        let gradParts = [], offset = 0;
+        sorted.forEach(([, val], i) => {
+            const pct = (val / total) * 100;
+            gradParts.push(colors[i % colors.length] + ' ' + offset + '% ' + (offset + pct) + '%');
+            offset += pct;
+        });
+        container.style.background = 'conic-gradient(' + gradParts.join(', ') + ')';
+        container.style.borderRadius = '50%';
+        legend.innerHTML = sorted.map(([name, val], i) => {
+            const pct = ((val / total) * 100).toFixed(1);
+            return `<div class="pie-legend-item"><div class="pie-legend-dot" style="background:${colors[i % colors.length]};"></div><span style="color:var(--text-primary);">${name}</span><span style="color:var(--text-muted);margin-left:auto;">${pct}%</span></div>`;
+        }).join('');
+    }
+
+    // ---------- PRICE ALERT SYSTEM ----------
+    let priceAlerts = [];
+    function loadPriceAlerts() {
+        try { priceAlerts = JSON.parse(localStorage.getItem('price_alerts') || '[]'); } catch(e) { priceAlerts = []; }
+    }
+    function savePriceAlerts() { localStorage.setItem('price_alerts', JSON.stringify(priceAlerts)); }
+    function addPriceAlert() {
+        const dir = document.getElementById('alert-direction')?.value;
+        const price = parseFloat(document.getElementById('alert-price')?.value);
+        if (!price || isNaN(price)) { showWarningToast('⚠️ ระบุราคาให้ถูกต้อง!'); return; }
+        priceAlerts.push({ direction: dir, price: price, triggered: false, id: Date.now() });
+        savePriceAlerts(); renderPriceAlerts();
+        document.getElementById('alert-price').value = '';
+        showWarningToast('🔔 เพิ่มแจ้งเตือนสำเร็จ!');
+        haptic(30);
+        try { const c = parseInt(localStorage.getItem('price_alert_count') || '0') + 1; localStorage.setItem('price_alert_count', String(c)); if (c >= 5) unlockAchievement('price_alert'); } catch(e) {}
+    }
+    function removePriceAlert(id) {
+        priceAlerts = priceAlerts.filter(a => a.id !== id);
+        savePriceAlerts(); renderPriceAlerts();
+    }
+    function renderPriceAlerts() {
+        const list = document.getElementById('price-alert-list');
+        if (!list) return;
+        loadPriceAlerts();
+        if (priceAlerts.length === 0) { list.innerHTML = '<p class="text-center text-sm py-4" style="color:var(--text-muted);">ยังไม่มีแจ้งเตือน</p>'; return; }
+        list.innerHTML = priceAlerts.map(a => {
+            const icon = a.direction === 'above' ? '📈' : '📉';
+            const text = a.direction === 'above' ? 'สูงกว่า' : 'ต่ำกว่า';
+            return `<div class="price-alert-item ${a.triggered ? 'triggered' : ''}">
+                <div><span>${icon}</span> <span style="color:var(--text-primary);">${text} ${a.price.toLocaleString()} บาท</span></div>
+                <button onclick="removePriceAlert(${a.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;">✕</button>
+            </div>`;
+        }).join('');
+    }
+    function checkPriceAlerts(currentPrice) {
+        loadPriceAlerts();
+        let triggered = false;
+        priceAlerts.forEach(a => {
+            if (a.triggered) return;
+            if (a.direction === 'above' && currentPrice >= a.price) { a.triggered = true; triggered = true; }
+            if (a.direction === 'below' && currentPrice <= a.price) { a.triggered = true; triggered = true; }
+        });
+        if (triggered) {
+            savePriceAlerts();
+            sfx('bell'); haptic(100);
+            showWarningToast('🔔 แจ้งเตือนราคาทองถึงเป้าหมายแล้ว!');
+        }
+    }
+    function openPriceAlertModal() { renderPriceAlerts(); document.getElementById('price-alert-modal')?.classList.remove('hidden'); }
+    function closePriceAlertModal() { document.getElementById('price-alert-modal')?.classList.add('hidden'); }
+
+    // ---------- MOOD BOARD ----------
+    const MOODS = [
+        { emoji: '🤑', text: 'กำไรงาม' }, { emoji: '😭', text: 'ขาดทุนหนัก' },
+        { emoji: '😤', text: 'ลุ้นสุดๆ' }, { emoji: '😴', text: 'เบื่อ' },
+        { emoji: '🔥', text: 'มาแรง' }, { emoji: '🧊', text: 'นิ่งมาก' },
+        { emoji: '😱', text: 'ตกใจ' }, { emoji: '🥳', text: 'ฉลอง' },
+        { emoji: '🤔', text: 'คิดไม่ออก' }, { emoji: '💪', text: 'สู้ไม่ถอย' },
+        { emoji: '😇', text: 'สบายใจ' }, { emoji: '🫠', text: 'หมดแรง' },
+    ];
+    function openMoodModal() {
+        const grid = document.getElementById('mood-grid');
+        const result = document.getElementById('mood-result');
+        if (!grid) return;
+        result?.classList.add('hidden');
+        grid.innerHTML = MOODS.map((m, i) => `<div class="mood-item" onclick="selectMood(${i})"><span>${m.emoji}</span><span>${m.text}</span></div>`).join('');
+        document.getElementById('mood-modal')?.classList.remove('hidden');
+    }
+    function closeMoodModal() { document.getElementById('mood-modal')?.classList.add('hidden'); }
+    function selectMood(i) {
+        const m = MOODS[i];
+        document.getElementById('mood-selected-emoji').textContent = m.emoji;
+        document.getElementById('mood-selected-text').textContent = m.text;
+        document.getElementById('mood-result')?.classList.remove('hidden');
+        document.querySelectorAll('.mood-item').forEach((el, idx) => el.classList.toggle('selected', idx === i));
+        sfx('click'); haptic(20);
+    }
+    function shareMood() {
+        const emoji = document.getElementById('mood-selected-emoji')?.textContent;
+        const text = document.getElementById('mood-selected-text')?.textContent;
+        if (!emoji || !text) return;
+        const shareText = `${emoji} อารมณ์นักเทรดวันนี้: ${text}\n💰 ราคาทอง: ${currentGoldBuyPrice.toLocaleString()} บาท\n\n📊 พอร์ตทองคำ`;
+        if (navigator.share) { navigator.share({ text: shareText }).catch(() => {}); }
+        else { navigator.clipboard?.writeText(shareText); showWarningToast('📋 คัดลอกข้อความแล้ว!'); }
+        closeMoodModal();
+    }
+
+    // ---------- MINI GAME ----------
+    let gameCoins = parseInt(localStorage.getItem('game_coins') || '10');
+    let gameHighScore = parseInt(localStorage.getItem('game_high_score') || '0');
+    let gameWinStreak = 0;
+    function openMiniGameModal() {
+        document.getElementById('game-current-price').textContent = currentGoldBuyPrice.toLocaleString() + ' บาท';
+        document.getElementById('game-coins-count').textContent = gameCoins;
+        document.getElementById('game-high-score').textContent = gameHighScore;
+        document.getElementById('game-result')?.classList.add('hidden');
+        renderGameCoins();
+        document.getElementById('mini-game-modal')?.classList.remove('hidden');
+    }
+    function closeMiniGameModal() { document.getElementById('mini-game-modal')?.classList.add('hidden'); }
+    function renderGameCoins() {
+        const el = document.getElementById('game-coins-display');
+        if (!el) return;
+        el.innerHTML = Array(Math.min(gameCoins, 20)).fill(0).map(() => '<div class="game-coin">G</div>').join('');
+    }
+    function playGame(guess) {
+        if (gameCoins <= 0) { showWarningToast('💰 เหรียหมด! เล่นใหม่วันพรุ่งนี้'); return; }
+        gameCoins--;
+        const actualChange = (Math.random() > 0.45) ? 'up' : 'down';
+        const won = guess === actualChange;
+        if (won) {
+            gameCoins += 3;
+            gameWinStreak++;
+            sfx('success'); haptic(30);
+        } else {
+            gameWinStreak = 0;
+            sfx('coin_down'); haptic(50);
+        }
+        if (gameCoins > gameHighScore) { gameHighScore = gameCoins; localStorage.setItem('game_high_score', String(gameHighScore)); }
+        localStorage.setItem('game_coins', String(gameCoins));
+        const resultEl = document.getElementById('game-result');
+        if (resultEl) {
+            resultEl.classList.remove('hidden');
+            const actualIcon = actualChange === 'up' ? '📈' : '📉';
+            const actualText = actualChange === 'up' ? 'ขึ้น' : 'ลง';
+            resultEl.innerHTML = `<div class="game-result">${won ? '🎉' : '😢'}</div>
+                <p class="font-bold mt-2" style="color:${won ? '#22c55e' : '#ef4444'};">${won ? 'ถูกต้อง!' : 'ผิด!'}</p>
+                <p class="text-sm" style="color:var(--text-secondary);">ราคาจริง: ${actualIcon} ${actualText}</p>
+                <p class="text-sm font-bold" style="color:#d4a017;">+${won ? '3' : '0'} เหรียญ</p>`;
+        }
+        document.getElementById('game-coins-count').textContent = gameCoins;
+        document.getElementById('game-high-score').textContent = gameHighScore;
+        renderGameCoins();
+        if (gameWinStreak >= 5) unlockAchievement('game_win_5');
+    }
+
+    // ---------- PULL TO REFRESH ----------
+    let _pullRefreshStartY = 0, _isPulling = false;
+    document.addEventListener('touchstart', (e) => {
+        if (window.scrollY === 0 && currentView === 'dashboard') { _pullRefreshStartY = e.touches[0].clientY; _isPulling = true; }
+    });
+    document.addEventListener('touchmove', (e) => {
+        if (!_isPulling) return;
+        const diff = e.touches[0].clientY - _pullRefreshStartY;
+        if (diff > 60 && diff < 200) {
+            const indicator = document.getElementById('pull-refresh-indicator');
+            if (indicator) indicator.classList.add('visible');
+        }
+    });
+    document.addEventListener('touchend', () => {
+        if (!_isPulling) return;
+        _isPulling = false;
+        const indicator = document.getElementById('pull-refresh-indicator');
+        if (indicator && indicator.classList.contains('visible')) {
+            fetchGoldPrice().then(() => {
+                indicator.classList.remove('visible');
+                showWarningToast('✅ อัปเดตราคาเรียบร้อย!');
+            }).catch(() => indicator.classList.remove('visible'));
+        }
+    });
+
+    // ---------- TOAST ENHANCEMENT ----------
+    const _origShowWarningToast = window.showWarningToast;
+    window.showWarningToast = function(msg) {
+        if (_origShowWarningToast) _origShowWarningToast(msg);
+        setTimeout(() => {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const last = container.lastElementChild;
+            if (last && !last.classList.contains('toast-enter')) {
+                last.classList.add('toast-enter');
+                setTimeout(() => last.classList.remove('toast-enter'), 500);
+            }
+        }, 50);
+    };
+
+    // ---------- DARK MODE TRANSITION ----------
+    const _origSetTheme = window.setTheme;
+    if (typeof _origSetTheme === 'function') {
+        window.setTheme = function(theme) {
+            document.body.classList.add('theme-transitioning');
+            _origSetTheme(theme);
+            initNightSky();
+            try { const c = parseInt(localStorage.getItem('theme_changes') || '0') + 1; localStorage.setItem('theme_changes', String(c)); } catch(e) {}
+            setTimeout(() => document.body.classList.remove('theme-transitioning'), 500);
+        };
+    }
+
+    // ---------- ONBOARDING ----------
+    const ONBOARDING_STEPS = [
+        { icon: '🏆', title: 'ยินดีต้อนรับสู่ พอร์ตทองคำ!', desc: 'แอปติดตามราคาทองคำแบบ real-time พร้อมพอร์ตลงทุนส่วนตัว' },
+        { icon: '📊', title: 'ดูราคาทอง', desc: 'หน้าแรกแสดงราคาทอง real-time พร้อมกราฟแนวโน้ม แจ้งเตือนราคา และดัชนีความกลัว/ความโลภ' },
+        { icon: '💰', title: 'จัดการพอร์ต', desc: 'เพิ่มธุรกรรมซื้อ-ขายทอง ติดตามกำไร/ขาดทุน พร้อมกราฟสัดส่วนพอร์ต' },
+        { icon: '🎮', title: 'ลูกเล่นสนุกๆ', desc: 'เกมทายราคาทอง 🎮 อารมณ์นักเทรด 🎭 ระบบรางวัล 🏆 และ Gold Rush Mode 🔥' },
+        { icon: '⚙️', title: 'ตั้งค่าส่วนตัว', desc: 'เปลี่ยนธีม ตั้งแจ้งเตือนราคา แก้ไขโปรไฟล์ และอีกมากมาย!' },
+    ];
+    let onboardingStep = 0;
+    function showOnboarding() {
+        if (localStorage.getItem('onboarding_done')) return;
+        onboardingStep = 0;
+        renderOnboarding();
+        document.getElementById('onboarding-overlay')?.classList.remove('hidden');
+    }
+    function renderOnboarding() {
+        const step = ONBOARDING_STEPS[onboardingStep];
+        const content = document.getElementById('onboarding-content');
+        const dots = document.getElementById('onboarding-dots');
+        if (content) content.innerHTML = `<div style="font-size:48px;margin-bottom:16px;">${step.icon}</div><h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:8px;">${step.title}</h3><p style="color:var(--text-secondary);font-size:13px;line-height:1.6;">${step.desc}</p>`;
+        if (dots) dots.innerHTML = ONBOARDING_STEPS.map((_, i) => `<div class="onboarding-dot ${i === onboardingStep ? 'active' : ''}"></div>`).join('');
+    }
+    function nextOnboarding() {
+        onboardingStep++;
+        if (onboardingStep >= ONBOARDING_STEPS.length) { skipOnboarding(); return; }
+        sfx('click'); renderOnboarding();
+    }
+    function skipOnboarding() {
+        document.getElementById('onboarding-overlay')?.classList.add('hidden');
+        localStorage.setItem('onboarding_done', '1');
+    }
+
+    // ---------- INTEGRATE WITH EXISTING SYSTEMS ----------
+    // Hook into price updates
+    const _origRenderData = window.renderData;
+    window.renderData = function() {
+        if (_origRenderData) _origRenderData.call(this);
+        try { animatePriceTicker(currentGoldBuyPrice); checkGoldRush(currentGoldBuyPrice); checkPriceAlerts(currentGoldBuyPrice); } catch(e) {}
+    };
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+        initParticles();
+        initNightSky();
+        loadPriceAlerts();
+        setTimeout(() => {
+            checkAchievements();
+            updateFearGreedIndex();
+            updateGoldenHour();
+            updatePortfolioPie();
+            showOnboarding();
+            setInterval(updateGoldenHour, 60000);
+            setInterval(() => { updateFearGreedIndex(); updatePortfolioPie(); }, 30000);
+            _prevPriceValue = currentGoldBuyPrice;
+        }, 2000);
+    });
 </script>
