@@ -962,6 +962,53 @@
     .pie-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
     .pie-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
+    /* ========== USER CARD REDESIGN ========== */
+    .user-card-new { background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 16px; padding: 0; overflow: hidden; transition: all 0.2s ease; }
+    .user-card-new:hover { border-color: rgba(212,160,23,0.3); }
+    .user-card-new.banned { border-color: rgba(239,68,68,0.4); background: linear-gradient(135deg, rgba(127,29,29,0.15), rgba(153,27,27,0.1)); }
+    .user-card-header { display: flex; align-items: center; gap: 10px; padding: 12px 12px 8px; }
+    .user-card-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-primary); flex-shrink: 0; }
+    .user-card-info { flex: 1; min-width: 0; }
+    .user-card-name { font-size: 15px; font-weight: 800; color: var(--text-primary); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-card-username { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 1px; }
+    .user-card-phone { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.1); padding: 2px 8px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(34,197,94,0.2); }
+    .user-card-actions { display: flex; gap: 3px; flex-shrink: 0; }
+    .user-card-actions button { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; border: 1px solid transparent; }
+    .user-card-actions button:hover { transform: scale(1.1); }
+    .user-card-actions button:active { transform: scale(0.95); }
+    .user-card-actions .btn-fav { color: #eab308; background: rgba(234,179,8,0.1); border-color: rgba(234,179,8,0.2); }
+    .user-card-actions .btn-fav:hover { background: rgba(234,179,8,0.2); }
+    .user-card-actions .btn-edit { color: #3b82f6; background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.15); }
+    .user-card-actions .btn-edit:hover { background: rgba(59,130,246,0.2); }
+    .user-card-actions .btn-history { color: #818cf8; background: rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.15); }
+    .user-card-actions .btn-history:hover { background: rgba(129,140,248,0.2); }
+    .user-card-actions .btn-vis { color: #22c55e; background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.15); }
+    .user-card-actions .btn-vis:hover { background: rgba(34,197,94,0.2); }
+    .user-card-actions .btn-vis.hidden-vis { color: #94a3b8; background: rgba(148,163,184,0.1); border-color: rgba(148,163,184,0.15); }
+    .user-card-actions .btn-delete { color: #ef4444; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.15); }
+    .user-card-actions .btn-delete:hover { background: rgba(239,68,68,0.2); }
+    .user-card-actions .btn-ban { color: #f97316; background: rgba(249,115,22,0.1); border-color: rgba(249,115,22,0.15); }
+    .user-card-actions .btn-ban:hover { background: rgba(249,115,22,0.2); }
+    .user-card-actions .btn-unban { color: #22c55e; background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.15); }
+    .user-card-actions .btn-unban:hover { background: rgba(34,197,94,0.2); }
+    .user-card-status { display: flex; align-items: center; gap: 6px; padding: 0 12px 10px; flex-wrap: wrap; }
+    .user-card-status .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .user-card-status .status-dot.online { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.5); animation: goldPulse 1.5s infinite; }
+    .user-card-status .status-dot.offline { background: #6b7280; }
+    .user-card-status .status-text { font-size: 11px; font-weight: 700; }
+    .user-card-status .status-meta { font-size: 10px; color: var(--text-muted); }
+    .user-card-drag { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--bg-elevated); color: var(--text-muted); cursor: grab; flex-shrink: 0; transition: all 0.2s; }
+    .user-card-drag:hover { color: #d4a017; background: rgba(212,160,23,0.1); }
+    .user-card-drag:active { cursor: grabbing; }
+    .user-card-banned-banner { background: linear-gradient(90deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05)); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-top: 1px solid rgba(239,68,68,0.2); }
+    .user-card-banned-banner span { font-size: 11px; font-weight: 700; color: #ef4444; }
+    [data-theme="light"] .user-card-new { background: #ffffff; border-color: #e5e5e5; }
+    [data-theme="light"] .user-card-new.banned { background: linear-gradient(135deg, rgba(254,226,226,0.3), rgba(254,202,202,0.2)); }
+    [data-theme="light"] .user-card-name { color: #1a1a1a; }
+    [data-theme="light"] .user-card-username { color: #666666; }
+    [data-theme="light"] .user-card-drag { background: #f0f0f0; color: #999; }
+    [data-theme="light"] .user-card-status .status-meta { color: #999999; }
+
     /* ========== DARK MODE TRANSITION ========== */
     body.theme-transitioning * { transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important; }
 </style>
@@ -5187,38 +5234,35 @@ function convertToThaiDate(dateStr) {
             
             let phoneHtml = u.phone ? `<a href="tel:${u.phone}" class="bg-green-500/10 text-green-400 hover:bg-green-500/30 text-[10px] px-2.5 py-1 rounded-md flex items-center gap-1 font-bold border border-green-500/20 transition mt-1.5 w-max active:scale-95"><span class="emoji">📞</span> ${u.phone}</a>` : `<span class="text-gray-600 text-[10px] font-bold mt-1.5 block">ไม่มีเบอร์โทร</span>`;
 
-            container.innerHTML += `<div data-username="${u.username}" class="user-drag-item bg-[#1a1c23] rounded-[1.5rem] p-5 shadow-lg border ${u.isBanned ? 'border-red-500/70' : 'border-gray-800/50'} cursor-grab active:cursor-grabbing" style="${u.isBanned ? 'background: linear-gradient(135deg, rgba(127,29,29,0.3) 0%, rgba(153,27,27,0.2) 100%); opacity: 0.7;' : ''}">
-                <div class="flex items-start justify-between mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="drag-handle text-[#94a3b8] hover:text-yellow-400 p-1.5 flex flex-col gap-1 w-7 h-7 items-center justify-center bg-gray-800 rounded-lg transition">
-                            <div class="flex gap-0.5"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
-                            <div class="flex gap-0.5"><div class="w-1 h-1 bg-current rounded-full"></div><div class="w-1 h-1 bg-current rounded-full"></div></div>
-                        </div>
-                        <img src="${profImg}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-700 pointer-events-none shadow-md">
-                        <div class="flex flex-col justify-center">
-                            <h3 class="text-white font-black text-xl leading-none">${u.name}</h3>
-                            <p class="text-gray-400 text-[11px] font-bold mt-1">User: <span class="text-gray-200">${u.username}</span></p>
-                            ${phoneHtml}
-                        </div>
+            container.innerHTML += `<div data-username="${u.username}" class="user-card-new user-drag-item ${u.isBanned ? 'banned' : ''}">
+                <!-- Header: Drag + Avatar + Name + Actions -->
+                <div class="user-card-header">
+                    <div class="user-card-drag drag-handle">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="3" cy="2" r="1.2"/><circle cx="9" cy="2" r="1.2"/><circle cx="3" cy="6" r="1.2"/><circle cx="9" cy="6" r="1.2"/><circle cx="3" cy="10" r="1.2"/><circle cx="9" cy="10" r="1.2"/></svg>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="toggleFav('${u.username}')" class="p-1 hover:scale-110 transition ${u.isFavorite ? 'bg-yellow-500/15' : 'bg-gray-500/10'} rounded-md" title="${u.isFavorite ? 'ยกเลิกถูกใจ' : 'ถูกใจ'}">${starSvg}</button>
-                        <button onclick="toggleVis('${u.username}')" class="p-1 hover:scale-110 transition ${u.isHidden ? 'bg-red-500/10' : 'bg-green-500/10'} rounded-md">${eyeSvg}</button>
-                        <button onclick="editUser('${u.username}')" class="p-1 hover:scale-110 transition bg-blue-500/10 rounded-md"><svg class="w-4 h-4 text-[#3b82f6]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                        <button onclick="showLoginHistory('${u.username}', '${u.name}')" class="p-1 hover:scale-110 transition bg-indigo-500/10 rounded-md" title="ประวัติ Login"><svg class="w-4 h-4 text-[#818cf8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
-                        <button onclick="deleteUser('${u.username}')" class="p-1 hover:scale-110 transition bg-red-500/10 rounded-md" title="ลบผู้ใช้"><svg class="w-4 h-4 text-[#ef4444]" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"></path></svg></button>
-                        ${u.isBanned ? `<button onclick="unbanUser('${u.username}')" class="p-1 hover:scale-110 transition bg-orange-500/15 rounded-md" title="ปลดแบน"><svg class="w-4 h-4 text-[#f97316]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>` : `<button onclick="banUser('${u.username}')" class="p-1 hover:scale-110 transition bg-orange-500/10 rounded-md" title="แบนผู้ใช้"><svg class="w-4 h-4 text-[#f97316]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></button>`}
+                    <img src="${profImg}" class="user-card-avatar">
+                    <div class="user-card-info">
+                        <div class="user-card-name">${u.name}</div>
+                        <div class="user-card-username">@${u.username}</div>
+                        ${u.phone ? `<div class="user-card-phone"><span>📞</span> ${u.phone}</div>` : ''}
+                    </div>
+                    <div class="user-card-actions">
+                        <button onclick="toggleFav('${u.username}')" class="btn-fav" title="${u.isFavorite ? 'ยกเลิกถูกใจ' : 'ถูกใจ'}">${u.isFavorite ? '⭐' : '☆'}</button>
+                        <button onclick="editUser('${u.username}')" class="btn-edit" title="แก้ไข"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+                        <button onclick="showLoginHistory('${u.username}', '${u.name}')" class="btn-history" title="ประวัติ Login"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                        <button onclick="toggleVis('${u.username}')" class="btn-vis ${u.isHidden ? 'hidden-vis' : ''}" title="${u.isHidden ? 'ซ่อน' : 'แสดง'}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${u.isHidden ? '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/>' : '<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>'}</svg></button>
+                        <button onclick="deleteUser('${u.username}')" class="btn-delete" title="ลบผู้ใช้"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"/></svg></button>
+                        ${u.isBanned ? `<button onclick="unbanUser('${u.username}')" class="btn-unban" title="ปลดแบน"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>` : `<button onclick="banUser('${u.username}')" class="btn-ban" title="แบน"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></button>`}
                     </div>
                 </div>
-                ${u.isBanned ? `<div class="ml-[52px] mt-2 flex items-center gap-2"><span class="inline-flex items-center gap-1.5 bg-red-600/30 text-red-300 text-[11px] font-black px-3 py-1.5 rounded-lg border border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><span class="text-sm">🚫</span> ถูกแบน</span><span class="text-[9px] text-red-400/60 font-bold">- ไม่สามารถเข้าใช้งานได้</span></div>` : ''}
-                <div class="flex items-center justify-between ml-[52px] mt-2">
-                    <div class="flex items-center gap-1.5">
-                        <div class="w-2.5 h-2.5 rounded-full ${isOnline ? 'animate-pulse' : ''}" style="background-color: ${statusColor};"></div>
-                        <span class="text-[11px] font-bold" style="color: ${statusColor};">${statusText}</span>
-                        ${lastLogin.date ? `<span class="text-gray-600 text-[10px] ml-2">เข้าล่าสุด: ${lastLogin.date} ${lastLogin.time || ''}</span>` : ''}
-                        ${lastLogin.ip ? `<span class="text-gray-700 text-[9px] ml-2">IP: ${lastLogin.ip}</span>` : ''}
-                    </div>
+                <!-- Status Row -->
+                <div class="user-card-status">
+                    <div class="status-dot ${isOnline ? 'online' : 'offline'}"></div>
+                    <span class="status-text" style="color:${statusColor};">${statusText}</span>
+                    ${lastLogin.date ? `<span class="status-meta">• เข้าล่าสุด: ${lastLogin.date} ${lastLogin.time || ''} น.</span>` : ''}
+                    ${lastLogin.ip ? `<span class="status-meta">• IP: ${lastLogin.ip}</span>` : ''}
                 </div>
+                ${u.isBanned ? `<div class="user-card-banned-banner"><span>🚫</span><span>ถูกแบน — ไม่สามารถเข้าใช้งานได้</span></div>` : ''}
             </div>`;
         });
         if(sortableInstance) sortableInstance.destroy(); sortableInstance = new Sortable(container, { animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', onStart: function () { isDraggingUser = true; }, onEnd: function () { updateOrderInDB(); setTimeout(() => { isDraggingUser = false; }, 500); } });
