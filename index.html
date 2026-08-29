@@ -1011,6 +1011,16 @@
     [data-theme="light"] .user-card-drag { background: #f0f0f0; color: #999; }
     [data-theme="light"] .user-card-status .status-meta { color: #999999; }
 
+    /* ========== PASSWORD EYE TOGGLE ========== */
+    .pw-toggle-wrap { position: relative; display: block; width: 100%; }
+    .pw-toggle-wrap input[type="password"],
+    .pw-toggle-wrap input[type="text"] { padding-right: 44px !important; }
+    .pw-toggle-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 10px; border: none; background: rgba(255,255,255,0.08); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; z-index: 2; }
+    .pw-toggle-btn:hover { background: rgba(255,255,255,0.15); color: var(--text-primary); }
+    .pw-toggle-btn:active { transform: translateY(-50%) scale(0.9); }
+    [data-theme="light"] .pw-toggle-btn { background: rgba(0,0,0,0.06); color: #666; }
+    [data-theme="light"] .pw-toggle-btn:hover { background: rgba(0,0,0,0.1); color: #333; }
+
     /* ========== DARK MODE TRANSITION ========== */
     body.theme-transitioning * { transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important; }
 </style>
@@ -7120,6 +7130,48 @@ function convertToThaiDate(dateStr) {
         localStorage.setItem('onboarding_done', '1');
     }
 
+    // ---------- PASSWORD EYE TOGGLE SYSTEM ----------
+    function initPasswordToggles() {
+        const eyeOpen = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
+        const eyeClosed = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>';
+        document.querySelectorAll('input[type="password"]').forEach(input => {
+            if (input.closest('.pw-toggle-wrap')) return;
+            const wrap = document.createElement('div');
+            wrap.className = 'pw-toggle-wrap';
+            input.parentNode.insertBefore(wrap, input);
+            wrap.appendChild(input);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pw-toggle-btn';
+            btn.innerHTML = eyeOpen;
+            btn.title = 'แสดง/ซ่อนรหัสผ่าน';
+            btn.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                btn.innerHTML = isPassword ? eyeClosed : eyeOpen;
+                sfx('click');
+            });
+            wrap.appendChild(btn);
+        });
+    }
+    // Re-run after modals open
+    const _origOpenProfileModal = window.openProfileModal;
+    if (typeof _origOpenProfileModal === 'function') {
+        window.openProfileModal = function() { _origOpenProfileModal(); setTimeout(initPasswordToggles, 100); };
+    }
+    const _origOpenSettingsFromMenu = window.openSettingsFromMenu;
+    if (typeof _origOpenSettingsFromMenu === 'function') {
+        window.openSettingsFromMenu = function() { _origOpenSettingsFromMenu(); setTimeout(initPasswordToggles, 100); };
+    }
+    const _origShowLoginModal = window.showLoginModal;
+    if (typeof _origShowLoginModal === 'function') {
+        window.showLoginModal = function() { _origShowLoginModal(); setTimeout(initPasswordToggles, 100); };
+    }
+    const _origToggleRegisterForm = window.toggleRegisterForm;
+    if (typeof _origToggleRegisterForm === 'function') {
+        window.toggleRegisterForm = function() { _origToggleRegisterForm(); setTimeout(initPasswordToggles, 100); };
+    }
+
     // ---------- INTEGRATE WITH EXISTING SYSTEMS ----------
     // Hook into price updates
     const _origRenderData = window.renderData;
@@ -7131,6 +7183,7 @@ function convertToThaiDate(dateStr) {
     document.addEventListener('DOMContentLoaded', () => {
         initParticles();
         initNightSky();
+        initPasswordToggles();
         loadPriceAlerts();
         setTimeout(() => {
             checkAchievements();
