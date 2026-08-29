@@ -7013,7 +7013,7 @@ function convertToThaiDate(dateStr) {
         const buyerTotals = {};
         transactionsData.forEach(tx => {
             const name = tx.buyer || 'ไม่ทราบ';
-            const total = (tx.weight || 0) * (tx.buyPrice || 0);
+            const total = tx.totalCost || (tx.weight || 0) * (tx.buyprice || 0);
             buyerTotals[name] = (buyerTotals[name] || 0) + total;
         });
         const sorted = Object.entries(buyerTotals).sort((a, b) => b[1] - a[1]).slice(0, 5);
