@@ -37,17 +37,7 @@
         document.querySelector('#dynamic-manifest').setAttribute('href', URL.createObjectURL(manifestBlob));
         // Init toggle UI & chart default
         setTimeout(() => { updateToggleUI(); setChartRange('24h'); }, 500);
-        // Auto-update version display with current date
-        try {
-            const now = new Date();
-            const day = now.getDate();
-            const month = now.toLocaleDateString('th-TH', {month: 'short'});
-            const year = now.getFullYear() + 543;
-            const verBtn = document.querySelector('button[onclick="openChangelog()"]');
-            if (verBtn) verBtn.innerHTML = verBtn.innerHTML.replace(/v[\d.]+/, 'v1.2.' + day);
-            const verTitle = document.querySelector('#changelog-modal h3');
-            if (verTitle) verTitle.innerHTML = verTitle.innerHTML.replace(/v[\d.]+/, 'v1.2.' + day);
-        } catch(e) {}
+        // Version display is managed by Firebase real-time listener (loadVersionFromFirebase)
         
         // ========== PWA Install Prompt Banner ==========
         let deferredPrompt = null;
