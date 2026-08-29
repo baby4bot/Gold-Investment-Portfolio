@@ -1336,23 +1336,36 @@
                     .toggle-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #666; transition: all 0.3s; }
                     .toggle-track.active { background: var(--accent-blue); border-color: var(--accent-blue); }
                     .toggle-track.active::after { left: 18px; background: #fff; }
+                    .toggle-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 16px; font-size: 12px; font-weight: 700; border: 1px solid rgba(212,160,23,0.3); background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(245,158,11,0.05)); color: #d4a017; transition: all 0.3s ease; cursor: pointer; }
+                    .toggle-badge:hover { border-color: rgba(212,160,23,0.5); box-shadow: 0 0 12px rgba(212,160,23,0.2); }
+                    .toggle-badge.active { background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(245,158,11,0.15)); border-color: #d4a017; box-shadow: 0 0 12px rgba(212,160,23,0.3); }
+                    .toggle-badge .toggle-icon { font-size: 16px; }
+                    .toggle-badge .toggle-label { color: var(--text-primary); font-size: 11px; }
+                    .toggle-badge .toggle-status { font-size: 10px; color: var(--text-secondary); }
+                    .toggle-badge.line-badge { border-color: rgba(6,199,85,0.3); background: linear-gradient(135deg, rgba(6,199,85,0.08), rgba(6,199,85,0.05)); }
+                    .toggle-badge.line-badge.active { background: linear-gradient(135deg, rgba(6,199,85,0.2), rgba(6,199,85,0.15)); border-color: #06c755; box-shadow: 0 0 12px rgba(6,199,85,0.3); }
                 </style>
                 <div id="toggle-section" class="mt-2 px-4 mb-3 flex justify-center">
-                    <div class="flex items-center justify-center gap-3">
-                        <div class="flex items-center gap-2">
-                            <i class="ph ph-speaker-high" style="color: var(--accent-gold); font-size: 14px;"></i>
-                            <span class="text-[11px] font-bold" style="color: var(--text-secondary);">เสียง</span>
-                            <div id="sound-toggle-track" class="toggle-track" onclick="toggleSound()"></div>
+                    <div class="flex items-center justify-center gap-2 flex-wrap">
+                        <div id="sound-toggle-badge" class="toggle-badge active" onclick="toggleSound()">
+                            <span class="toggle-icon">🔔</span>
+                            <div class="flex flex-col">
+                                <span class="toggle-label">เปิดเสียงแจ้งเตือน</span>
+                            </div>
                         </div>
 
-                        <div class="flex items-center gap-2">
-                            <i class="ph ph-microphone" style="color: var(--accent-gold); font-size: 14px;"></i>
-                            <span class="text-[11px] font-bold" style="color: var(--text-secondary);">เสียงพูด</span>
-                            <div id="voice-toggle-track" class="toggle-track" onclick="toggleVoice()"></div>
+                        <div id="voice-toggle-badge" class="toggle-badge" onclick="toggleVoice()">
+                            <span class="toggle-icon">🎙️</span>
+                            <div class="flex flex-col">
+                                <span class="toggle-label">เสียงพูด</span>
+                            </div>
                         </div>
-                        <div id="line-toggle-container" class="flex items-center gap-1.5 cursor-pointer" style="background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 10px; padding: 5px 10px; transition: all 0.2s;" onclick="toggleLineNotify()">
-                            <svg id="line-toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="#06c755"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.271.173-.508.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-                            <span id="line-toggle-text" class="text-[11px] font-bold" style="color: #06c755;">LINE</span>
+
+                        <div id="line-toggle-container" class="toggle-badge line-badge" onclick="toggleLineNotify()">
+                            <span class="toggle-icon">💬</span>
+                            <div class="flex flex-col">
+                                <span class="toggle-label" style="color: #06c755;">LINE</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2698,9 +2711,16 @@ function convertToThaiDate(dateStr) {
     }
 
     function updateToggleUI() {
+        const soundBadge = document.getElementById('sound-toggle-badge');
         const soundTrack = document.getElementById('sound-toggle-track');
         const pushTrack = document.getElementById('push-toggle-track');
+        const voiceBadge = document.getElementById('voice-toggle-badge');
         const voiceTrack = document.getElementById('voice-toggle-track');
+        const lineBadge = document.getElementById('line-toggle-container');
+        if (soundBadge) {
+            if (soundEnabled) { soundBadge.classList.add('active'); soundBadge.querySelector('.toggle-label').textContent = 'เปิดเสียงแจ้งเตือน'; }
+            else { soundBadge.classList.remove('active'); soundBadge.querySelector('.toggle-label').textContent = 'ปิดเสียงแจ้งเตือน'; }
+        }
         if (soundTrack) {
             if (soundEnabled) soundTrack.classList.add('active');
             else soundTrack.classList.remove('active');
@@ -2709,9 +2729,17 @@ function convertToThaiDate(dateStr) {
             if (pushEnabled) pushTrack.classList.add('active');
             else pushTrack.classList.remove('active');
         }
+        if (voiceBadge) {
+            if (voiceEnabled) { voiceBadge.classList.add('active'); voiceBadge.querySelector('.toggle-label').textContent = 'เปิดเสียงพูด'; }
+            else { voiceBadge.classList.remove('active'); voiceBadge.querySelector('.toggle-label').textContent = 'ปิดเสียงพูด'; }
+        }
         if (voiceTrack) {
             if (voiceEnabled) voiceTrack.classList.add('active');
             else voiceTrack.classList.remove('active');
+        }
+        if (lineBadge) {
+            if (typeof lineEnabled !== 'undefined' && lineEnabled) lineBadge.classList.add('active');
+            else lineBadge.classList.remove('active');
         }
     }
 
