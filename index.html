@@ -972,6 +972,50 @@
     .game-coins { display: flex; gap: 4px; justify-content: center; }
     .game-coin { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #d4a017, #f59e0b); border: 2px solid #b8941f; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #000; }
 
+    /* ========== SKELETON LOADING ========== */
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: skeletonShimmer 1.5s infinite ease-in-out; border-radius: 8px; }
+    .skeleton-text { height: 14px; margin-bottom: 8px; }
+    .skeleton-text-sm { height: 10px; width: 60%; margin-bottom: 6px; }
+    .skeleton-circle { width: 48px; height: 48px; border-radius: 50%; }
+    .skeleton-card { height: 120px; border-radius: 16px; margin-bottom: 12px; }
+    .skeleton-price { height: 32px; width: 140px; margin: 0 auto 8px; }
+    @keyframes skeletonShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-primary); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
+    .skeleton-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    /* ========== PAGE TRANSITION ========== */
+    .view-section { animation: fadeSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes fadeSlideIn { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+    .gold-dashboard-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .gold-dashboard-card:active { transform: scale(0.98); }
+
+    /* ========== TOAST SWIPE ========== */
+    .toast-swipe { touch-action: pan-x; user-select: none; cursor: grab; }
+    .toast-swipe:active { cursor: grabbing; }
+    .toast-dismiss { animation: toastSlideOut 0.3s ease forwards; }
+    @keyframes toastSlideOut { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(100%); } }
+
+    /* ========== MICRO-INTERACTIONS ========== */
+    .btn-glow:hover { box-shadow: 0 0 20px rgba(212,160,23,0.3); }
+    .btn-glow:active { transform: scale(0.95); }
+    .icon-bounce { transition: transform 0.2s ease; }
+    .icon-bounce:hover { transform: scale(1.15); }
+    .icon-bounce:active { transform: scale(0.9); }
+    .card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+    .ripple { position: relative; overflow: hidden; }
+    .ripple::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255,255,255,0.15); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.4s, height 0.4s; }
+    .ripple:active::after { width: 200px; height: 200px; }
+
+    /* ========== FLOATING ANIMATION ========== */
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .float-anim { animation: float 3s ease-in-out infinite; }
+
+    /* ========== PULSE DOT ========== */
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; position: relative; }
+    .pulse-dot::after { content: ''; position: absolute; top: -4px; left: -4px; width: 16px; height: 16px; border-radius: 50%; background: rgba(34,197,94,0.3); animation: pulseRing 2s infinite; }
+    @keyframes pulseRing { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+
     /* ========== USER CARD REDESIGN ========== */
     .user-card-new { background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 16px; padding: 0; overflow: hidden; transition: all 0.2s ease; }
     .user-card-new:hover { border-color: rgba(212,160,23,0.3); }
@@ -1093,6 +1137,25 @@
                 </label>
             </div>
             <button onclick="logout()" class="w-full text-center px-5 py-3.5 rounded-2xl text-[15px] font-bold transition flex items-center justify-center gap-2 cursor-pointer" style="color: #ffffff; background: #ef4444; border: 1px solid #ef4444;"><i class="ph ph-sign-out" style="color: #ffffff;"></i> ออกจากระบบ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== SKELETON LOADING ========== -->
+<div id="skeleton-overlay" class="skeleton-overlay">
+    <div style="text-align:center; width:90%; max-width:340px;">
+        <div class="skeleton skeleton-price" style="height:40px; width:200px; margin:0 auto 16px;"></div>
+        <div class="skeleton skeleton-text" style="width:80%; margin:0 auto 8px;"></div>
+        <div class="skeleton skeleton-text-sm" style="width:50%; margin:0 auto 24px;"></div>
+        <div style="display:flex; gap:12px; margin-bottom:16px;">
+            <div class="skeleton" style="flex:1; height:70px; border-radius:12px;"></div>
+            <div class="skeleton" style="flex:1; height:70px; border-radius:12px;"></div>
+        </div>
+        <div class="skeleton skeleton-card" style="height:100px;"></div>
+        <div class="skeleton skeleton-card" style="height:100px;"></div>
+        <div style="margin-top:16px;">
+            <div class="skeleton" style="height:10px; width:40%; margin:0 auto 6px;"></div>
+            <div class="skeleton" style="height:8px; width:30%; margin:0 auto;"></div>
         </div>
     </div>
 </div>
@@ -7280,6 +7343,9 @@ function convertToThaiDate(dateStr) {
             setInterval(updateGoldenHour, 60000);
             setInterval(updateFearGreedIndex, 30000);
             _prevPriceValue = currentGoldBuyPrice;
-        }, 2000);
+            // Hide skeleton loading
+            const sk = document.getElementById('skeleton-overlay');
+            if (sk) { sk.classList.add('hidden'); setTimeout(() => sk.remove(), 600); }
+        }, 1500);
     });
 </script>
