@@ -5246,7 +5246,6 @@ function convertToThaiDate(dateStr) {
                     <div class="user-card-info">
                         <div class="user-card-name">${u.name}</div>
                         <div class="user-card-username">@${u.username}</div>
-                        ${u.phone ? `<a href="tel:${u.phone}" class="user-card-phone"><span>📞</span> ${u.phone}</a>` : ''}
                     </div>
                     <div class="user-card-actions">
                         <button onclick="toggleFav('${u.username}')" class="btn-fav" title="${u.isFavorite ? 'ยกเลิกถูกใจ' : 'ถูกใจ'}">${u.isFavorite ? '⭐' : '☆'}</button>
@@ -5257,6 +5256,8 @@ function convertToThaiDate(dateStr) {
                         ${u.isBanned ? `<button onclick="unbanUser('${u.username}')" class="btn-unban" title="ปลดแบน"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>` : `<button onclick="banUser('${u.username}')" class="btn-ban" title="แบน"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></button>`}
                     </div>
                 </div>
+                <!-- Phone Row -->
+                ${u.phone ? `<div class="px-3 pb-1"><a href="tel:${u.phone}" class="user-card-phone"><span>📞</span> ${u.phone}</a></div>` : ''}
                 <!-- Status Row -->
                 <div class="user-card-status">
                     <div class="status-dot ${isOnline ? 'online' : 'offline'}"></div>
