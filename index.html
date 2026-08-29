@@ -386,7 +386,10 @@
     .form-collapse { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease, margin 0.3s ease, padding 0.3s ease; opacity: 0; margin: 0 !important; padding: 0 !important; }
     .form-expand { max-height: 2000px; opacity: 1; }
     .pin-dot, .s-pin-dot { transition: all 0.2s ease-in-out; }
-    #item-modal { overscroll-behavior: contain; }    #view-manage-tx.active #add-tx-form-container.form-collapse { display: none !important; }
+    #item-modal { overscroll-behavior: contain; }    #view-manage-tx.active { height: calc(100vh - 60px); display: flex; flex-direction: column; overflow: hidden; }
+    #view-manage-tx.active #manage-tx-sticky-header { top: 0 !important; flex-shrink: 0; position: sticky !important; z-index: 50; }
+    #view-manage-tx.active #tx-list-section { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    #view-manage-tx.active #add-tx-form-container.form-collapse { display: none !important; }
     #view-manage-tx.active #add-tx-form-container.form-expand { display: block !important; max-height: none !important; opacity: 1 !important; }
     #price-history-modal { overscroll-behavior: contain; }
     #price-history-list { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
@@ -4292,6 +4295,8 @@ function convertToThaiDate(dateStr) {
         currentView = viewName; closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' });
         // Lock pull-to-refresh on non-dashboard views
         document.body.style.overscrollBehaviorY = (viewName === 'dashboard') ? 'auto' : 'none';
+        document.body.style.overflow = (viewName === 'manage-tx') ? 'hidden' : '';
+        document.documentElement.style.overflow = (viewName === 'manage-tx') ? 'hidden' : '';
 
         if(viewName === 'dashboard') renderData();
         if(viewName === 'manage-tx') toggleAddTxForm(false);        if(viewName === 'manage-users') { renderUsersCards(); updateBannedCount(); }
