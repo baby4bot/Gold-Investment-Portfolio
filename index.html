@@ -972,11 +972,6 @@
     .game-coins { display: flex; gap: 4px; justify-content: center; }
     .game-coin { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #d4a017, #f59e0b); border: 2px solid #b8941f; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #000; }
 
-    /* ========== PIE CHART ========== */
-    .pie-chart-container { width: 160px; height: 160px; border-radius: 50%; position: relative; margin: 0 auto; }
-    .pie-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
-    .pie-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
     /* ========== USER CARD REDESIGN ========== */
     .user-card-new { background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 16px; padding: 0; overflow: hidden; transition: all 0.2s ease; }
     .user-card-new:hover { border-color: rgba(212,160,23,0.3); }
@@ -1343,19 +1338,6 @@
                                 <p class="text-[11px]" style="color:var(--text-secondary);">ช่วง 09:00-11:00 และ 14:00-16:00</p>
                                 <p class="text-[10px] mt-1" style="color:var(--text-muted);">⏱ เวลาที่เหลือ: <span id="gh-countdown" class="font-bold" style="color:#d4a017;">--:--</span></p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ========== PORTFOLIO PIE CHART ========== -->
-                <div class="px-4 pb-3" id="portfolio-pie-section">
-                    <div class="gold-dashboard-card p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-chart-pie-slice"></i> สัดส่วนพอร์ตลงทุน</span>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="pie-chart-container" id="portfolio-pie"></div>
-                            <div id="pie-legend" class="flex-1 space-y-2"></div>
                         </div>
                     </div>
                 </div>
@@ -7000,40 +6982,6 @@ function convertToThaiDate(dateStr) {
         }
     }
 
-    // ---------- PORTFOLIO PIE CHART ----------
-    function updatePortfolioPie() {
-        const container = document.getElementById('portfolio-pie');
-        const legend = document.getElementById('pie-legend');
-        if (!container || !legend) return;
-        if (!transactionsData || transactionsData.length === 0) {
-            container.style.background = 'conic-gradient(rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.05) 100%)';
-            legend.innerHTML = '<p class="text-xs" style="color:var(--text-muted);">ยังไม่มีข้อมูล</p>';
-            return;
-        }
-        const buyerTotals = {};
-        transactionsData.forEach(tx => {
-            const name = tx.buyer || 'ไม่ทราบ';
-            const total = tx.totalCost || (tx.weight || 0) * (tx.buyprice || 0);
-            buyerTotals[name] = (buyerTotals[name] || 0) + total;
-        });
-        const sorted = Object.entries(buyerTotals).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        const total = sorted.reduce((sum, [, v]) => sum + v, 0);
-        if (total === 0) { container.style.background = 'conic-gradient(rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.05) 100%)'; return; }
-        const colors = ['#d4a017', '#22c55e', '#3b82f6', '#ef4444', '#a855f7'];
-        let gradParts = [], offset = 0;
-        sorted.forEach(([, val], i) => {
-            const pct = (val / total) * 100;
-            gradParts.push(colors[i % colors.length] + ' ' + offset + '% ' + (offset + pct) + '%');
-            offset += pct;
-        });
-        container.style.background = 'conic-gradient(' + gradParts.join(', ') + ')';
-        container.style.borderRadius = '50%';
-        legend.innerHTML = sorted.map(([name, val], i) => {
-            const pct = ((val / total) * 100).toFixed(1);
-            return `<div class="pie-legend-item"><div class="pie-legend-dot" style="background:${colors[i % colors.length]};"></div><span style="color:var(--text-primary);">${name}</span><span style="color:var(--text-muted);margin-left:auto;">${pct}%</span></div>`;
-        }).join('');
-    }
-
     // ---------- PRICE ALERT SYSTEM ----------
     let priceAlerts = [];
     function loadPriceAlerts() {
@@ -7328,10 +7276,9 @@ function convertToThaiDate(dateStr) {
             checkAchievements();
             updateFearGreedIndex();
             updateGoldenHour();
-            updatePortfolioPie();
             showOnboarding();
             setInterval(updateGoldenHour, 60000);
-            setInterval(() => { updateFearGreedIndex(); updatePortfolioPie(); }, 30000);
+            setInterval(updateFearGreedIndex, 30000);
             _prevPriceValue = currentGoldBuyPrice;
         }, 2000);
     });
