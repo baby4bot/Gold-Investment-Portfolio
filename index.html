@@ -5105,10 +5105,13 @@ function convertToThaiDate(dateStr) {
             if (currentRole !== 'admin') notifyAdminOffline(_presenceUsername);
         }
         localStorage.removeItem('goldAppSession');
-        localStorage.setItem('goldAppManualLogout', '1');
-        playLogoutSound();
-        setTimeout(() => location.reload(), 500);
+        localStorage.setItem('goldAppManualLogout', '1');        playLogoutSound();
+        showToggleCard('👋', 'ออกจากระบบ', 'กำลังออกจากระบบ... แล้วพบกันใหม่!');
+        setTimeout(() => location.reload(), 2000);
     }
+
+
+
 
     function loadUsers() {
         if(!db) return;
