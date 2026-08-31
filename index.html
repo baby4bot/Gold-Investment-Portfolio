@@ -5630,7 +5630,7 @@ function convertToThaiDate(dateStr) {
 
             dashboardContainer.innerHTML += `
             <div onclick="openModal(${index})" class="app-card rounded-2xl p-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${getCardStyleClass(tx)}" style="background: linear-gradient(145deg, rgba(30,30,42,0.95), rgba(20,20,28,0.98)); border: 1px solid ${tx.totalProfit >= 0 ? 'rgba(34,197,94,0.25)' : 'rgba(255,51,51,0.25)'}; box-shadow: 0 4px 20px ${tx.totalProfit >= 0 ? 'rgba(34,197,94,0.08)' : 'rgba(255,51,51,0.08)'};">
-                ${isAdmin ? '<div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#f97316,#ea580c);padding:4px 12px;border-radius:0 0 0 12px;font-size:10px;font-weight:800;color:#fff;z-index:10;display:flex;align-items:center;gap:4px;">🛡️ Admin Port</div>' : ''}<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${tx.totalProfit >= 0 ? '#22c55e' : '#ff3333'},transparent);opacity:0.4;"></div>
+                ${isAdmin ? '<div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#f97316,#ea580c);padding:4px 12px;border-radius:0 0 0 12px;font-size:10px;font-weight:800;color:#fff;z-index:10;display:flex;align-items:center;gap:4px;">🛡️ Admin Port</div><div style="position:absolute;top:' + (isAdmin ? '24px' : '0') + ';right:0;background:linear-gradient(135deg,' + (tx.totalProfit >= 0 ? 'rgba(34,197,94,0.9),rgba(22,163,74,0.9)' : 'rgba(255,51,51,0.9),rgba(220,38,38,0.9)') + ');padding:3px 10px;border-radius:0 0 0 10px;font-size:9px;font-weight:800;color:#fff;z-index:10;">' + (tx.totalProfit >= 0 ? '🟢 กำไร' : '🔴 ขาดทุน') + '</div>' : '<div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,' + (tx.totalProfit >= 0 ? 'rgba(34,197,94,0.9),rgba(22,163,74,0.9)' : 'rgba(255,51,51,0.9),rgba(220,38,38,0.9)') + ');padding:4px 12px;border-radius:0 0 0 12px;font-size:10px;font-weight:800;color:#fff;z-index:10;">' + (tx.totalProfit >= 0 ? '🟢 กำไร' : '🔴 ขาดทุน') + '</div>'}<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${tx.totalProfit >= 0 ? '#22c55e' : '#ff3333'},transparent);opacity:0.4;"></div>
                 <!-- Header: Avatar + Name -->
                 <div class="flex items-center gap-3 mb-3">
                     <div class="relative shrink-0">
@@ -5641,7 +5641,6 @@ function convertToThaiDate(dateStr) {
                         <p class="text-white font-black text-base leading-tight truncate" style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${tx.buyer}</p>
                         <p style="font-size:11px;color:#94a3b8;font-weight:600;margin-top:3px;">📅 ${formatDateThai(tx.date)}</p>
                     </div>
-                    <div style="padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:${tx.totalProfit >= 0 ? '#4ade80' : '#f87171'};">${tx.totalProfit >= 0 ? '🟢 กำไร' : '🔴 ขาดทุน'}</div>
                 </div>
                 <!-- Price Grid -->
                 <div class="grid grid-cols-2 gap-2 mb-2">
