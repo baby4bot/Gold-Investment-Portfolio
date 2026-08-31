@@ -3721,7 +3721,7 @@ function convertToThaiDate(dateStr) {
                 const lastSeen = localStorage.getItem('goldAppLastSeen');
                 const awayMs = lastSeen ? Date.now() - parseInt(lastSeen) : 999999999;
                 logUserLogin(currentUser.username);
-                if (awayMs > 300000) notifyAdminLogin(currentUser.username);
+                notifyAdminLogin(currentUser.username);
             }
         }
         // ทำงานพร้อมกันเพื่อความเร็ว
@@ -4731,12 +4731,14 @@ function convertToThaiDate(dateStr) {
         const u = appUsers[username];
         const now = new Date();
         const duration = _loginTimestamp ? Math.round((Date.now() - _loginTimestamp) / 60000) : 0;
-        const notifPayload = { username: username, name: u.name, ip: 'N/A', type: 'offline', duration: duration,
-            time: now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
-            date: now.toLocaleDateString('th-TH'), timestamp: Date.now() };
-        if (db) {
-            db.ref('admin_notifications').push(notifPayload);
-        }
+        getPublicIP().then(ip => {
+            const notifPayload = { username: username, name: u.name, ip: ip || 'N/A', type: 'offline', duration: duration,
+                time: now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+                date: now.toLocaleDateString('th-TH'), timestamp: Date.now() };
+            if (db) {
+                db.ref('admin_notifications').push(notifPayload);
+            }
+        });
     }
 
     function showAdminLoginAlert(notif) {
