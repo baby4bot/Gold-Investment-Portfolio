@@ -4335,6 +4335,18 @@ function convertToThaiDate(dateStr) {
                 const awayMs = lastSeen ? Date.now() - parseInt(lastSeen) : 999999999;
                 logUserLogin(currentUser.username);
                 notifyAdminLogin(currentUser.username);
+                // Welcome modal ครั้งแรกของวันเท่านั้น
+                var today = new Date().toDateString();
+                var lastWelcome = localStorage.getItem('goldAppLastWelcome');
+                if (lastWelcome !== today) {
+                    localStorage.setItem('goldAppLastWelcome', today);
+                    setTimeout(() => {
+                        var welcomeName = currentUser.name || currentUser.username || 'User';
+                        var welcomeRole = (currentRole === 'admin') ? 'Admin' : 'ผู้ใช้งาน';
+                        var welcomeIcon = (currentRole === 'admin') ? '👑' : '👤';
+                        showToggleCard(welcomeIcon, 'ยินดีต้อนรับ!', welcomeName, { avatar: userProfiles[welcomeName] || undefined, role: welcomeRole, duration: 2500 });
+                    }, 800);
+                }
             }
         }
         // ทำงานพร้อมกันเพื่อความเร็ว
