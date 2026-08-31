@@ -4682,14 +4682,27 @@ function convertToThaiDate(dateStr) {
                     const isNowOnline = newPresence[username] && newPresence[username].online === true;
                     const wasOnline = _prevOnlineState[username];
                     if (wasOnline !== isNowOnline && appUsers && appUsers[username]) {
-                        // Only show offline notification, skip online (handled by notifyAdminLogin)
                         if (!isNowOnline) {
-                            const duration = newPresence[username].lastSeen && _loginTimestamp ? Math.round((newPresence[username].lastSeen - _loginTimestamp) / 60000) : 0;
+                            // Offline notification
+                            const duration = newPresence[username].lastSeen ? Math.round((Date.now() - newPresence[username].lastSeen) / 60000) : 0;
                             showAdminLoginAlert({
                                 username: username, name: appUsers[username].name, type: 'offline',
                                 ip: 'N/A', duration: duration,
                                 time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
                             });
+                        } else if (wasOnline === false) {
+                            // Online notification only if user was offline > 30 sec (skip quick refresh)
+                            const lastSeen = newPresence[username] && newPresence[username].lastSeen;
+                            const offMs = lastSeen ? Date.now() - lastSeen : 0;
+                            if (offMs > 30000) {
+                                getPublicIP().then(ip => {
+                                    showAdminLoginAlert({
+                                        username: username, name: appUsers[username].name, type: 'online',
+                                        ip: ip || 'N/A', duration: 0,
+                                        time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+                                    });
+                                });
+                            }
                         }
                     }
                 });
