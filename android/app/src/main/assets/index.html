@@ -4690,12 +4690,12 @@ function convertToThaiDate(dateStr) {
                                 ip: 'N/A', duration: duration,
                                 time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
                             });
-                        } else if (wasOnline === false) {
-                            // Online notification only if user was offline > 30 sec (skip quick refresh)
-                            const lastSeen = newPresence[username] && newPresence[username].lastSeen;
-                            const offMs = lastSeen ? Date.now() - lastSeen : 0;
-                            if (offMs > 30000) {
-                                getPublicIP().then(ip => {
+                        } else {
+                            // Online notification — check if user was offline > 30 sec (skip quick refresh)
+                            var lastSeenTs = newPresence[username] && newPresence[username].lastSeen;
+                            var offMs = lastSeenTs ? Date.now() - lastSeenTs : 0;
+                            if (offMs > 30000 || wasOnline === undefined) {
+                                getPublicIP().then(function(ip) {
                                     showAdminLoginAlert({
                                         username: username, name: appUsers[username].name, type: 'online',
                                         ip: ip || 'N/A', duration: 0,
