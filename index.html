@@ -4330,11 +4330,8 @@ function convertToThaiDate(dateStr) {
             if (currentUser) {
                 setupPresence(currentUser.username);
                 if (currentRole === 'admin') setupAdminNotifListener();
-                // Log re-login if session was saved (notify admin only if away > 5 min)
-                const lastSeen = localStorage.getItem('goldAppLastSeen');
-                const awayMs = lastSeen ? Date.now() - parseInt(lastSeen) : 999999999;
+                // Log re-login (no admin notification on refresh)
                 logUserLogin(currentUser.username);
-                if (awayMs > 300000) notifyAdminLogin(currentUser.username);
                 // Welcome modal ครั้งแรกของวันเท่านั้น
                 var today = new Date().toDateString();
                 var lastWelcome = localStorage.getItem('goldAppLastWelcome');
