@@ -5330,13 +5330,13 @@ function convertToThaiDate(dateStr) {
                             var lastSeenTs = newPresence[username] && newPresence[username].lastSeen;
                             var offMs = lastSeenTs ? Date.now() - lastSeenTs : 0;
                             if (offMs > 30000 || wasOnline === undefined) {
-                                getPublicIP().then(function(ip) {
-                                    showAdminLoginAlert({
-                                        username: username, name: appUsers[username].name, type: 'online',
-                                        ip: ip || 'N/A', duration: 0,
-                                        time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
-                                    });
+                                var nowTime = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                                showAdminLoginAlert({
+                                    username: username, name: appUsers[username].name, type: 'online',
+                                    ip: 'N/A', duration: 0, time: nowTime
                                 });
+                                // Update IP async
+                                getPublicIP().then(function(ip) { if (ip) db.ref('user_logins/' + username + '/ip').set(ip); });
                             }
                         }
                     }
