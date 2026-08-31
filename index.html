@@ -5308,24 +5308,14 @@ function convertToThaiDate(dateStr) {
     }
 
     function showAdminLoginAlert(notif) {
-        const existing = document.getElementById('admin-login-alert');
-        if (existing) existing.remove();
-        const profImg = getProfileImg(notif.name || notif.username);
         const isOnline = notif.type !== 'offline';
-        const color = isOnline ? '#22c55e' : '#ef4444';
-        const bgColor = isOnline ? 'rgba(34,197,94,' : 'rgba(239,68,68,';
+        const profImg = getProfileImg(notif.name || notif.username);
         const icon = isOnline ? '🟢' : '🔴';
-        const statusText = isOnline ? 'ออนไลน์' : 'ออฟไลน์';
-        const detailText = isOnline
+        const title = isOnline ? `${notif.name || notif.username} ออนไลน์` : `${notif.name || notif.username} ออฟไลน์`;
+        const desc = isOnline
             ? `เข้าสู่ระบบเมื่อ ${notif.time || ''} • IP: ${notif.ip || 'N/A'}`
             : `ปิดเว็บเมื่อ ${notif.time || ''}${notif.duration ? ' • ใช้เวลา ' + notif.duration + ' นาที' : ''}`;
-        const alertEl = document.createElement('div');
-        alertEl.id = 'admin-login-alert';
-        alertEl.style.cssText = `position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:900;background:linear-gradient(135deg,${bgColor}0.15),${bgColor}0.05));border:1px solid ${bgColor}0.3);border-radius:1rem;padding:12px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);backdrop-filter:blur(20px);animation:slideDown 0.3s ease;max-width:90%;width:340px;cursor:pointer;`;
-        alertEl.onclick = () => alertEl.remove();
-        alertEl.innerHTML = `<img src="${profImg}" style="width:40px;height:40px;border-radius:50%;border:2px solid ${color};object-fit:cover;"><div style="flex:1;"><div style="color:${color};font-weight:900;font-size:13px;">${icon} ${notif.name || notif.username} ${statusText}</div><div style="color:#9ca3af;font-size:10px;font-weight:bold;margin-top:2px;">${detailText}</div></div><span style="color:#6b7280;font-size:18px;">✕</span>`;
-        document.body.appendChild(alertEl);
-        setTimeout(() => { if (alertEl.parentNode) { alertEl.style.opacity = '0'; alertEl.style.transition = 'opacity 0.3s'; setTimeout(() => alertEl.remove(), 300); } }, 2000);
+        showToggleCard(icon, title, desc, { avatar: profImg, duration: 2500 });
     }
 
     function loadLoginHistory(username) {
