@@ -5138,7 +5138,7 @@ function convertToThaiDate(dateStr) {
             let halfBuyers = Object.keys(halfHalfGroups);
             if (halfBuyers.length === 0) { halfContainer.innerHTML = ''; } 
             else {
-                let halfHTML = `<div class="mt-14 w-full max-w-2xl mx-auto flex flex-col gap-10"><div class="text-center"><span class="bg-blue-600/10 text-blue-400 px-4 py-1.5 rounded-full text-xs font-black border border-blue-500/20 shadow-inner">&#x1F91D; สรุปโครงการคนละครึ่ง (รวมทุกรายการ)</span></div>`;
+                let halfHTML = `<div class="mt-14 w-full max-w-2xl mx-auto flex flex-col gap-10"><div class="text-center"><span class="bg-blue-600/10 text-blue-400 px-4 py-1.5 rounded-full text-xs font-black border border-blue-500/20 shadow-inner">&#x1F91D; สรุปโครงการคนละครึ่ง</span></div>`;
                 halfBuyers.forEach(buyer => {
                     let group = halfHalfGroups[buyer], halfShare = group.totalProfit / 2;
                     let pColTotal = group.totalProfit >= 0 ? 'text-green-400' : 'text-red-400', pColShare = halfShare >= 0 ? 'text-green-400' : 'text-red-400';
