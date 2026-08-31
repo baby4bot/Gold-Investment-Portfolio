@@ -776,10 +776,9 @@
     [data-theme="light"] #profile-modal > div { background: #ffffff !important; border-color: #e5e5e5 !important; }
 
     /* Admin settings modal - Light Theme */
-    [data-theme="light"] #admin-settings-modal > div { background: #ffffff !important; border-color: #e5e5e5 !important; }
+    [data-theme="light"] #admin-settings-modal > div { background: #ffffff !important; border-color: #e5e5e5 !important; padding-top: 8px !important; }
     [data-theme="light"] #admin-settings-modal h3 { color: #5D3A00 !important; text-shadow: none !important; }
     [data-theme="light"] #settings-profile-header h3 { color: #5D3A00 !important; text-shadow: none !important; }
-    [data-theme="light"] #admin-settings-modal { padding-top: 8px !important; }
     [data-theme="light"] #admin-settings-modal > div > div:first-child { background: linear-gradient(90deg,transparent,#b8860b,transparent) !important; }
     [data-theme="light"] #admin-settings-modal .flex.gap-1 { background: #f0ece4 !important; }
     [data-theme="light"] #admin-settings-modal .admin-tab[style*="color: #94a3b8"] { color: #666 !important; }
@@ -796,6 +795,8 @@
     [data-theme="light"] #admin-settings-modal .hover\:bg-gray-600\/80:hover { background: #e8e0d0 !important; }
     /* Change password section */
     [data-theme="light"] #admin-settings-pass .text-white { color: #333 !important; }
+    /* Fix sticky close button overlapping header */
+    [data-theme="light"] #admin-settings-modal > div > div[style*="sticky"] { margin: 0 -20px 8px 0 !important; padding: 4px 8px 0px 0 !important; }
 
     /* Custom confirm modal */
     [data-theme="light"] #custom-confirm-modal > div { background: #ffffff !important; border-color: #e5e5e5 !important; }
