@@ -4322,15 +4322,6 @@ function convertToThaiDate(dateStr) {
             loadTheme(); loadPinEnabledSetting();
         }
         updateUIRole(); loadAdminSettings(); loadVersionFromFirebase(); loadChangelogFromFirebase(); loadUsers(); loadProfiles(); _skipPresenceNotif = true; setupOnlineStatusListener(); setTimeout(() => { _skipPresenceNotif = false; }, 3000);
-        // Welcome modal on every app open
-        if (currentUser) {
-            setTimeout(() => {
-                var welcomeName = currentUser.name || currentUser.username || 'User';
-                var welcomeRole = (currentRole === 'admin') ? 'Admin' : 'ผู้ใช้งาน';
-                var welcomeIcon = (currentRole === 'admin') ? '👑' : '👤';
-                showToggleCard(welcomeIcon, 'ยินดีต้อนรับ!', welcomeName, { avatar: userProfiles[welcomeName] || undefined, role: welcomeRole, duration: 2500 });
-            }, 800);
-        }
         // Firebase listener สำหรับ PIN ban — ต้อง setup เสมอ (ไม่ว่าจะ login หรือยัง)
         loadPinEnabledSetting(); loadPinBanHours();
         if(db) {
