@@ -1638,7 +1638,7 @@
     </div>
 
     <div class="text-center text-gray-600 text-xs mt-10 pb-4 font-bold tracking-wider">
-        <button onclick="openChangelog()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full transition-all active:scale-95" style="background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; font-weight: 700; font-size: 12px; border: none;" onmouseover="this.style.background='linear-gradient(135deg, #fb923c, #f97316)';this.style.transform='scale(1.05)'" onmouseout="this.style.background='linear-gradient(135deg, #f97316, #ea580c)';this.style.transform='scale(1)'"><i class="ph ph-tag" style="font-size: 12px;"></i> v1.2.4</button>
+        <button onclick="openChangelog()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full transition-all active:scale-95" style="background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; font-weight: 700; font-size: 12px; border: none;" onmouseover="this.style.background='linear-gradient(135deg, #fb923c, #f97316)';this.style.transform='scale(1.05)'" onmouseout="this.style.background='linear-gradient(135deg, #f97316, #ea580c)';this.style.transform='scale(1)'"><i class="ph ph-tag" style="font-size: 12px;"></i> v1.2.5</button>
         <div class="mt-2" style="color: var(--text-muted);">Design by นักเลงคีย์บอร์ด</div>
     </div>
 
@@ -1647,10 +1647,24 @@
     <div class="rounded-[1.75rem] shadow-2xl w-full max-w-md relative modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); max-height: 92vh; overflow-y: auto; position: relative; padding: 20px 20px 0 20px; display: flex; flex-direction: column;">
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
         <div class="flex items-center justify-between mb-4">
-            <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-tag"></i> เวอร์ชัน v1.2.4</h3>
+            <h3 style="color:#d4a017;font-size:18px;font-weight:900;"><i class="ph ph-tag"></i> เวอร์ชัน v1.2.5</h3>
             <button onclick="closeChangelog()" style="background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;">✕</button>
         </div>
         <div class="space-y-3" style="flex: 1;">
+            <!-- v1.2.5 -->
+            <div class="p-3 rounded-xl" style="background: var(--bg-elevated, rgba(0,0,0,0.3)); border: 1px solid var(--border-primary, rgba(255,255,255,0.06));">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black" style="background: var(--accent-green); color: #fff;">v1.2.5</span>
+                    <span class="text-xs font-bold" style="color: var(--text-secondary, #94a3b8);">1 กันยายน 2569</span>
+                </div>
+                <ul class="text-xs space-y-1" style="color: var(--text-secondary);">
+                    <li>✅ แก้ไขธีมสว่าง — หน้าตั้งค่า headers เห็นชัดทุกแท็บ</li>
+                    <li>✅ แก้ IP ไม่แสดงตอน user เปิด/refresh แอป</li>
+                    <li>✅ Welcome modal ครั้งแรกของวัน</li>
+                    <li>✅ การ์ดลงทุน — จัดกลาง, วันที่ไทย, ค่าบล็อก, ไอคอนทอง</li>
+                    <li>✅ แจ้งเตือน user login/logout แบบ modal card</li>
+                </ul>
+            </div>
             <!-- v1.2.3 -->
             <div class="p-3 rounded-xl" style="background: var(--bg-elevated, rgba(0,0,0,0.3)); border: 1px solid var(--border-primary, rgba(255,255,255,0.06));">
                 <div class="flex items-center gap-2 mb-2">
@@ -1743,7 +1757,7 @@
         </div>
         <div class="mb-4 p-3 rounded-xl" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06);">
             <p class="text-xs font-bold" style="color: #94a3b8;">เวอร์ชันปัจจุบัน</p>
-            <p class="text-2xl font-black" style="color: #d4a017;" id="current-version-display">v1.2.4</p>
+            <p class="text-2xl font-black" style="color: #d4a017;" id="current-version-display">v1.2.5</p>
         </div>
         <div class="mb-4">
             <label class="block text-xs font-bold mb-2" style="color: #94a3b8;">เวอร์ชันใหม่</label>
@@ -6580,7 +6594,7 @@ function convertToThaiDate(dateStr) {
     function seedLocalStorageChangelog() {
         let localData = loadLocalVersionData();
         const hardcoded = [
-            { version: 'v1.2.4', date: '29 สิงหาคม 2569', items: '<li>✅ อัปเดตไอคอนใหม่ — Megaphone, Shield, Bell, Hand-coins, Share arrow</li><li>✅ ล็อก Header หน้าจัดการข้อมูลทอง & ผู้ใช้งาน</li><li>✅ ลบช่องว่างเกินหลังรายการสุดท้าย</li><li>✅ Toast notification สไตล์ Badge ใหม่</li>', timestamp: Date.now() },
+            { version: 'v1.2.5', date: '29 สิงหาคม 2569', items: '<li>✅ อัปเดตไอคอนใหม่ — Megaphone, Shield, Bell, Hand-coins, Share arrow</li><li>✅ ล็อก Header หน้าจัดการข้อมูลทอง & ผู้ใช้งาน</li><li>✅ ลบช่องว่างเกินหลังรายการสุดท้าย</li><li>✅ Toast notification สไตล์ Badge ใหม่</li>', timestamp: Date.now() },
             { version: 'v1.2.3', date: '29 สิงหาคม 2569', items: '<li>✅ แก้ไข Profile Settings — User แก้ไขข้อมูลของตัวเอง</li><li>✅ เมนูตั้งค่าแยก role: User เปิด Profile, Admin เปิด Settings</li><li>✅ บันทึกรูป/ชื่อ/รหัสผ่าน ตาม user ที่ login อยู่</li>', timestamp: Date.now() },
             { version: 'v1.2.2', date: '29 สิงหาคม 2569', items: '<li>🔐 ความปลอดภัย — SHA-256 Hash รหัสผ่านทุกจุด (Login/Register/Change/Forgot)</li><li>🛡️ ระบบ PIN Code — ระยะเวลาการระงับ 1/6/12/24 ชม.</li><li>📡 Real-time PIN Ban — Firebase listener แสดง badge ทันทีทุกเครื่อง</li><li>🎨 ตั้งค่าใหม่ — แท็บ โปรไฟล์/บัญชี/ระบบ + Accordion PIN Code</li><li>🌓 Light Theme Fix — การ์ดลงทุน/ฟอร์ม/ลืมรหัสผ่าน รองรับธีมสว่าง</li><li>🔒 GitHub Security — .gitignore + Push ขึ้น GitHub Private</li><li>🎨 UI — Sticky Header, ปุ่มสีแดงสด, ลูกศรชี้ขึ้น/ลงสีขาว</li><li>📊 Dashboard — สรุปพอร์ตมีกรอบสี, ตารางลูกศรสีขาว</li>', timestamp: Date.now() },
             { version: 'v1.2.1', date: '27 สิงหาคม 2569', items: '<li>🔧 แก้ไข Sticky Header หน้าจัดการข้อมูลทอง — ล็อคหัวข้อไม่เลื่อนหาย</li><li>🔧 แก้ไข Changelog บันทึกไม่สำเร็จ — เปลี่ยน .update() เป็น .set()</li><li>🎨 ปรับปุ่มปิด (X) เป็นสีแดงสด พื้นหลังชัดเจน</li><li>🎨 ปรับแต่งหน้า Dashboard วิเคราะห์ — ซ่อน "จัดอันดับ" สำหรับ User</li><li>🎨 ปรับสีการ์ดกำไร/ขาดทุน ให้กลืนกับธีม</li><li>🎨 ปุ่ม Logout สีแดงสด ตัวอักษรและไอคอนสีขาว</li><li>🔧 แก้ไข Session หายหลัง Preview Reload — Auto-login อัตโนมัติ</li><li>🎨 ซ่อน "รายการที่มีในระบบ" เมื่อกดปุ่มบวกเพิ่มรายการ</li>', timestamp: Date.now() },
