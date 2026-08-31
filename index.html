@@ -5680,6 +5680,7 @@ function convertToThaiDate(dateStr) {
                     </div>
                 </div>
                 ${halfHalfHTML}
+                ${currentRole === 'admin' ? '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;"><button onclick="event.stopPropagation();prepareEdit(\'' + tx.id + '\')" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;" title="แก้ไข"><i class="ph ph-pencil-simple" style="color:#60a5fa;font-size:14px;"></i></button><button onclick="event.stopPropagation();deleteTx(\'' + tx.id + '\')" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;" title="ลบ"><i class="ph ph-trash" style="color:#f87171;font-size:14px;"></i></button></div>' : ''}
             </div>`;
         });
         document.getElementById('total-items-count').innerText = `${validTxs.length} รายการ`;
