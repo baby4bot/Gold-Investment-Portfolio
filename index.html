@@ -4334,7 +4334,7 @@ function convertToThaiDate(dateStr) {
                 const lastSeen = localStorage.getItem('goldAppLastSeen');
                 const awayMs = lastSeen ? Date.now() - parseInt(lastSeen) : 999999999;
                 logUserLogin(currentUser.username);
-                notifyAdminLogin(currentUser.username);
+                if (awayMs > 300000) notifyAdminLogin(currentUser.username);
                 // Welcome modal ครั้งแรกของวันเท่านั้น
                 var today = new Date().toDateString();
                 var lastWelcome = localStorage.getItem('goldAppLastWelcome');
