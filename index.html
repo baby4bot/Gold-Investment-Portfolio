@@ -6722,6 +6722,22 @@ function convertToThaiDate(dateStr) {
             let localData = loadLocalVersionData();
             localData.entries = fbEntries;
             saveLocalVersionData(localData);
+            // Sync hardcoded data to Firebase if admin
+            if (currentRole === 'admin') {
+                const hardcoded = [
+                    { version: 'v1.2.5', date: '1 กันยายน 2569', items: '<li>✅ แก้ไขธีมสว่าง — หน้าตั้งค่า headers เห็นชัดทุกแท็บ</li><li>✅ แก้ IP ไม่แสดงตอน user เปิด/refresh แอป</li><li>✅ Welcome modal ครั้งแรกของวัน</li><li>✅ การ์ดลงทุน — จัดกลาง, วันที่ไทย, ค่าบล็อก, ไอคอนทอง</li><li>✅ แจ้งเตือน user login/logout แบบ modal card</li><li>✅ เปลี่ยนปุ่มเสียงเป็นเสียงเตือน, จัดบรรทัดเดียวกัน</li><li>✅ สรุปภาพรวม / สรุปโครงการคนละครึ่ง สั้นลง</li>' },
+                    { version: 'v1.2.4', date: '31 สิงหาคม 2569', items: '<li>✅ อัปเดตไอคอนใหม่ — Megaphone, Shield, Bell, Hand-coins, Share arrow</li><li>✅ ล็อก Header หน้าจัดการข้อมูลทอง & ผู้ใช้งาน</li><li>✅ ลบช่องว่างเกินหลังรายการสุดท้าย</li><li>✅ Toast notification สไตล์ Badge ใหม่</li>' },
+                ];
+                hardcoded.forEach(entry => {
+                    const ek = entry.version.replace(/\./g, '_');
+                    db.ref('app_settings/changelog/' + ek).once('value', s => {
+                        const existing = s.val();
+                        if (!existing || existing.date !== entry.date || existing.items !== entry.items) {
+                            db.ref('app_settings/changelog/' + ek).update(entry);
+                        }
+                    });
+                });
+            }
         });
     }
 
