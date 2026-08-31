@@ -1025,6 +1025,8 @@
     @keyframes toggleIconBounce { 0% { transform: scale(0) rotate(-20deg); } 60% { transform: scale(1.2) rotate(5deg); } 100% { transform: scale(1) rotate(0); } }
     .toggle-modal-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
     .toggle-modal-desc { font-size: 13px; line-height: 1.5; opacity: 0.7; }
+    .toggle-modal-avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; border: 3px solid rgba(212,160,23,0.5); box-shadow: 0 0 20px rgba(212,160,23,0.3); animation: toggleIconBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); object-fit: cover; }
+    .toggle-modal-role { font-size: 11px; padding: 4px 12px; border-radius: 12px; display: inline-block; margin-top: 4px; background: rgba(212,160,23,0.15); color: #d4a017; border: 1px solid rgba(212,160,23,0.3); }
 
     /* ========== USER CARD REDESIGN ========== */
     .user-card-new { background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 16px; padding: 0; overflow: hidden; transition: all 0.2s ease; }
@@ -1173,9 +1175,11 @@
 <!-- ========== TOGGLE MODAL CARD ========== -->
 <div id="toggle-modal-overlay" class="toggle-modal-overlay">
     <div class="toggle-modal-card">
+        <div id="toggle-modal-avatar-wrap" style="display:none;"><img id="toggle-modal-avatar" class="toggle-modal-avatar" src="" alt="" /></div>
         <div class="toggle-modal-icon" id="toggle-modal-icon">🔔</div>
         <div class="toggle-modal-title" id="toggle-modal-title" style="color: #d4a017;">เปิดเสียงแจ้งเตือน</div>
         <div class="toggle-modal-desc" id="toggle-modal-desc" style="color: var(--text-secondary);">เสียงจะดังเตือนเมื่อราคาทองมีการเปลี่ยนแปลง</div>
+        <div id="toggle-modal-role-wrap" style="display:none;"><span class="toggle-modal-role" id="toggle-modal-role"></span></div>
     </div>
 </div>
 
@@ -4924,11 +4928,11 @@ function convertToThaiDate(dateStr) {
         const hashedInput = await hashPassword(passStr);
         if (userStr.toLowerCase() === 'admin' && (passStr === adminPass || hashedInput === adminPass)) {
             if (passStr === adminPass && db) { db.ref('admin_settings/adminPass').set(hashedInput); adminPass = hashedInput; }
-            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
+            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setTimeout(() => { showToggleCard('👑', 'ยินดีต้อนรับ!', adminDisplayName, { avatar: userProfiles[adminDisplayName] || undefined, role: 'Admin', duration: 2500 }); }, 500); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
         } else if (appUsers[userStr] && (appUsers[userStr].password === passStr || appUsers[userStr].password === hashedInput)) {
             if (appUsers[userStr].password === passStr && db) { db.ref('users/' + userStr + '/password').set(hashedInput); appUsers[userStr].password = hashedInput; }
             if (appUsers[userStr].isBanned) { document.getElementById('login-error').innerText = 'บัญชีนี้ถูกแบน! ไม่สามารถเข้าสู่ระบบได้'; document.getElementById('login-error').classList.remove('hidden'); return; }
-            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); notifyAdminLogin(userStr); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
+            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); setTimeout(() => { showToggleCard('👋', 'ยินดีต้อนรับ!', appUsers[userStr].name, { avatar: userProfiles[appUsers[userStr].name] || undefined, role: 'ผู้ใช้งาน', duration: 2500 }); }, 500); notifyAdminLogin(userStr); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
         } else { 
             document.getElementById('login-error').innerText = 'ข้อมูลไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); 
         } 
@@ -4940,7 +4944,7 @@ function convertToThaiDate(dateStr) {
         if (currentPinInput === adminPin) { 
             db.ref('admin_settings').update({pinAttempts: 0, pinBanUntil: 0});
             adminPinAttempts = 0; adminPinBanUntil = 0;
-            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setupAdminNotifListener(); loadPinEnabledSetting(); if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
+            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setTimeout(() => { showToggleCard('👑', 'ยินดีต้อนรับ!', adminDisplayName, { avatar: userProfiles[adminDisplayName] || undefined, role: 'Admin', duration: 2500 }); }, 500); setupAdminNotifListener(); loadPinEnabledSetting(); if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
         } else { 
             adminPinAttempts++;
             if(adminPinAttempts >= 3) {
@@ -5106,8 +5110,11 @@ function convertToThaiDate(dateStr) {
         }
         localStorage.removeItem('goldAppSession');
         localStorage.setItem('goldAppManualLogout', '1');        playLogoutSound();
-        showToggleCard('👋', 'ออกจากระบบ', 'กำลังออกจากระบบ... แล้วพบกันใหม่!');
-        setTimeout(() => location.reload(), 2000);
+        closeMenu();
+        setTimeout(() => {
+            showToggleCard('👋', 'ออกจากระบบ', 'กำลังออกจากระบบ... แล้วพบกันใหม่!');
+        }, 400);
+        setTimeout(() => location.reload(), 2500);
     }
 
 
@@ -5794,17 +5801,23 @@ function convertToThaiDate(dateStr) {
     }
     function showWarningToast(msg) { if (navigator.vibrate) navigator.vibrate(200); const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'badge-toast transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-3 w-full max-w-sm mx-auto'; toast.style.cssText = 'padding: 12px 16px; border-radius: 16px; font-weight: 700; font-size: 13px; border: 1px solid rgba(212,160,23,0.4); background: linear-gradient(135deg, rgba(28,28,36,0.95), rgba(20,20,24,0.95)); backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(212,160,23,0.15); color: #d4a017;'; toast.innerHTML = `<span style="font-size:20px;">🔔</span> <span style="color: var(--text-primary);">${msg}</span>`; container.appendChild(toast); requestAnimationFrame(() => { toast.classList.remove('translate-y-[-20px]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-20px]', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
-    function showToggleCard(icon, title, desc) {
+    function showToggleCard(icon, title, desc, opts) {
         if (navigator.vibrate) navigator.vibrate(100);
         const overlay = document.getElementById('toggle-modal-overlay');
         const iconEl = document.getElementById('toggle-modal-icon');
         const titleEl = document.getElementById('toggle-modal-title');
         const descEl = document.getElementById('toggle-modal-desc');
+        const avatarWrap = document.getElementById('toggle-modal-avatar-wrap');
+        const avatarImg = document.getElementById('toggle-modal-avatar');
+        const roleWrap = document.getElementById('toggle-modal-role-wrap');
+        const roleEl = document.getElementById('toggle-modal-role');
         iconEl.textContent = icon;
         titleEl.textContent = title;
         descEl.textContent = desc;
+        if (opts && opts.avatar) { avatarWrap.style.display = 'block'; iconEl.style.display = 'none'; avatarImg.src = opts.avatar; } else { avatarWrap.style.display = 'none'; iconEl.style.display = ''; }
+        if (opts && opts.role) { roleWrap.style.display = 'block'; roleEl.textContent = opts.role; } else { roleWrap.style.display = 'none'; }
         overlay.classList.add('show');
-        setTimeout(() => { overlay.classList.remove('show'); }, 2000);
+        setTimeout(() => { overlay.classList.remove('show'); }, opts && opts.duration ? opts.duration : 2000);
     }
 
     function openSettingsFromMenu() {
