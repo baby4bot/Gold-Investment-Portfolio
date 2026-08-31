@@ -5121,7 +5121,7 @@ function convertToThaiDate(dateStr) {
             if(summaryKeys.length === 0) { summaryContainer.innerHTML = ''; } 
             else {
                 let sortedBuyers = summaryKeys.sort((a, b) => { let aAdmin = summaryMap[a].isAdmin ? 1 : 0; let bAdmin = summaryMap[b].isAdmin ? 1 : 0; return bAdmin - aAdmin; });
-                let summaryHTML = `<h3 class="text-lg font-black text-white text-center mb-4 drop-shadow-md">สรุปภาพรวมกำไร/ขาดทุน</h3><div class="flex flex-wrap justify-center gap-3">`;
+                let summaryHTML = `<h3 class="text-lg font-black text-white text-center mb-4 drop-shadow-md">สรุปภาพรวม</h3><div class="flex flex-wrap justify-center gap-3">`;
                 sortedBuyers.forEach(buyer => {
                     let data = summaryMap[buyer]; let pCol = data.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; if (isSim && data.totalProfit >= 0) pCol = 'text-yellow-300';
                     let prefix = data.totalProfit > 0 ? '+' : '', icon = data.isAdmin ? '&#x1F451;' : '&#x1F464;', titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';

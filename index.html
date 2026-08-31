@@ -1937,7 +1937,7 @@
             </div>
             <div>
                 <label class="block text-xs mb-2 font-bold" style="color:#94a3b8;">ชื่อที่ใช้แสดง</label>
-                <input id="admin_display_name" type="text" placeholder="เช่น นักเลงคีย์บอร์ด" class="w-full text-center" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,160,23,0.3); color: #e2e8f0; padding: 12px 16px; border-radius: 12px; font-size: 14px;" />
+                <input id="admin_display_name" type="text" placeholder="เช่น นักเลงคีย์บอร์ด" class="w-full text-left" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,160,23,0.3); color: #e2e8f0; padding: 12px 16px; border-radius: 12px; font-size: 14px;" />
             </div>
             <button type="button" onclick="saveAdminProfile()" class="w-full py-3.5 rounded-xl font-black transition flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #e8b80d, #d4a017); color: #0c0e14; font-size: 15px;"><i class="ph ph-check-circle"></i> อัปเดตข้อมูล</button>
             <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;"></div>
@@ -4330,20 +4330,11 @@ function convertToThaiDate(dateStr) {
             if (currentUser) {
                 setupPresence(currentUser.username);
                 if (currentRole === 'admin') setupAdminNotifListener();
-                // Log re-login (no admin notification on refresh)
+                // Log re-login if session was saved (notify admin only if away > 5 min)
+                const lastSeen = localStorage.getItem('goldAppLastSeen');
+                const awayMs = lastSeen ? Date.now() - parseInt(lastSeen) : 999999999;
                 logUserLogin(currentUser.username);
-                // Welcome modal ครั้งแรกของวันเท่านั้น
-                var today = new Date().toDateString();
-                var lastWelcome = localStorage.getItem('goldAppLastWelcome');
-                if (lastWelcome !== today) {
-                    localStorage.setItem('goldAppLastWelcome', today);
-                    setTimeout(() => {
-                        var welcomeName = currentUser.name || currentUser.username || 'User';
-                        var welcomeRole = (currentRole === 'admin') ? 'Admin' : 'ผู้ใช้งาน';
-                        var welcomeIcon = (currentRole === 'admin') ? '👑' : '👤';
-                        showToggleCard(welcomeIcon, 'ยินดีต้อนรับ!', welcomeName, { avatar: userProfiles[welcomeName] || undefined, role: welcomeRole, duration: 2500 });
-                    }, 800);
-                }
+                if (awayMs > 300000) notifyAdminLogin(currentUser.username);
             }
         }
         // ทำงานพร้อมกันเพื่อความเร็ว
@@ -5317,28 +5308,13 @@ function convertToThaiDate(dateStr) {
                     const isNowOnline = newPresence[username] && newPresence[username].online === true;
                     const wasOnline = _prevOnlineState[username];
                     if (wasOnline !== isNowOnline && appUsers && appUsers[username]) {
-                        if (!isNowOnline) {
-                            // Offline notification
-                            const duration = newPresence[username].lastSeen ? Math.round((Date.now() - newPresence[username].lastSeen) / 60000) : 0;
-                            showAdminLoginAlert({
-                                username: username, name: appUsers[username].name, type: 'offline',
-                                ip: 'N/A', duration: duration,
-                                time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
-                            });
-                        } else {
-                            // Online notification — check if user was offline > 30 sec (skip quick refresh)
-                            var lastSeenTs = newPresence[username] && newPresence[username].lastSeen;
-                            var offMs = lastSeenTs ? Date.now() - lastSeenTs : 0;
-                            if (offMs > 30000 || wasOnline === undefined) {
-                                var nowTime = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-                                showAdminLoginAlert({
-                                    username: username, name: appUsers[username].name, type: 'online',
-                                    ip: 'N/A', duration: 0, time: nowTime
-                                });
-                                // Update IP async
-                                getPublicIP().then(function(ip) { if (ip) db.ref('user_logins/' + username + '/ip').set(ip); });
-                            }
-                        }
+                        const notifType = isNowOnline ? 'online' : 'offline';
+                        const duration = !isNowOnline && newPresence[username].lastSeen && _loginTimestamp ? Math.round((newPresence[username].lastSeen - _loginTimestamp) / 60000) : 0;
+                        showAdminLoginAlert({
+                            username: username, name: appUsers[username].name, type: notifType,
+                            ip: isNowOnline ? 'N/A' : 'N/A', duration: duration,
+                            time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+                        });
                     }
                 });
             }
@@ -5378,14 +5354,12 @@ function convertToThaiDate(dateStr) {
         const u = appUsers[username];
         const now = new Date();
         const duration = _loginTimestamp ? Math.round((Date.now() - _loginTimestamp) / 60000) : 0;
-        getPublicIP().then(ip => {
-            const notifPayload = { username: username, name: u.name, ip: ip || 'N/A', type: 'offline', duration: duration,
-                time: now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
-                date: now.toLocaleDateString('th-TH'), timestamp: Date.now() };
-            if (db) {
-                db.ref('admin_notifications').push(notifPayload);
-            }
-        });
+        const notifPayload = { username: username, name: u.name, ip: 'N/A', type: 'offline', duration: duration,
+            time: now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+            date: now.toLocaleDateString('th-TH'), timestamp: Date.now() };
+        if (db) {
+            db.ref('admin_notifications').push(notifPayload);
+        }
     }
 
     function showAdminLoginAlert(notif) {
@@ -5751,7 +5725,7 @@ function convertToThaiDate(dateStr) {
             if(summaryKeys.length === 0) { summaryContainer.innerHTML = ''; } 
             else {
                 let sortedBuyers = summaryKeys.sort((a, b) => { let aAdmin = summaryMap[a].isAdmin ? 1 : 0; let bAdmin = summaryMap[b].isAdmin ? 1 : 0; return bAdmin - aAdmin; });
-                let summaryHTML = `<h3 class="text-lg font-black text-white text-center mb-4 drop-shadow-md">สรุปภาพรวมกำไร/ขาดทุน</h3><div class="flex flex-wrap justify-center gap-3">`;
+                let summaryHTML = `<h3 class="text-lg font-black text-white text-center mb-4 drop-shadow-md">สรุปภาพรวม</h3><div class="flex flex-wrap justify-center gap-3">`;
                 sortedBuyers.forEach(buyer => {
                     let data = summaryMap[buyer]; let pCol = data.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'; if (isSim && data.totalProfit >= 0) pCol = 'text-yellow-300';
                     let prefix = data.totalProfit > 0 ? '+' : '', icon = data.isAdmin ? '&#x1F451;' : '&#x1F464;', titleColor = data.isAdmin ? 'text-yellow-500' : 'text-gray-400';
