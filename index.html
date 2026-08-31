@@ -5666,11 +5666,11 @@ function convertToThaiDate(dateStr) {
                 <div class="grid grid-cols-2 gap-2 mb-2">
                     <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 12px;text-align:center;border:1px solid rgba(255,255,255,0.04);">
                         <p style="font-size:10px;color:#94a3b8;font-weight:700;margin-bottom:4px;"><i class="ph ph-tag" style="font-size:10px;color:#d4a017;"></i> ราคาวันซื้อ</p>
-                        <p class="text-white font-black" style="font-size:17px;">${tx.buyprice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                        <p class="text-white font-black" style="font-size:17px;">${tx.buyprice.toLocaleString()}</p>
                     </div>
                     <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 12px;text-align:center;border:1px solid rgba(255,255,255,0.04);">
                         <p style="font-size:10px;color:#facc15;font-weight:700;margin-bottom:4px;">${isSim ? '🔮 ราคาจำลอง' : '<i class="ph ph-coins" style="font-size:10px;color:#d4a017;"></i> ราคาปัจจุบัน'}</p>
-                        <p style="font-size:17px;font-weight:900;color:#facc15;">${effectivePrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                        <p style="font-size:17px;font-weight:900;color:#facc15;">${effectivePrice.toLocaleString()}</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2 mb-3">
