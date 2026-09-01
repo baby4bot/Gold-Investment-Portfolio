@@ -2550,33 +2550,12 @@ function convertToThaiDate(dateStr) {
         }
         _dedupDone = true;
 
-        // Fix records with leading-zero day (batch: max 200 per cycle, stop when done)
-        if (!_normalizeDone) {
-            const BATCH_SIZE = 200;
-            let batchCount = 0;
-            const batchUpdates = {};
-            allHistoryData.forEach(h => {
-                if (!h.date || !h.id || batchCount >= BATCH_SIZE) return;
-                const normDate = h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString());
-                if (normDate !== h.date) {
-                    const hasNormalized = allHistoryData.some(x => x.id !== h.id && x.date === normDate && x.time === h.time && x.barBuy === h.barBuy);
-                    if (hasNormalized) {
-                        batchUpdates['gold_price_history/' + h.id] = null;
-                        batchCount++;
-                    } else {
-                        batchUpdates['gold_price_history/' + h.id + '/date'] = normDate;
-                        batchCount++;
-                    }
-                }
-            });
-            if (batchCount > 0) {
-                db.ref().update(batchUpdates).then(() => {
-                    console.log('Normalized ' + batchCount + ' records with leading-zero dates');
-                });
-            } else {
-                _normalizeDone = true;
-            }
-        }
+        // Normalize leading-zero dates in memory (display only)
+        allHistoryData.forEach(h => {
+            if (!h.date) return;
+            const normDate = h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString());
+            if (normDate !== h.date) h.date = normDate;
+        });
     }
 
     function openDatePicker() {
@@ -3902,6 +3881,12 @@ function convertToThaiDate(dateStr) {
                     allHistoryData.push({ id: child.key, ...child.val() });
                 });
             }
+            // Normalize leading-zero dates in memory (display only)
+            allHistoryData.forEach(h => {
+                if (!h.date) return;
+                const normDate = h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString());
+                if (normDate !== h.date) h.date = normDate;
+            });
             // NOTE: Removed auto-render of price history list on Firebase update.
             // The list now only refreshes when the modal is opened (openPriceHistory).
             // This prevents the record count from jumping while the user is viewing history.

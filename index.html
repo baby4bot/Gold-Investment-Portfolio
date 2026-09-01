@@ -3086,6 +3086,13 @@ function convertToThaiDate(dateStr) {
                 console.log('Auto-dedup: removed ' + keysToDelete.length + ' duplicate records');
             });
         }
+
+        // Normalize leading-zero dates in memory (display only, don't write to Firebase)
+        allHistoryData.forEach(h => {
+            if (!h.date) return;
+            const normDate = h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString());
+            if (normDate !== h.date) h.date = normDate;
+        });
         _dedupDone = true;
     }
 
@@ -4465,6 +4472,12 @@ function convertToThaiDate(dateStr) {
                     allHistoryData.push({ id: child.key, ...child.val() });
                 });
             }
+            // Normalize leading-zero dates in memory (display only)
+            allHistoryData.forEach(h => {
+                if (!h.date) return;
+                const normDate = h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString());
+                if (normDate !== h.date) h.date = normDate;
+            });
             if(document.getElementById('price-history-modal').style.display === 'flex') {
                 renderHistoryList();
             }
