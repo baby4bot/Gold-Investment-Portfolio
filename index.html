@@ -1040,7 +1040,7 @@
     @keyframes pulseRing { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
 
     /* ========== TOGGLE MODAL CARD ========== */
-    .toggle-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 99999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .toggle-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
     .toggle-modal-overlay.show { opacity: 1; visibility: visible; }
     .toggle-modal-card { width: 280px; padding: 32px 24px 24px; border-radius: 24px; text-align: center; transform: scale(0.8) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.3); box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(212,160,23,0.1); }
     .toggle-modal-overlay.show .toggle-modal-card { transform: scale(1) translateY(0); }
@@ -2153,7 +2153,7 @@
 </div>
 
 <!-- Import History Modal -->
-<div id="import-history-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[950] justify-center items-center px-4 hidden">
+<div id="import-history-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[850] justify-center items-center px-4 hidden">
     <div class="p-5 rounded-[1.5rem] shadow-2xl w-full max-w-lg relative modal-enter" style="background: var(--bg-card); border: 1px solid var(--border-primary); max-height: 90vh; overflow-y: auto;">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-black" style="color: var(--accent-gold);"><i class="ph ph-file-arrow-down"></i> นำเข้าประวัติราคาย้อนหลัง</h3>
@@ -2360,8 +2360,8 @@
     let allHistoryData = []; 
     let currentSelectedHistoryDateStr = null;
     const GAS_API_URLS = [
-        "https://script.google.com/macros/s/AKfycbz9FddxomM-cOUwQP0hO32QI3HKMUrwbeEUUUcWr-j1GbC3_rTDNYvYpk7wMOXvXmLU9A/exec",  // GAS Account 1
-        "https://script.google.com/macros/s/AKfycbwosbQhlaKyEPCMJdpsbmCukolN_QDqsxmAd4wjcWcy3rN8BBZrlakHU4GhNTem2D7PdA/exec"   // GAS Account 2
+        "https://script.google.com/macros/s/AKfycbwoF6BTTGQJoSZBsyNGILkikMh84CWA1U-pMeCzeWXfxNnJu2dolDHXHF0P96DGoOb35g/exec",  // GAS Account 1
+        "https://script.google.com/macros/s/AKfycbzmClohIj6jbpTIkIEB2cSWfB9cTBQ0r0jmrRO3h07ru5nR97vg4P6jcYdL_kRxNgA1vQ/exec"   // GAS Account 2
     ];
     let activeGasIndex = parseInt(localStorage.getItem('activeGasIndex') || '0'); // จำ GAS ตัวสุดท้ายที่สำเร็จ
     if (activeGasIndex >= GAS_API_URLS.length) activeGasIndex = 0;
@@ -2569,13 +2569,11 @@ function convertToThaiDate(dateStr) {
                 const barSellNum = parseFloat(data.bar_sell.toString().replace(/,/g, ''));
                 const ornamentBuyNum = parseFloat(data.ornament_buy.toString().replace(/,/g, ''));
                 const ornamentSellNum = parseFloat(data.ornament_sell.toString().replace(/,/g, ''));
-                const normDate = data.date ? data.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : data.date;
-                const isDuplicate = allHistoryData && allHistoryData.some(h => {
-                    const hNormDate = h.date ? h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : h.date;
-                    return hNormDate === normDate && h.time === data.time && h.barBuy === barBuyNum;
-                });
+                const isDuplicate = allHistoryData && allHistoryData.some(h =>
+                    h.date === data.date && h.time === data.time && h.barBuy === barBuyNum
+                );
                 if (!isDuplicate) {
-                    const recordKey = `${normDate}_${data.time}_${barBuyNum}`.replace(/[\/\s:]/g, '-');
+                    const recordKey = `${data.date}_${data.time}_${barBuyNum}`.replace(/[\/\s:]/g, '-');
                     db.ref('gold_price_history/' + recordKey).set({
                         barBuy: barBuyNum, barSell: barSellNum,
                         ornamentBuy: ornamentBuyNum, ornamentSell: ornamentSellNum,
@@ -2594,13 +2592,22 @@ function convertToThaiDate(dateStr) {
                     date: data.date, time: data.time, count: parseInt(data.count) || 0, timestamp: Date.now()
                 });
             }
+            // Auto-sync ประวัติถ้า count ไม่ตรง
+            if (data.count && allHistoryData) {
+                const todayRecords = allHistoryData.filter(h => h.date === data.date);
+                const webCount = parseInt(data.count) || 0;
+                if (webCount > 0 && todayRecords.length < webCount && webCount - todayRecords.length > 2) {
+                    console.log(`🔄 Auto-sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${webCount} — กำลังดึงอัตโนมัติ...`);
+                    setTimeout(() => syncHistoryFromWeb(), 2000);
+                }
+            }
             if (priceChanged && transactionsData.length > 0) renderData();
             if (priceChanged && newPrice > 0 && lastGoldBarBuy > 0 && newPrice !== lastGoldBarBuy) {
                 lastGoldBarBuy = newPrice;
                 playPriceChangeSound();
                 speakPriceChange(data.count || 0, _goldLatestChange || 0, newPrice.toLocaleString());
                 sendPushNotification('💰 ราคาทองคำเปลี่ยนแปลง!', `ทองคำแท่ง: ${newPrice.toLocaleString()} บาท\nเปลี่ยนแปลง: ${goldChangeToday}`);
-                // LINE notification handled by GAS time-based trigger (no duplicate)
+                autoShareToLINE();
             } else if (lastGoldBarBuy < 0 && newPrice > 0) { lastGoldBarBuy = newPrice; }
         } else {
             document.getElementById('gold-status-text').innerText = 'ดึงข้อมูลล้มเหลว — ลองใหม่อีกครั้ง';
@@ -3051,20 +3058,16 @@ function convertToThaiDate(dateStr) {
     // ===== Auto-dedup: ลบ record ซ้ำอัตโนมัติ =====
     let lastDedupTime = 0;
     const DEDUP_INTERVAL = 60000; // เช็คทุก 1 นาที
-    let _normalizeDone = false; // run leading-zero cleanup only until done
-    let _dedupDone = false; // run dedup only once on first load
     function autoDedupHistory() {
         if (!db || !allHistoryData || allHistoryData.length < 2) return;
-        if (_dedupDone && _normalizeDone) return; // all cleanup done
         const now = Date.now();
         if (now - lastDedupTime < DEDUP_INTERVAL) return;
         lastDedupTime = now;
 
-        // จัดกลุ่ม record ตาม date+time+barBuy (normalize leading zero in day)
+        // จัดกลุ่ม record ตาม date+time+barBuy
         const groups = {};
         allHistoryData.forEach(h => {
-            const normDate = h.date ? h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : h.date;
-            const key = `${normDate}_${h.time}_${h.barBuy}`;
+            const key = `${h.date}_${h.time}_${h.barBuy}`;
             if (!groups[key]) groups[key] = [];
             groups[key].push(h);
         });
@@ -3087,35 +3090,6 @@ function convertToThaiDate(dateStr) {
             db.ref('gold_price_history').update(updates).then(() => {
                 console.log('Auto-dedup: removed ' + keysToDelete.length + ' duplicate records');
             });
-        }
-        _dedupDone = true;
-
-        // Fix records with leading-zero day (batch: max 200 per cycle, stop when done)
-        if (!_normalizeDone) {
-            const BATCH_SIZE = 200;
-            let batchCount = 0;
-            const batchUpdates = {};
-            allHistoryData.forEach(h => {
-                if (!h.date || !h.id || batchCount >= BATCH_SIZE) return;
-                const normDate = h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString());
-                if (normDate !== h.date) {
-                    const hasNormalized = allHistoryData.some(x => x.id !== h.id && x.date === normDate && x.time === h.time && x.barBuy === h.barBuy);
-                    if (hasNormalized) {
-                        batchUpdates['gold_price_history/' + h.id] = null;
-                        batchCount++;
-                    } else {
-                        batchUpdates['gold_price_history/' + h.id + '/date'] = normDate;
-                        batchCount++;
-                    }
-                }
-            });
-            if (batchCount > 0) {
-                db.ref().update(batchUpdates).then(() => {
-                    console.log('Normalized ' + batchCount + ' records with leading-zero dates');
-                });
-            } else {
-                _normalizeDone = true;
-            }
         }
     }
 
@@ -3529,63 +3503,15 @@ function convertToThaiDate(dateStr) {
             deleteAllBtn.disabled = true;
             deleteAllBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> กำลังลบ...';
         }
-        // Show progress modal
-        const total = filtered.length;
-        let deleted = 0;
-        const progressModal = document.createElement('div');
-        progressModal.id = 'delete-progress-modal';
-        progressModal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:99999';
-        progressModal.innerHTML = `
-            <div style="background:var(--bg-card,#1a1a2e);border-radius:16px;padding:24px;width:90%;max-width:350px;text-align:center;border:1px solid var(--border-primary,#333)">
-                <div style="font-size:32px;margin-bottom:8px">🗑️</div>
-                <div style="color:var(--text-primary,#fff);font-weight:bold;font-size:16px;margin-bottom:4px">กำลังลบประวัติราคา ${filterName}</div>
-                <div id="delete-progress-count" style="color:var(--accent-gold,#d4a017);font-size:28px;font-weight:900;margin:12px 0">${total} / ${total}</div>
-                <div style="background:rgba(255,255,255,0.1);border-radius:8px;height:8px;overflow:hidden;margin-bottom:8px">
-                    <div id="delete-progress-bar" style="background:linear-gradient(90deg,#d4a017,#f59e0b);height:100%;width:0%;border-radius:8px;transition:width 0.3s"></div>
-                </div>
-                <div id="delete-progress-eta" style="color:var(--text-secondary,#999);font-size:12px">กำลังเตรียม...</div>
-            </div>
-        `;
-        document.body.appendChild(progressModal);
-        const startTime = Date.now();
-        let prevDeleted = 0;
-        let timeWindow = [];
-        function updateProgress() {
-            const remaining = total - deleted;
-            document.getElementById('delete-progress-count').textContent = `${deleted} / ${total}`;
-            document.getElementById('delete-progress-bar').style.width = ((deleted / total) * 100) + '%';
-            if (deleted > 0 && timeWindow.length >= 2) {
-                const elapsed = (Date.now() - startTime) / 1000;
-                const rate = deleted / elapsed;
-                const eta = Math.ceil(remaining / Math.max(rate, 0.1));
-                document.getElementById('delete-progress-eta').textContent = `เหลืออีก ${eta} วินาที • ${deleted}/${total} รายการ`;
-            }
-        }
-        const progressInterval = setInterval(updateProgress, 200);
-        // Delete one by one with delay for visual feedback
-        async function deleteSequentially() {
-            for (let i = 0; i < filtered.length; i++) {
-                if (filtered[i].id) {
-                    await db.ref('gold_price_history/' + filtered[i].id).remove();
-                }
-                deleted = i + 1;
-                if (deleted % 5 === 0 || deleted === total) updateProgress();
-                if (deleted % 10 === 0) await new Promise(r => setTimeout(r, 50));
-            }
-            clearInterval(progressInterval);
-            document.getElementById('delete-progress-count').textContent = 'เสร็จสิ้น!';
-            document.getElementById('delete-progress-bar').style.width = '100%';
-            document.getElementById('delete-progress-eta').textContent = `ลบ ${total} รายการสำเร็จ`;
-            setTimeout(() => {
-                progressModal.remove();
-                showWarningToast(`✅ ลบประวัติราคา ${filterName} สำเร็จ ${total} รายการ!`);
-                loadHistoryGlobal();
-                renderHistoryList();
-            }, 800);
-        }
-        deleteSequentially().catch(e => {
-            clearInterval(progressInterval);
-            progressModal.remove();
+        let deletePromises = filtered.map(d => {
+            if (d.id) return db.ref('gold_price_history/' + d.id).remove();
+            return Promise.resolve();
+        });
+        Promise.all(deletePromises).then(() => {
+            showWarningToast(`✅ ลบประวัติราคา ${filterName} สำเร็จ ${filtered.length} รายการ!`);
+            loadHistoryGlobal();
+            renderHistoryList();
+        }).catch(e => {
             showWarningToast('❌ ลบไม่สำเร็จ: ' + e.message);
         }).finally(() => {
             if (deleteAllBtn) {
@@ -3620,7 +3546,7 @@ function convertToThaiDate(dateStr) {
         });
         
         if (duplicates.length === 0) {
-            showToggleCard('✅', 'ไม่มีข้อมูลซ้ำกัน', 'ไม่พบข้อมูลซ้ำในระบบ', 'green');
+            showWarningToast('✅ ไม่มีข้อมูลซ้ำกัน!');
             return;
         }
         
@@ -3632,11 +3558,11 @@ function convertToThaiDate(dateStr) {
             return Promise.resolve();
         });
         Promise.all(deletePromises).then(() => {
-            showToggleCard('✅', `ลบข้อมูลซ้ำสำเร็จ ${duplicates.length} รายการ`, 'ทำรายการเสร็จสมบูรณ์', 'green');
+            showWarningToast(`✅ ลบข้อมูลซ้ำสำเร็จ ${duplicates.length} รายการ!`);
             loadHistoryGlobal();
             renderHistoryList();
         }).catch(e => {
-            showToggleCard('❌', 'ลบไม่สำเร็จ', e.message, 'red');
+            showWarningToast('❌ ลบไม่สำเร็จ: ' + e.message);
         });
     }
 
@@ -3822,22 +3748,18 @@ function convertToThaiDate(dateStr) {
                 const safeTime = d.time.replace(/[\s\.:น]/g, '');
                 const recordKey = `IMP_${safeDate}_${safeTime}`;
 
-                // คำนวณ timestamp จากวันที่+เวลาจริง เพื่อให้ sort ถูกต้อง
-                const importTimestamp = new Date(d.date.replace(/(\d+)\s+(\S+)\s+(\d+)/, function(m, day, month, year) {
-                    const monthMap = {'มกราคม':'0','กุมภาพันธ์':'1','มีนาคม':'2','เมษายน':'3','พฤษภาคม':'4','มิถุนายน':'5','กรกฎาคม':'6','สิงหาคม':'7','กันยายน':'8','ตุลาคม':'9','พฤศจิกายน':'10','ธันวาคม':'11'};
-                    return monthMap[month] + '/' + day + '/' + year;
-                }) + ' ' + d.time).getTime() || Date.now();
                 await db.ref('gold_price_history/' + recordKey).set({
                     barBuy: d.barBuy,
                     barSell: d.barSell,
                     ornamentBuy: d.ornamentBuy,
                     ornamentSell: d.ornamentSell,
                     changeToday: d.changeToday,
-                    latestChange: 0,
+                    prev_change: 0,
+                    price: d.barBuy,
                     date: d.date,
                     time: d.time,
                     count: 0,
-                    timestamp: importTimestamp
+                    timestamp: Date.now()
                 });
                 // allHistoryData จะอัปเดตอัตโนมัติจาก Firebase listener
                 successCount++;
@@ -3866,97 +3788,39 @@ function convertToThaiDate(dateStr) {
         _syncRunning = true;
         const btn = document.getElementById('hist-btn-sync');
         if (btn) { btn.innerHTML = '<i class="ph ph-spinner animate-spin" style="font-size:16px"></i>'; btn.disabled = true; }
-        showToggleCard('🔄', 'กำลังดึงประวัติราคาทอง', 'กรุณารอสักครู่...', { duration: 2000 });
+        showWarningToast('🔄 กำลังดึงประวัติราคาทองผ่าน GAS...');
 
-        // วิธี 1: ลอง GAS API syncHistory ก่อน
+        // เรียก GAS API syncHistory ทั้ง 2 URLs
         const validGasUrls = GAS_API_URLS.filter(u => u && u.length > 10);
         let syncSuccess = false;
         for (let i = 0; i < validGasUrls.length; i++) {
             try {
-                showToggleCard('🔄', `ลอง GAS Account ${i + 1}`, 'กำลังเชื่อมต่อ...', { duration: 2000 });
+                showWarningToast(`🔄 ลอง GAS Account ${i + 1}...`);
                 const ctrl = new AbortController();
                 const timer = setTimeout(() => ctrl.abort(), 20000);
                 const resp = await fetch(validGasUrls[i] + '?action=syncHistory', { signal: ctrl.signal, redirect: 'follow' });
                 clearTimeout(timer);
                 const result = await resp.json();
                 if (result.status === 'success' && result.count > 0) {
-                    showToggleCard('✅', `sync สำเร็จ! ${result.count} รายการ`, 'กำลังโหลดข้อมูล...', { duration: 2500 });
-                    await new Promise(r => setTimeout(r, 2000));
+                    showWarningToast(`✅ GAS ${i + 1} sync สำเร็จ! ${result.count} รายการ — กำลังโหลดจาก Firebase...`);
+                    await new Promise(r => setTimeout(r, 3000));
                     loadHistoryGlobal();
-                    setTimeout(() => renderHistoryList(), 1000);
+                    setTimeout(() => renderHistoryList(), 1500);
                     syncSuccess = true;
                     break;
+                } else if (result.status === 'success' && result.count === 0) {
+                    console.warn('GAS ' + (i+1) + ' returned 0 records');
                 }
             } catch(e) { console.warn('GAS ' + (i+1) + ' failed:', e.message); }
         }
 
-        // วิธี 2: ถ้า GAS ไม่ได้ ลอง CORS proxy
         if (!syncSuccess) {
-            showWarningToast('🔄 ลอง CORS proxy...');
-            const historyUrl = 'https://xn--42cah7d0cxcvbbb9x.com/%E0%B8%A3%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%97%E0%B8%AD%E0%B8%87%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87/';
-            const proxies = ['https://api.allorigins.win/raw?url='];
-            for (const proxy of proxies) {
-                try {
-                    const ctrl = new AbortController();
-                    const timer = setTimeout(() => ctrl.abort(), 15000);
-                    const resp = await fetch(proxy + encodeURIComponent(historyUrl), { signal: ctrl.signal });
-                    clearTimeout(timer);
-                    const html = await resp.text();
-                    if (html && html.includes('<table')) {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-                        const tables = doc.querySelectorAll('table');
-                        let historyTable = null;
-                        for (const t of tables) {
-                            if (t.className.includes('flip') || t.className.includes('pdtable')) { historyTable = t; break; }
-                        }
-                        if (!historyTable && tables.length > 0) historyTable = tables[tables.length - 1];
-                        if (historyTable) {
-                            const rows = historyTable.querySelectorAll('tr');
-                            const dateText = doc.body.innerText.match(/(\d{1,2}\s+[ก-๙]+\s+\d{4})/);
-                            // Normalize: remove leading zero from day (e.g. '01 กันยายน' -> '1 กันยายน')
-                            const dateStr = dateText ? dateText[1].replace(/^(\d+)/, (m) => parseInt(m, 10).toString()) : '';
-                            let savedCount = 0;
-                            for (const row of rows) {
-                                const cells = row.querySelectorAll('td');
-                                if (cells.length < 6) continue;
-                                const timeMatch = (cells[0]?.innerText || '').match(/(\d{1,2}:\d{2})/);
-                                if (!timeMatch) continue;
-                                const countNum = parseInt(cells[1]?.innerText?.trim() || '0') || 0;
-                                const barBuy = parseFloat((cells[2]?.innerText?.trim() || '0').replace(/,/g, ''));
-                                const barSell = parseFloat((cells[3]?.innerText?.trim() || '0').replace(/,/g, ''));
-                                const ornBuy = parseFloat((cells[4]?.innerText?.trim() || '0').replace(/,/g, ''));
-                                const ornSell = parseFloat((cells[5]?.innerText?.trim() || '0').replace(/,/g, ''));
-                                const changeNum = parseInt((cells[8]?.innerText?.trim() || '0').replace(/[^\-\d]/g, '')) || 0;
-                                const recordKey = dateStr.replace(/[\/\s]/g, '-') + '_' + timeMatch[1].replace(/:/g, '-') + '_' + barBuy;
-                                await db.ref('gold_price_history/' + recordKey).set({
-                                    barBuy, barSell, ornamentBuy: ornBuy, ornamentSell: ornSell,
-                                    changeToday: changeNum, latestChange: 0,
-                                    date: dateStr, time: timeMatch[1], count: countNum,
-                                    timestamp: Date.now() - ((parseInt(cells[1]?.innerText?.trim() || '30') || 30) - countNum) * 60000
-                                });
-                                savedCount++;
-                            }
-                            if (savedCount > 0) {
-                                showWarningToast(`✅ sync สำเร็จ! ${savedCount} รายการ`);
-                                await new Promise(r => setTimeout(r, 1000));
-                                loadHistoryGlobal();
-                                setTimeout(() => renderHistoryList(), 1000);
-                                syncSuccess = true;
-                                break;
-                            }
-                        }
-                    }
-                } catch(e) { console.warn('Proxy failed:', e.message); }
-            }
-        }
-
-        if (!syncSuccess) {
-            showWarningToast('⚠️ sync ไม่สำเร็จ — ลองใหม่อีกครั้ง');
+            showWarningToast('⚠️ sync ไม่สำเร็จ — ต้องอัพเดท GAS script v2 แล้วรัน setupTrigger');
         }
 
         _syncRunning = false;
         if (btn) { btn.innerHTML = '<i class="ph ph-arrows-clockwise" style="font-size:16px"></i>'; btn.disabled = false; }
+
     }
 
     // ===== Gold Price Trend Chart =====
@@ -4605,9 +4469,9 @@ function convertToThaiDate(dateStr) {
                     allHistoryData.push({ id: child.key, ...child.val() });
                 });
             }
-            // NOTE: Removed auto-render of price history list on Firebase update.
-            // The list now only refreshes when the modal is opened (openPriceHistory).
-            // This prevents the record count from jumping while the user is viewing history.
+            if(document.getElementById('price-history-modal').style.display === 'flex') {
+                renderHistoryList();
+            }
             // Auto-cleanup records older than 30 days
             cleanupOldHistory();
             // Auto-dedup ลบ record ซ้ำอัตโนมัติ
@@ -4619,8 +4483,6 @@ function convertToThaiDate(dateStr) {
             _lastHistoryLen = allHistoryData.length;
         });
     }
-
-    // ===== Auto-sync removed: user can manually sync via the sync button =====
 
     // ===== แชร์เว็บไซต์ =====
     const SHARE_URL = 'https://baby4bot.github.io/Gold-Investment-Portfolio/';
@@ -6620,12 +6482,31 @@ function convertToThaiDate(dateStr) {
     }
     function saveLocalVersionData(data) { localStorage.setItem(VER_KEY, JSON.stringify(data)); }
     function loadVersionFromFirebase() {
-        // Hardcoded version is always authoritative — sync TO Firebase, never FROM it
+        // Firebase = single source of truth — all users see the same version
         const hardcodedVer = Object.assign({}, currentVersion);
-        currentVersion = hardcodedVer;
-        updateVersionDisplay();
         if (db) {
-            db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
+            db.ref('app_settings/version').on('value', snap => {
+                const val = snap.val();
+                if (val && val.version) {
+                    const fbVer = parseVersion(val.version);
+                    // Use whichever is newer: Firebase or hardcoded
+                    if (compareVersions(hardcodedVer, fbVer) >= 0) {
+                        currentVersion = hardcodedVer;
+                        db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
+                    } else {
+                        currentVersion = fbVer;
+                    }
+                } else {
+                    // First time: push hardcoded to Firebase
+                    currentVersion = hardcodedVer;
+                    db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
+                }
+                updateVersionDisplay();
+            });
+        } else {
+            const local = loadLocalVersionData();
+            currentVersion = parseVersion(local.version);
+            updateVersionDisplay();
         }
     }
     function compareVersions(a, b) {
@@ -6731,7 +6612,9 @@ function convertToThaiDate(dateStr) {
         // Also seed to Firebase so ALL users see it
         if (db) {
             hardcoded.forEach(entry => {
-                db.ref('app_settings/changelog/' + entry.version.replace(/\./g, '_')).set(entry);
+                db.ref('app_settings/changelog/' + entry.version.replace(/\./g, '_')).once('value', snap => {
+                    if (!snap.val()) db.ref('app_settings/changelog/' + entry.version.replace(/\./g, '_')).set(entry);
+                });
             });
         }
     }
