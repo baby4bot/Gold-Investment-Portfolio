@@ -3897,16 +3897,21 @@ function convertToThaiDate(dateStr) {
             var todayStr = snap.val() || '';
             if (!todayStr) return;
             var todayRecords = allHistoryData.filter(h => h.date === todayStr);
-            if (todayRecords.length < latestCount && (Date.now() - _lastAutoSyncTime) > 60000) {
+            if (todayRecords.length < latestCount && (Date.now() - _lastAutoSyncTime) > 30000) {
                 _lastAutoSyncTime = Date.now();
-                console.log(`🔄 Auto-sync: ${todayRecords.length}/${latestCount} — calling Cloud Function...`);
-                fetch('https://asia-southeast1-gold-portfolio-db.cloudfunctions.net/syncGoldManual').then(r => r.json()).then(result => {
-                    console.log('✅ Cloud Function sync:', result);
-                    loadHistoryGlobal();
-                }).catch(e => {
-                    console.warn('Cloud Function failed, trying GAS fallback:', e.message);
-                    syncHistoryFromWeb();
-                });
+                console.log(`🔄 Auto-sync: ${todayRecords.length}/${latestCount} — calling GAS...`);
+                const validUrls = GAS_API_URLS.filter(u => u && u.length > 10);
+                if (validUrls.length > 0) {
+                    fetch(validUrls[0] + '?action=syncHistory', { redirect: 'follow' })
+                        .then(r => r.json())
+                        .then(result => {
+                            console.log('✅ Auto-sync result:', result);
+                            if (result.status === 'success' && result.count > 0) {
+                                loadHistoryGlobal();
+                            }
+                        })
+                        .catch(e => console.warn('Auto-sync failed:', e.message));
+                }
             }
         });
     }, 15000);
