@@ -3888,18 +3888,25 @@ function convertToThaiDate(dateStr) {
     }
 
     // ===== Periodic History Sync: ตรวจ count ทุก 15 วินาที =====
+    let _lastAutoSyncTime = 0;
     setInterval(() => {
         if (!allHistoryData || allHistoryData.length === 0 || !db) return;
         var latestCount = parseInt(document.getElementById('gold-update-count')?.innerText?.replace(/[^0-9]/g, '') || '0');
         if (latestCount <= 0) return;
-        // ดึงวันที่จาก latest_gold_price (ไม่ใช่จาก history ที่อาจไม่ครบ)
         db.ref('latest_gold_price/date').once('value', snap => {
             var todayStr = snap.val() || '';
             if (!todayStr) return;
             var todayRecords = allHistoryData.filter(h => h.date === todayStr);
-            if (todayRecords.length < latestCount) {
-                console.log(`🔄 Periodic sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${latestCount} — กำลังดึงอัตโนมัติ...`);
-                syncHistoryFromWeb();
+            if (todayRecords.length < latestCount && (Date.now() - _lastAutoSyncTime) > 60000) {
+                _lastAutoSyncTime = Date.now();
+                console.log(`🔄 Auto-sync: ${todayRecords.length}/${latestCount} — calling Cloud Function...`);
+                fetch('https://asia-southeast1-gold-portfolio-db.cloudfunctions.net/syncGoldManual').then(r => r.json()).then(result => {
+                    console.log('✅ Cloud Function sync:', result);
+                    loadHistoryGlobal();
+                }).catch(e => {
+                    console.warn('Cloud Function failed, trying GAS fallback:', e.message);
+                    syncHistoryFromWeb();
+                });
             }
         });
     }, 15000);
