@@ -2188,7 +2188,7 @@
     </div>
 </div>
 
-<div id="custom-confirm-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[900] justify-center items-center px-5 hidden">
+<div id="custom-confirm-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[920] justify-center items-center px-5 hidden">
     <div class="p-7 rounded-[1.75rem] w-full max-w-sm relative text-center modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25);">
         <!-- Gold accent line top -->
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
@@ -3590,7 +3590,7 @@ function convertToThaiDate(dateStr) {
         });
         
         if (duplicates.length === 0) {
-            showWarningToast('✅ ไม่มีข้อมูลซ้ำกัน!');
+            showToggleCard('✅', 'ไม่มีข้อมูลซ้ำกัน', 'ไม่พบข้อมูลซ้ำในระบบ', 'green');
             return;
         }
         
