@@ -8,6 +8,7 @@ function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) || '';
   if (action === 'sendLatest') return sendLatestToLine();
   if (action === 'sendAllToday') return sendAllTodayToLine();
+  if (action === 'syncHistory') return syncHistoryManual();
 
   var url = "https://xn--42cah7d0cxcvbbb9x.com/";
   try {
@@ -746,6 +747,72 @@ function sendAllTodayToLine() {
       Utilities.sleep(500);
     });
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', count: count, message: 'Sent ' + count + ' messages to LINE' })).setMimeType(ContentService.MimeType.JSON);
+  } catch(e) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ============================================================
+// ★ syncHistoryManual: ดึงประวัติราคาทองจากเว็บลง Firebase ★
+// ============================================================
+function syncHistoryManual() {
+  try {
+    var url = "https://xn--42cah7d0cxcvbbb9x.com/";
+    var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    var html = response.getContentText("UTF-8");
+    var tables = html.match(/<table[\s\S]*?<\/table>/gi) || [];
+    var historyTable = '';
+    for (var i = 0; i < tables.length; i++) {
+      if (tables[i].indexOf('flip') !== -1 || tables[i].indexOf('pdtable') !== -1 || tables[i].indexOf('data-column') !== -1) {
+        historyTable = tables[i];
+        break;
+      }
+    }
+    if (!historyTable) historyTable = tables[tables.length - 1] || '';
+    if (!historyTable) return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No history table found' })).setMimeType(ContentService.MimeType.JSON);
+    var rows = historyTable.match(/<tr[\s\S]*?<\/tr>/gi);
+    if (!rows) return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No rows found' })).setMimeType(ContentService.MimeType.JSON);
+    var FIREBASE_URL = 'https://gold-portfolio-db-default-rtdb.asia-southeast1.firebasedatabase.app';
+    var dateStr = matchText(html, /(\d{1,2}\s+[ก-๙]+\s+\d{4})/);
+    var countStr = matchText(html, /ครั้งที่\s*(\d+)/);
+    var now = new Date().getTime();
+    var savedCount = 0;
+    rows.forEach(function(row) {
+      var cells = row.match(/<td[\s\S]*?<\/td>/gi);
+      if (cells && cells.length >= 6) {
+        var timeCell = cells[0].replace(/<[^>]+>/g, '').trim();
+        var timeMatch = timeCell.match(/(\d{1,2}:\d{2})/);
+        if (!timeMatch) return;
+        var timeStr = timeMatch[1];
+        var barBuy = cells[2].replace(/<[^>]+>/g, '').trim();
+        var barSell = cells[3].replace(/<[^>]+>/g, '').trim();
+        var ornBuy = cells[4].replace(/<[^>]+>/g, '').trim();
+        var ornSell = cells[5].replace(/<[^>]+>/g, '').trim();
+        var changeVal = cells.length > 8 ? cells[8].replace(/<[^>]+>/g, '').trim() : '0';
+        changeVal = changeVal.replace(/<[^>]+>/g, '').replace(/[^\-\d]/g, '');
+        var barBuyNum = parseFloat(barBuy.replace(/,/g, ''));
+        var barSellNum = parseFloat(barSell.replace(/,/g, ''));
+        var ornBuyNum = parseFloat(ornBuy.replace(/,/g, ''));
+        var ornSellNum = parseFloat(ornSell.replace(/,/g, ''));
+        var changeNum = parseInt(changeVal.replace(/,/g, ''), 10);
+        var safeDate = dateStr.replace(/[\/\s]/g, '-');
+        var safeTime = timeStr.replace(/:/g, '-');
+        var recordKey = safeDate + '_' + safeTime + '_' + barBuyNum;
+        var historyData = {
+          barBuy: barBuyNum, barSell: barSellNum,
+          ornamentBuy: ornBuyNum, ornamentSell: ornSellNum,
+          changeToday: changeNum || 0, latestChange: 0,
+          date: dateStr, time: timeStr,
+          count: parseInt(countStr) || 0,
+          timestamp: now - (30 - parseInt(countStr)) * 60000
+        };
+        UrlFetchApp.fetch(FIREBASE_URL + '/gold_price_history/' + recordKey + '.json', {
+          method: 'PUT', payload: JSON.stringify(historyData), muteHttpExceptions: true
+        });
+        savedCount++;
+      }
+    });
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success', count: savedCount })).setMimeType(ContentService.MimeType.JSON);
   } catch(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
