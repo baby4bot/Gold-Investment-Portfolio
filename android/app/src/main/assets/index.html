@@ -2074,7 +2074,7 @@ function convertToThaiDate(dateStr) {
             if (data.count && allHistoryData) {
                 const todayRecords = allHistoryData.filter(h => h.date === data.date);
                 const webCount = parseInt(data.count) || 0;
-                if (webCount > 0 && todayRecords.length < webCount && webCount - todayRecords.length > 2) {
+                if (webCount > 0 && todayRecords.length < webCount) {
                     console.log(`🔄 Auto-sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${webCount} — กำลังดึงอัตโนมัติ...`);
                     setTimeout(() => syncHistoryFromWeb(), 2000);
                 }
