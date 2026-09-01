@@ -1723,6 +1723,7 @@
             </div>
             <div class="flex items-center gap-2 mb-3 flex-wrap">
                 <button onclick="filterHistory('today')" id="hist-btn-today" class="text-[11px] px-3 py-1.5 rounded-lg font-bold transition" style="background: linear-gradient(135deg,#d4a017,#b8941f); color: #0c0e14;">วันนี้</button>
+                <button onclick="filterHistory('yesterday')" id="hist-btn-yesterday" class="text-[11px] px-3 py-1.5 rounded-lg font-bold transition" style="background: rgba(255,255,255,0.06); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08);">เมื่อวาน</button>
                 <button onclick="filterHistory('week')" id="hist-btn-week" class="text-[11px] px-3 py-1.5 rounded-lg font-bold transition" style="background: rgba(255,255,255,0.06); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08);">อาทิตย์นี้</button>
                 <button onclick="onMonthBtnClick()" ontouchstart="onMonthBtnTouchStart(event)" ontouchend="onMonthBtnTouchEnd(event)" id="hist-btn-month" class="text-[11px] px-3 py-1.5 rounded-lg font-bold transition" style="background: rgba(255,255,255,0.06); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08);">เดือนนี้</button>
                 <button onclick="openDatePicker()" class="px-3 py-1.5 rounded-lg cursor-pointer transition inline-flex items-center justify-center" id="hist-btn-date" style="background: rgba(255,255,255,0.06); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08);" title="เลือกวันที่">
@@ -2589,7 +2590,7 @@ function convertToThaiDate(dateStr) {
     function filterHistory(range) {
         historyFilter = range;
         // Update button styles
-        ['all','today','week','month'].forEach(r => {
+        ['all','today','yesterday','week','month'].forEach(r => {
             const btn = document.getElementById('hist-btn-' + r);
             if (btn) {
                 if (r === range) {
@@ -2688,7 +2689,7 @@ function convertToThaiDate(dateStr) {
         // Override filter to use selected month
         historyFilter = 'selected_month';
         // Update button styles
-        ['all','today','week','month'].forEach(r => {
+        ['all','today','yesterday','week','month'].forEach(r => {
             const btn = document.getElementById('hist-btn-' + r);
             if (btn) {
                 if (r === 'month') {
@@ -2741,6 +2742,11 @@ function convertToThaiDate(dateStr) {
             // ไม่กรอง — แสดงทั้งหมด
         } else if (historyFilter === 'today') {
             filtered = filtered.filter(d => d.date && d.date.trim() === todayStr.trim());
+        } else if (historyFilter === 'yesterday') {
+            const y = new Date(filterNow);
+            y.setDate(y.getDate() - 1);
+            const yesterdayStr = `${y.getDate()} ${thaiMonths[y.getMonth()]} ${y.getFullYear() + 543}`;
+            filtered = filtered.filter(d => d.date && d.date.trim() === yesterdayStr.trim());
         } else if (historyFilter === 'week') {
             // Filter by date string containing current week dates (Mon-Sun)
             const weekDates = [];
@@ -2973,6 +2979,7 @@ function convertToThaiDate(dateStr) {
         // สร้างข้อความยืนยันตาม filter
         let filterName = '';
         if (historyFilter === 'today') filterName = 'วันนี้';
+        else if (historyFilter === 'yesterday') filterName = 'เมื่อวาน';
         else if (historyFilter === 'week') filterName = 'อาทิตย์นี้';
         else if (historyFilter === 'month') filterName = 'เดือนนี้';
         else if (historyFilter === 'date') filterName = 'วันที่เลือก';
