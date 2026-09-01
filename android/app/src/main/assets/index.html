@@ -3297,19 +3297,19 @@ function convertToThaiDate(dateStr) {
         _syncRunning = true;
         const btn = document.getElementById('hist-btn-sync');
         if (btn) { btn.innerHTML = '<i class="ph ph-spinner animate-spin" style="font-size:16px"></i>'; btn.disabled = true; }
-        showWarningToast('🔄 กำลังดึงประวัติราคาทอง...');
+        showToggleCard('🔄', 'กำลังดึงประวัติราคาทอง', 'เชื่อมต่อผ่าน GAS API...', { duration: 2000 });
         const validGasUrls = GAS_API_URLS.filter(u => u && u.length > 10);
         let syncSuccess = false;
         for (let i = 0; i < validGasUrls.length; i++) {
             try {
-                showWarningToast(`🔄 ลอง GAS Account ${i + 1}...`);
+                showToggleCard('🔄', `ลอง GAS Account ${i + 1}`, 'กำลังเชื่อมต่อ...', { duration: 2000 });
                 const ctrl = new AbortController();
                 const timer = setTimeout(() => ctrl.abort(), 20000);
                 const resp = await fetch(validGasUrls[i] + '?action=syncHistory', { signal: ctrl.signal, redirect: 'follow' });
                 clearTimeout(timer);
                 const result = await resp.json();
                 if (result.status === 'success' && result.count > 0) {
-                    showWarningToast(`✅ sync สำเร็จ! ${result.count} รายการ`);
+                    showToggleCard('✅', `GAS ${i + 1} sync สำเร็จ!`, `${result.count} รายการ`, { duration: 3000 });
                     await new Promise(r => setTimeout(r, 2000));
                     loadHistoryGlobal();
                     setTimeout(() => renderHistoryList(), 1000);
@@ -3318,7 +3318,7 @@ function convertToThaiDate(dateStr) {
                 }
             } catch(e) { console.warn('GAS ' + (i+1) + ' failed:', e.message); }
         }
-        if (!syncSuccess) showWarningToast('⚠️ sync ไม่สำเร็จ — ลองใหม่อีกครั้ง');
+        if (!syncSuccess) showToggleCard('⚠️', 'sync ไม่สำเร็จ', 'ลองใหม่อีกครั้ง', { duration: 4000 });
         _syncRunning = false;
         if (btn) { btn.innerHTML = '<i class="ph ph-arrows-clockwise" style="font-size:16px"></i>'; btn.disabled = false; }
     }
@@ -3683,7 +3683,7 @@ function convertToThaiDate(dateStr) {
         const btn = document.getElementById('btn-test-share');
         if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังส่ง...'; }
         try {
-            showWarningToast('🧪 กำลังทดสอบส่งไป LINE (ลองทั้ง 2 GAS)...');
+            showToggleCard('🧪', 'กำลังทดสอบส่งไป LINE', 'ลองทั้ง 2 GAS...', { duration: 2000 });
             // บันทึกค่าชั่วคราวเพื่อใช้ใน autoShareToLINE
             const prevToken = lineChannelToken, prevUid = lineUserId, prevEnabled = isAutoShareEnabled;
             lineChannelToken = token; isAutoShareEnabled = true;
