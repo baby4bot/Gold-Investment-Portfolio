@@ -3060,15 +3060,49 @@ function convertToThaiDate(dateStr) {
         showCustomConfirm('🧹 ลบข้อมูลซ้ำ', `พบข้อมูลซ้ำ ${duplicates.length} รายการ<br>ต้องการลบข้อมูลซ้ำทั้งหมดหรือไม่?`, function() { cleanupDuplicateHistoryConfirm(duplicates); }); return;
     }
     function cleanupDuplicateHistoryConfirm(duplicates) {
-        let deletePromises = duplicates.map(d => {
-            if (d.id) return db.ref('gold_price_history/' + d.id).remove();
-            return Promise.resolve();
-        });
-        Promise.all(deletePromises).then(() => {
-            showToggleCard('✅', `ลบข้อมูลซ้ำสำเร็จ ${duplicates.length} รายการ`, 'ทำรายการเสร็จสมบูรณ์', 'green');
-            loadHistoryGlobal();
-            renderHistoryList();
+        const total = duplicates.length;
+        let deleted = 0;
+        const progressModal = document.createElement('div');
+        progressModal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;';
+        progressModal.innerHTML = `
+            <div style="background:linear-gradient(135deg,#1c1c24,#141418);border:1px solid rgba(212,160,23,0.3);border-radius:16px;padding:32px;width:90%;max-width:360px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:16px;">🧹</div>
+                <div style="color:#d4a017;font-weight:900;font-size:18px;margin-bottom:8px;">กำลังลบข้อมูลซ้ำ</div>
+                <div id="dedup-progress-count" style="color:#f0f0f0;font-size:32px;font-weight:900;margin:12px 0;">${total}</div>
+                <div style="color:#94a3b8;font-size:13px;margin-bottom:16px;">รายการที่เหลือ</div>
+                <div style="background:#1e293b;border-radius:8px;height:8px;overflow:hidden;margin-bottom:8px;">
+                    <div id="dedup-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#d4a017,#22c55e);border-radius:8px;transition:width 0.2s ease;"></div>
+                </div>
+                <div id="dedup-progress-pct" style="color:#94a3b8;font-size:13px;">0%</div>
+            </div>
+        `;
+        document.body.appendChild(progressModal);
+        function updateProgress() {
+            const remaining = total - deleted;
+            const pct = Math.round((deleted / total) * 100);
+            const countEl = document.getElementById('dedup-progress-count');
+            const barEl = document.getElementById('dedup-progress-bar');
+            const pctEl = document.getElementById('dedup-progress-pct');
+            if (countEl) countEl.textContent = remaining;
+            if (barEl) barEl.style.width = pct + '%';
+            if (pctEl) pctEl.textContent = pct + '%';
+        }
+        async function deleteSequentially() {
+            for (const d of duplicates) {
+                if (d.id) await db.ref('gold_price_history/' + d.id).remove();
+                deleted++;
+                updateProgress();
+            }
+        }
+        deleteSequentially().then(() => {
+            setTimeout(() => {
+                progressModal.remove();
+                showToggleCard('✅', `ลบข้อมูลซ้ำสำเร็จ ${total} รายการ`, 'ทำรายการเสร็จสมบูรณ์', 'green');
+                loadHistoryGlobal();
+                renderHistoryList();
+            }, 500);
         }).catch(e => {
+            progressModal.remove();
             showToggleCard('❌', 'ลบไม่สำเร็จ', e.message, 'red');
         });
     }
