@@ -650,15 +650,16 @@ function sendLatestToLine() {
     msg += "📊 ล่าสุด  " + prevIcon + " " + prevAbs + "\n";
     msg += "📊 วันนี้    " + todayIcon + " " + todayAbs + "\n";
     msg += "\n(by นักเลงคีย์บอร์ด)";
-    // ===== Cross-account dedup: random sleep + check Firebase =====
-    // สุ่ม delay 0-3 วินาที เพื่อไม่ให้ 2 บัญชีเช็คพร้อมกัน
-    Utilities.sleep(Math.floor(Math.random() * 3000));
+    // ===== Cross-account dedup: check Firebase _lastLineNotify =====
+    // window = 300 วินาที (5 นาที) ครอบคลุม triggering cycle ของ 2 บัญชี
+    var DEDUP_WINDOW_MS = 300000; // 5 minutes
     if (firebaseUrl) {
       try {
         var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { muteHttpExceptions: true });
         var checkData = JSON.parse(checkResp.getContentText());
-        if (checkData && (Date.now() - checkData) < 120000) {
-          return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE already sent ' + Math.round((Date.now() - checkData) / 1000) + 's ago' })).setMimeType(ContentService.MimeType.JSON);
+        if (checkData && (Date.now() - checkData) < DEDUP_WINDOW_MS) {
+          var secsAgo = Math.round((Date.now() - checkData) / 1000);
+          return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE already sent ' + secsAgo + 's ago (within ' + (DEDUP_WINDOW_MS/1000) + 's window)' })).setMimeType(ContentService.MimeType.JSON);
         }
       } catch(e) { /* first time = no data = proceed */ }
     }
@@ -669,7 +670,7 @@ function sendLatestToLine() {
       payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
       muteHttpExceptions: true
     });
-    // ===== บันทึกว่าส่งแล้ว =====
+    // ===== บันทึกว่าส่งแล้ว ( Firebase _lastLineNotify ) =====
     if (firebaseUrl) {
       try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { method: 'put', payload: JSON.stringify(Date.now()), muteHttpExceptions: true }); } catch(e) {}
     }
