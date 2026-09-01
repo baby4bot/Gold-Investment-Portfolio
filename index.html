@@ -3602,7 +3602,7 @@ function convertToThaiDate(dateStr) {
             return Promise.resolve();
         });
         Promise.all(deletePromises).then(() => {
-            showWarningToast(`✅ ลบข้อมูลซ้ำสำเร็จ ${duplicates.length} รายการ!`);
+            showToggleCard('✅', `ลบข้อมูลซ้ำสำเร็จ ${duplicates.length} รายการ`, 'ทำรายการเสร็จสมบูรณ์', 'green');
             loadHistoryGlobal();
             renderHistoryList();
         }).catch(e => {
