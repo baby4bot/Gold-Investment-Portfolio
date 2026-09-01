@@ -753,7 +753,7 @@ function sendAllTodayToLine() {
 }
 
 // ============================================================
-// ★ syncHistoryManual: ดึงประวัติราคาทองจากเว็บลง Firebase ★
+// ★ syncHistoryManual: ดึงประวัติราคาทองจากเว็บลง Firebase (ทุกวัน) ★
 // ============================================================
 function syncHistoryManual() {
   try {
@@ -761,46 +761,62 @@ function syncHistoryManual() {
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
     var html = response.getContentText("UTF-8");
     var FIREBASE_URL = 'https://gold-portfolio-db-default-rtdb.asia-southeast1.firebasedatabase.app';
-    var dateStr = matchText(html, /(\d{1,2}\s+[ก-๙]+\s+\d{4})/);
     var now = new Date().getTime();
     var savedCount = 0;
-    // Find today's section: split by date headers like "จันทร์ที่ 31 สิงหาคม 69" then only parse first section
-    var todayMatch = html.match(/<table[^>]*>([\s\S]*?)<\/table>/i);
-    if (!todayMatch) return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No table found' })).setMimeType(ContentService.MimeType.JSON);
-    var tableHtml = todayMatch[0];
-    var rows = tableHtml.match(/<tr[\s\S]*?<\/tr>/gi);
-    if (!rows) return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No rows found' })).setMimeType(ContentService.MimeType.JSON);
-    rows.forEach(function(row) {
-      var cells = row.match(/<td[\s\S]*?<\/td>/gi);
-      if (cells && cells.length >= 6) {
-        var cellTexts = cells.map(function(c) { return c.replace(/<[^>]+>/g, '').trim(); });
-        // cells[0] = date+time, cells[1] = count, cells[2] = barBuy, cells[3] = barSell, cells[4] = ornBuy, cells[5] = ornSell
-        var timeMatch = cellTexts[0].match(/(\d{1,2}:\d{2})/);
-        if (!timeMatch) return;
-        var timeStr = timeMatch[1];
-        var countNum = parseInt(cellTexts[1]) || 0;
-        var barBuyNum = parseFloat(cellTexts[2].replace(/,/g, ''));
-        var barSellNum = parseFloat(cellTexts[3].replace(/,/g, ''));
-        var ornBuyNum = parseFloat(cellTexts[4].replace(/,/g, ''));
-        var ornSellNum = parseFloat(cellTexts[5].replace(/,/g, ''));
-        var changeNum = cells.length > 8 ? parseInt(cellTexts[8].replace(/[^\-\d]/g, '')) || 0 : 0;
-        if (barBuyNum <= 0) return;
-        var safeDate = dateStr.replace(/[\/\s]/g, '-');
-        var safeTime = timeStr.replace(/:/g, '-');
-        var recordKey = safeDate + '_' + safeTime + '_' + barBuyNum;
-        var historyData = {
-          barBuy: barBuyNum, barSell: barSellNum,
-          ornamentBuy: ornBuyNum, ornamentSell: ornSellNum,
-          changeToday: changeNum, latestChange: 0,
-          date: dateStr, time: timeStr,
-          count: countNum,
-          timestamp: now - (30 - countNum) * 60000
-        };
-        UrlFetchApp.fetch(FIREBASE_URL + '/gold_price_history/' + recordKey + '.json', {
-          method: 'PUT', payload: JSON.stringify(historyData), muteHttpExceptions: true
-        });
-        savedCount++;
+    // Parse ALL tables (not just first) - each table = one day
+    var tables = html.match(/<table[\s\S]*?<\/table>/gi) || [];
+    if (tables.length === 0) return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No tables found' })).setMimeType(ContentService.MimeType.JSON);
+    // For each table, find the date header before it
+    tables.forEach(function(tableHtml) {
+      // Find date header: "จันทร์ที่ 31 สิงหาคม 69" or "อังคารที่ 1 กันยายน 69"
+      var tableIdx = html.indexOf(tableHtml);
+      var beforeTable = html.substring(Math.max(0, tableIdx - 500), tableIdx);
+      var dateHeaderMatch = beforeTable.match(/(\d{1,2})\s+([ก-๙]+)\s+(\d{2,4})/);
+      var tableDateStr = '';
+      if (dateHeaderMatch) {
+        var day = dateHeaderMatch[1];
+        var month = dateHeaderMatch[2];
+        var year = dateHeaderMatch[3];
+        if (year.length === 2) year = '25' + year;
+        tableDateStr = day + ' ' + month + ' ' + year;
+      } else {
+        // Fallback: use first date found in page
+        tableDateStr = matchText(html, /(\d{1,2}\s+[ก-๙]+\s+\d{4})/) || '';
       }
+      if (!tableDateStr) return;
+      var rows = tableHtml.match(/<tr[\s\S]*?<\/tr>/gi);
+      if (!rows) return;
+      rows.forEach(function(row) {
+        var cells = row.match(/<td[\s\S]*?<\/td>/gi);
+        if (cells && cells.length >= 6) {
+          var cellTexts = cells.map(function(c) { return c.replace(/<[^>]+>/g, '').trim(); });
+          var timeMatch = cellTexts[0].match(/(\d{1,2}:\d{2})/);
+          if (!timeMatch) return;
+          var timeStr = timeMatch[1];
+          var countNum = parseInt(cellTexts[1]) || 0;
+          var barBuyNum = parseFloat(cellTexts[2].replace(/,/g, ''));
+          var barSellNum = parseFloat(cellTexts[3].replace(/,/g, ''));
+          var ornBuyNum = parseFloat(cellTexts[4].replace(/,/g, ''));
+          var ornSellNum = parseFloat(cellTexts[5].replace(/,/g, ''));
+          var changeNum = cells.length > 8 ? parseInt(cellTexts[8].replace(/[^\-\d]/g, '')) || 0 : 0;
+          if (barBuyNum <= 0) return;
+          var safeDate = tableDateStr.replace(/[\/\s]/g, '-');
+          var safeTime = timeStr.replace(/:/g, '-');
+          var recordKey = safeDate + '_' + safeTime + '_' + barBuyNum;
+          var historyData = {
+            barBuy: barBuyNum, barSell: barSellNum,
+            ornamentBuy: ornBuyNum, ornamentSell: ornSellNum,
+            changeToday: changeNum, latestChange: 0,
+            date: tableDateStr, time: timeStr,
+            count: countNum,
+            timestamp: now - (countNum) * 60000
+          };
+          UrlFetchApp.fetch(FIREBASE_URL + '/gold_price_history/' + recordKey + '.json', {
+            method: 'PUT', payload: JSON.stringify(historyData), muteHttpExceptions: true
+          });
+          savedCount++;
+        }
+      });
     });
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', count: savedCount })).setMimeType(ContentService.MimeType.JSON);
   } catch(e) {
