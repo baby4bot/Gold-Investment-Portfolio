@@ -4836,8 +4836,8 @@ function convertToThaiDate(dateStr) {
                 </div>
                 <div class="grid grid-cols-3 gap-3">
                     <div class="text-center"><div class="text-[10px] font-bold" style="color: var(--text-muted);">รายการ</div><div class="font-black text-white text-lg">${d.count}</div></div>
-                    <div class="text-center"><div class="text-[10px] font-bold" style="color: var(--text-muted);">น้ำหนัก</div><div class="font-black text-yellow-400 text-lg">${d.totalWeight} ก.</div></div>
-                    <div class="text-center"><div class="text-[10px] font-bold" style="color: var(--text-muted);">ทุนรวม</div><div class="font-black text-white text-lg">${d.totalCost.toLocaleString()}</div></div>
+                    <div class="text-center"><div class="text-[10px] font-bold" style="color: var(--text-muted);">น้ำหนัก</div><div class="font-black text-yellow-400 text-lg">${Number(d.totalWeight).toLocaleString()} ก.</div></div>
+                    <div class="text-center"><div class="text-[10px] font-bold" style="color: var(--text-muted);">ทุนรวม</div><div class="font-black text-white text-lg">${Number(d.totalCost).toLocaleString()}</div></div>
                 </div>
             </div>`;
         });
@@ -4871,7 +4871,7 @@ function convertToThaiDate(dateStr) {
                 <div class="flex items-center justify-between py-2" style="border-bottom: 1px solid var(--border-subtle);">
                     <div><span class="text-xs font-bold" style="color: var(--text-secondary);">${tx.shop || '-'}</span><br><span class="text-[10px]" style="color: var(--text-muted);">${tx.date} | ${tx.weight} ก. x${tx.qty}</span></div>
                     <div class="text-right">
-                        <div class="text-xs"><span style="color: var(--text-muted);">ซื้อ</span> <span class="font-bold text-white">${tx.buyprice.toLocaleString()}</span></div>
+                        <div class="text-xs"><span style="color: var(--text-muted);">ซื้อ</span> <span class="font-bold text-white">${Number(tx.buyprice).toLocaleString()}</span></div>
                         <div class="text-xs"><span style="color: var(--text-muted);">ปัจจุบัน</span> <span class="font-bold" style="color: var(--accent-gold);">${effectiveGoldPrice.toLocaleString()}</span></div>
                         <div class="text-xs font-black" style="color: ${diffCol};">${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${diffPct}%)</div>
                     </div>
@@ -4914,7 +4914,7 @@ function convertToThaiDate(dateStr) {
                 </div>
                 <div class="text-right">
                     <span class="text-xs px-2 py-0.5 rounded-full" style="background: #ef4444; color: #ffffff; font-weight: bold;">${d.totalProfit >= 0 ? '<span style=\'color:#4ade80\'>▲</span>' : '<span style=\'color:#ffffff\'>▼</span>'} ${Math.abs(d.totalProfit).toLocaleString()}</span>
-                    <div class="text-[10px]" style="color: var(--text-muted);">ทุน ${d.totalCost.toLocaleString()}</div>
+                    <div class="text-[10px]" style="color: var(--text-muted);">ทุน ${Number(d.totalCost).toLocaleString()}</div>
                 </div>
             </div>`;
         });
@@ -5736,7 +5736,7 @@ function convertToThaiDate(dateStr) {
             else if (currentRole === 'user' && tx.buyer === currentUser.name) canManage = true; 
 
             if (canManage) {
-                txContainer.innerHTML += `<div class="p-4 rounded-3xl relative flex flex-col gap-3 overflow-hidden ${getCardStyleClass(tx)}">${tx.isHalfHalf ? '<div class="absolute top-0 left-0 bg-blue-600 px-3 py-1.5 text-white text-[10px] font-bold z-10 rounded-br-xl"><i class="ph ph-hand-coins" style="font-size:12px;"></i> โครงการคนละครึ่ง</div>' : ''}${isAdmin ? '<div class="absolute top-0 right-0 bg-orange-500 px-3 py-1.5 text-white text-[10px] font-bold z-10 rounded-bl-xl"><i class=\"ph ph-shield-check\" style=\"font-size:11px;color:#fff;\"></i> Admin Port</div>' : ''}<div class="absolute ${isAdmin ? 'top-7' : 'top-0'} right-0 flex items-center gap-1.5 z-20 p-1"><button onclick="prepareEdit('${tx.id}')" style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;" title="แก้ไข" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'"><i class="ph ph-pencil-simple" style="color:#60a5fa;font-size:16px;"></i></button><button onclick="deleteTx('${tx.id}')" style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;" title="ลบ" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'"><i class="ph ph-trash" style="color:#f87171;font-size:16px;"></i></button></div><div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-${tx.isHalfHalf || isAdmin ? '4' : '1'}"><div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><span class="inline-block bg-white/10 px-2 py-0.5 rounded-full text-gray-400 text-[10px] font-bold mt-1 border border-white/10"><i class="ph ph-calendar-blank" style="font-size:10px;color:#d4a017;"></i> ${formatDateThai(tx.date)}</span></div></div></div><div class="grid grid-cols-2 gap-2 text-sm p-3 rounded-xl border border-white/5" style="background: #1a1a1a !important;"><div><span class="text-[#94a3b8] text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div><div class="text-right"><span class="text-[#94a3b8] text-xs block">น้ำหนัก (ก้อน)</span> <span class="font-bold text-white">${tx.weight} บ. <span class="text-[#94a3b8] text-xs">(x${tx.qty})</span></span></div><div><span class="text-[#94a3b8] text-xs block">ต้นทุนรวม</span> <span class="font-bold text-green-400">${tx.totalCost.toLocaleString()}</span></div><div class="text-right"><span class="text-[#94a3b8] text-xs block">${tx.totalProfit >= 0 ? 'กำไร' : 'ขาดทุน'}</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '<span style=\'color:#4ade80\'>▲</span>' : '<span style=\'color:#ff3333\'>▼</span>'} ${Math.abs(tx.totalProfit).toLocaleString()}</span></div></div></div>`;
+                txContainer.innerHTML += `<div class="p-4 rounded-3xl relative flex flex-col gap-3 overflow-hidden ${getCardStyleClass(tx)}">${tx.isHalfHalf ? '<div class="absolute top-0 left-0 bg-blue-600 px-3 py-1.5 text-white text-[10px] font-bold z-10 rounded-br-xl"><i class="ph ph-hand-coins" style="font-size:12px;"></i> โครงการคนละครึ่ง</div>' : ''}${isAdmin ? '<div class="absolute top-0 right-0 bg-orange-500 px-3 py-1.5 text-white text-[10px] font-bold z-10 rounded-bl-xl"><i class=\"ph ph-shield-check\" style=\"font-size:11px;color:#fff;\"></i> Admin Port</div>' : ''}<div class="absolute ${isAdmin ? 'top-7' : 'top-0'} right-0 flex items-center gap-1.5 z-20 p-1"><button onclick="prepareEdit('${tx.id}')" style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;" title="แก้ไข" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'"><i class="ph ph-pencil-simple" style="color:#60a5fa;font-size:16px;"></i></button><button onclick="deleteTx('${tx.id}')" style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;" title="ลบ" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'"><i class="ph ph-trash" style="color:#f87171;font-size:16px;"></i></button></div><div class="flex justify-between items-center border-b border-gray-700 pb-3 mt-${tx.isHalfHalf || isAdmin ? '4' : '1'}"><div class="flex items-center gap-3"><img src="${tx.profImg}" class="w-10 h-10 rounded-full border border-gray-600 object-cover bg-gray-900"><div><p class="font-black text-white leading-none">${tx.buyer}</p><span class="inline-block bg-white/10 px-2 py-0.5 rounded-full text-gray-400 text-[10px] font-bold mt-1 border border-white/10"><i class="ph ph-calendar-blank" style="font-size:10px;color:#d4a017;"></i> ${formatDateThai(tx.date)}</span></div></div></div><div class="grid grid-cols-2 gap-2 text-sm p-3 rounded-xl border border-white/5" style="background: #1a1a1a !important;"><div><span class="text-[#94a3b8] text-xs block">ร้านทอง</span> <span class="text-yellow-400 font-bold">${tx.shop}</span></div><div class="text-right"><span class="text-[#94a3b8] text-xs block">น้ำหนัก (ก้อน)</span> <span class="font-bold text-white">${tx.weight} บ. <span class="text-[#94a3b8] text-xs">(x${tx.qty})</span></span></div><div><span class="text-[#94a3b8] text-xs block">ต้นทุนรวม</span> <span class="font-bold text-green-400">${Number(tx.totalCost).toLocaleString()}</span></div><div class="text-right"><span class="text-[#94a3b8] text-xs block">${tx.totalProfit >= 0 ? 'กำไร' : 'ขาดทุน'}</span> <span class="font-black ${tx.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}">${tx.totalProfit >= 0 ? '<span style=\'color:#4ade80\'>▲</span>' : '<span style=\'color:#ff3333\'>▼</span>'} ${Number(Math.abs(tx.totalProfit)).toLocaleString()}</span></div></div></div>`;
             }
 
             if (currentRole === 'guest') return; 
@@ -5781,37 +5781,37 @@ function convertToThaiDate(dateStr) {
                 <div class="grid grid-cols-2 gap-2 mb-2">
                     <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 12px;text-align:center;border:1px solid rgba(255,255,255,0.04);">
                         <p style="font-size:10px;color:#94a3b8;font-weight:700;margin-bottom:4px;"><i class="ph ph-tag" style="font-size:10px;color:#d4a017;"></i> ราคาวันซื้อ</p>
-                        <p class="text-white font-black" style="font-size:17px;">${tx.buyprice.toLocaleString()}</p>
+                        <p class="text-white font-black" style="font-size:17px;">${Number(tx.buyprice).toLocaleString()}</p>
                     </div>
                     <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 12px;text-align:center;border:1px solid rgba(255,255,255,0.04);">
                         <p style="font-size:10px;color:#facc15;font-weight:700;margin-bottom:4px;">${isSim ? '🔮 ราคาจำลอง' : '<i class="ph ph-coins" style="font-size:10px;color:#d4a017;"></i> ราคาปัจจุบัน'}</p>
-                        <p style="font-size:17px;font-weight:900;color:#facc15;">${effectivePrice.toLocaleString()}</p>
+                        <p style="font-size:17px;font-weight:900;color:#facc15;">${Number(effectivePrice).toLocaleString()}</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2 mb-3">
                     <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:8px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:58px;">
                         <p style="font-size:9px;color:#94a3b8;font-weight:700;"><i class="ph ph-scales" style="font-size:9px;color:#d4a017;"></i> น้ำหนัก</p>
-                        <p style="font-size:14px;font-weight:900;color:#fde047;">${tx.totalWeight} บ.</p>
-                        <p style="font-size:8px;color:#6b7280;font-weight:600;margin-top:2px;">${tx.weight} x ${tx.qty} = ${tx.totalWeight} บ.</p>
+                        <p style="font-size:14px;font-weight:900;color:#fde047;">${Number(tx.totalWeight).toLocaleString()} บ.</p>
+                        <p style="font-size:8px;color:#6b7280;font-weight:600;margin-top:2px;">${tx.weight} x ${tx.qty} = ${Number(tx.totalWeight).toLocaleString()} บ.</p>
                     </div>
                     <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:8px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:58px;">
                         <p style="font-size:9px;color:#94a3b8;font-weight:700;"><i class="ph ph-cube" style="font-size:9px;color:#d4a017;"></i> ค่าบล็อก</p>
-                        <p style="font-size:13px;font-weight:900;color:#c084fc;">${(tx.blockfee * tx.totalWeight).toLocaleString()}</p>
+                        <p style="font-size:13px;font-weight:900;color:#c084fc;">${Number(tx.blockfee * tx.totalWeight).toLocaleString()}</p>
                     </div>
                     <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:8px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:58px;">
                         <p style="font-size:9px;color:#94a3b8;font-weight:700;"><i class="ph ph-wallet" style="font-size:9px;color:#d4a017;"></i> ทุนรวม</p>
-                        <p style="font-size:13px;font-weight:900;color:#fff;">${tx.totalCost.toLocaleString()}</p>
+                        <p style="font-size:13px;font-weight:900;color:#fff;">${Number(tx.totalCost).toLocaleString()}</p>
                     </div>
                 </div>
                 <div style="background:linear-gradient(135deg,${tx.totalProfit >= 0 ? 'rgba(34,197,94,0.08)' : 'rgba(255,51,51,0.08)'},transparent);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;border:1px solid ${tx.totalProfit >= 0 ? 'rgba(34,197,94,0.15)' : 'rgba(255,51,51,0.15)'};">
                     <div>
                         <p style="font-size:10px;color:#94a3b8;font-weight:700;"><i class="ph ph-calculator" style="font-size:9px;color:#d4a017;"></i> ${profitPerBahtLabel}</p>
-                        <p class="${pCol}" style="font-size:15px;font-weight:900;">${cardPArrBaht} ${Math.abs(tx.profitPerBaht).toLocaleString()}</p>
+                        <p class="${pCol}" style="font-size:15px;font-weight:900;">${cardPArrBaht} ${Number(Math.abs(tx.profitPerBaht)).toLocaleString()}</p>
                     </div>
                     <div style="width:1px;height:30px;background:rgba(255,255,255,0.1);"></div>
                     <div style="text-align:right;">
                         <p style="font-size:10px;color:#94a3b8;font-weight:700;"><i class="ph ph-chart-line-down" style="font-size:9px;color:#d4a017;"></i> ${profitLabel}</p>
-                        <p class="${pCol}" style="font-size:15px;font-weight:900;">${cardPArrow} ${Math.abs(tx.totalProfit).toLocaleString()}</p>
+                        <p class="${pCol}" style="font-size:15px;font-weight:900;">${cardPArrow} ${Number(Math.abs(tx.totalProfit)).toLocaleString()}</p>
                     </div>
                 </div>
                 ${halfHalfHTML}
@@ -6443,17 +6443,17 @@ function convertToThaiDate(dateStr) {
                     <div class="grid grid-cols-2 gap-2.5 mb-3">
                         <div class="rounded-xl p-3.5" style="background:#1a1a1a;">
                             <p class="text-[11px] text-[#94a3b8] font-bold mb-1"><i class="ph ph-tag" style="font-size:10px;color:#d4a017;"></i> ราคาวันซื้อ</p>
-                            <p class="text-white font-black text-lg">${tx.buyprice.toLocaleString()}</p>
+                            <p class="text-white font-black text-lg">${Number(tx.buyprice).toLocaleString()}</p>
                         </div>
                         <div class="rounded-xl p-3.5" style="background:#1a1a1a;">
                             <p class="text-[11px] text-[#94a3b8] font-bold mb-1">💰 ทุนรวม</p>
-                            <p class="text-white font-black text-lg">${tx.totalCost.toLocaleString()}</p>
+                            <p class="text-white font-black text-lg">${Number(tx.totalCost).toLocaleString()}</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2.5 mb-4">
                         <div class="rounded-xl p-3.5" style="background:#1a1a1a;">
                             <p class="text-[11px] text-yellow-500 font-bold mb-1">${isSim ? '🔮 ราคาจำลอง' : '<i class="ph ph-coins" style="font-size:10px;color:#d4a017;"></i> ราคาปัจจุบัน'}</p>
-                            <p class="text-yellow-400 font-black text-lg">${effectivePrice.toLocaleString()}</p>
+                            <p class="text-yellow-400 font-black text-lg">${Number(effectivePrice).toLocaleString()}</p>
                         </div>
                         <div class="rounded-xl p-3.5" style="background:#1a1a1a;">
                             <p class="text-[11px] text-[#94a3b8] font-bold mb-1">💎 มูลค่าปัจจุบัน</p>
@@ -6465,7 +6465,7 @@ function convertToThaiDate(dateStr) {
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-[11px] text-[#94a3b8] font-bold mb-0.5">🪙 น้ำหนัก (ก.) x ทุน</p>
-                                <p class="text-white font-black text-base">${tx.weight} x ${tx.qty} = <span class="text-yellow-300">${tx.totalWeight} บ.</span></p>
+                                <p class="text-white font-black text-base">${tx.weight} x ${tx.qty} = <span class="text-yellow-300">${Number(tx.totalWeight).toLocaleString()} บ.</span></p>
                             </div>
                             <div class="text-right">
                                 <p class="text-[11px] text-[#94a3b8] font-bold mb-0.5">ราคาทุน/บาท</p>
@@ -6476,7 +6476,7 @@ function convertToThaiDate(dateStr) {
                     <!-- Profit/Loss (Main) -->
                     <div class="rounded-2xl p-5 border text-center" style="background:#1a1a1a; border-color: ${tx.totalProfit >= 0 ? '#22c55e' : '#ff3333'};">
                         <p class="text-sm text-gray-400 font-bold mb-2">${profitLabel} (รวมทั้งหมด)</p>
-                        <p class="text-5xl font-black ${pCol}">${pArrow} ${Math.abs(tx.totalProfit).toLocaleString()}</p>
+                        <p class="text-5xl font-black ${pCol}">${pArrow} ${Number(Math.abs(tx.totalProfit)).toLocaleString()}</p>
                     </div>
                     ${halfHalfHtml}
                 </div>
