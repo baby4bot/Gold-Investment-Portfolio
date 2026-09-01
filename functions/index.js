@@ -45,25 +45,8 @@ exports.scheduledGoldSync = functions.pubsub
       // 4. บันทึกประวัติลง Firebase
       await saveHistoryToFirebase(priceData);
 
-      // 5. ตรวจสอบราคาเปลี่ยนแปลง + ส่ง LINE (with dedup)
-      const prevSnap = await db.ref("prev_gold_price/barBuy").once("value");
-      const prevPrice = prevSnap.val();
-      // Save current price as previous for next comparison
+      // 5. บันทึกราคาเก่าสำหรับ comparison (LINE notification handled by GAS script)
       await db.ref("prev_gold_price/barBuy").set(priceData.barBuy);
-      if (prevPrice && prevPrice !== priceData.barBuy) {
-        // Dedup: check if LINE was already sent for this price change (within 60 seconds)
-        const lastNotifySnap = await db.ref("_lastLineNotify").once("value");
-        const lastNotify = lastNotifySnap.val();
-        const now = Date.now();
-        if (!lastNotify || (now - lastNotify) > 60000) {
-          // Claim the notification slot
-          await db.ref("_lastLineNotify").set(now);
-          console.log(`💰 Price changed: ${prevPrice} → ${priceData.barBuy} — sending LINE`);
-          await sendLineNotification(priceData, prevPrice);
-        } else {
-          console.log(`⏭️ Price changed but LINE already sent ${now - lastNotify}ms ago — skipping`);
-        }
-      }
 
       console.log("✅ Gold sync completed:", priceData.date, priceData.time, "ครั้งที่", priceData.count);
       return null;
