@@ -3048,7 +3048,7 @@ function convertToThaiDate(dateStr) {
         });
         
         if (duplicates.length === 0) {
-            showWarningToast('✅ ไม่มีข้อมูลซ้ำกัน!');
+            showToggleCard('✅', 'ไม่มีข้อมูลซ้ำกัน', 'ไม่พบข้อมูลซ้ำในระบบ', 'green');
             return;
         }
         
@@ -3060,11 +3060,11 @@ function convertToThaiDate(dateStr) {
             return Promise.resolve();
         });
         Promise.all(deletePromises).then(() => {
-            showWarningToast(`✅ ลบข้อมูลซ้ำสำเร็จ ${duplicates.length} รายการ!`);
+            showToggleCard('✅', `ลบข้อมูลซ้ำสำเร็จ ${duplicates.length} รายการ`, 'ทำรายการเสร็จสมบูรณ์', 'green');
             loadHistoryGlobal();
             renderHistoryList();
         }).catch(e => {
-            showWarningToast('❌ ลบไม่สำเร็จ: ' + e.message);
+            showToggleCard('❌', 'ลบไม่สำเร็จ', e.message, 'red');
         });
     }
 
