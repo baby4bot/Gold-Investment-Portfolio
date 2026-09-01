@@ -4484,18 +4484,22 @@ function convertToThaiDate(dateStr) {
         });
     }
 
-    // ===== Periodic History Sync: ตรวจ count ทุก 30 วินาที =====
+    // ===== Periodic History Sync: ตรวจ count ทุก 15 วินาที =====
     setInterval(() => {
-        if (!allHistoryData || allHistoryData.length === 0) return;
+        if (!allHistoryData || allHistoryData.length === 0 || !db) return;
         var latestCount = parseInt(document.getElementById('gold-update-count')?.innerText?.replace(/[^0-9]/g, '') || '0');
         if (latestCount <= 0) return;
-        var todayStr = allHistoryData.length > 0 ? allHistoryData[allHistoryData.length - 1].date : '';
-        var todayRecords = allHistoryData.filter(h => h.date === todayStr);
-        if (todayRecords.length < latestCount) {
-            console.log(`🔄 Periodic sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${latestCount} — กำลังดึงอัตโนมัติ...`);
-            syncHistoryFromWeb();
-        }
-    }, 30000);
+        // ดึงวันที่จาก latest_gold_price (ไม่ใช่จาก history ที่อาจไม่ครบ)
+        db.ref('latest_gold_price/date').once('value', snap => {
+            var todayStr = snap.val() || '';
+            if (!todayStr) return;
+            var todayRecords = allHistoryData.filter(h => h.date === todayStr);
+            if (todayRecords.length < latestCount) {
+                console.log(`🔄 Periodic sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${latestCount} — กำลังดึงอัตโนมัติ...`);
+                syncHistoryFromWeb();
+            }
+        });
+    }, 15000);
 
     // ===== แชร์เว็บไซต์ =====
     const SHARE_URL = 'https://baby4bot.github.io/Gold-Investment-Portfolio/';
