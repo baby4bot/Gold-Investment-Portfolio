@@ -650,15 +650,31 @@ function sendLatestToLine() {
     msg += "📊 ล่าสุด  " + prevIcon + " " + prevAbs + "\n";
     msg += "📊 วันนี้    " + todayIcon + " " + todayAbs + "\n";
     msg += "\n(by นักเลงคีย์บอร์ด)";
-    // ===== Cross-account dedup: ตรวจว่าบัญชีอื่นส่ง LINE ไปแล้วหรือยัง =====
+    // ===== Cross-account dedup: ใช้ unique claim path ป้องกัน race condition =====
     if (firebaseUrl) {
       try {
-        var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { muteHttpExceptions: true });
-        var checkData = JSON.parse(checkResp.getContentText());
-        if (checkData && (Date.now() - checkData) < 120000) {
-          return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE already sent by other account (' + Math.round((Date.now() - checkData) / 1000) + 's ago)' })).setMimeType(ContentService.MimeType.JSON);
+        // 1. เขียน claim ของตัวเอง (path ไม่ซ้ำกัน)
+        var claimId = 'claim_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        var claimPath = '_lineClaims/' + claimId;
+        UrlFetchApp.fetch(firebaseUrl + '/' + claimPath + '.json', {
+          method: 'put', payload: JSON.stringify({ t: Date.now() }), muteHttpExceptions: true
+        });
+        Utilities.sleep(500); // รอ 500ms ให้บัญชีอื่นเขียน claim ของตัวเอง
+        // 2. อ่าน claim ทั้งหมด ดูว่าตัวเองเป็นตัวแรกหรือไม่
+        var claimsResp = UrlFetchApp.fetch(firebaseUrl + '/_lineClaims.json', { muteHttpExceptions: true });
+        var claimsData = JSON.parse(claimsResp.getContentText());
+        if (claimsData) {
+          var claimKeys = Object.keys(claimsData).sort(function(a, b) { return claimsData[a].t - claimsData[b].t; });
+          // ถ้ามี claim อื่นที่เก่ากว่า = บัญชีอื่น claim ก่อน → ข้าม
+          if (claimKeys.length > 0 && claimKeys[0] !== claimId) {
+            // ลบ claim ของตัวเอง
+            UrlFetchApp.fetch(firebaseUrl + '/' + claimPath + '.json', { method: 'delete', muteHttpExceptions: true });
+            return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'Other account claimed first' })).setMimeType(ContentService.MimeType.JSON);
+          }
         }
-      } catch(e) { /* Firebase ยังไม่มีค่า = ยังไม่มีใครส่ง → ไปส่งต่อ */ }
+        // 3. ตัวเอง claim สำเร็จ → ลบ claim ทั้งหมด
+        UrlFetchApp.fetch(firebaseUrl + '/_lineClaims.json', { method: 'delete', muteHttpExceptions: true });
+      } catch(e) { /* Firebase error = ไปส่งต่อ */ }
     }
     // ===== ส่ง LINE Notification =====
     UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
@@ -667,10 +683,6 @@ function sendLatestToLine() {
       payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
       muteHttpExceptions: true
     });
-    // บันทึกลง Firebase ว่าส่งแล้ว (สำหรับบัญชีอื่นเช็ค)
-    if (firebaseUrl) {
-      try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { method: 'put', payload: JSON.stringify(Date.now()), muteHttpExceptions: true }); } catch(e) {}
-    }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Latest price sent to LINE' })).setMimeType(ContentService.MimeType.JSON);
   } catch(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() })).setMimeType(ContentService.MimeType.JSON);

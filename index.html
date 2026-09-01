@@ -2607,7 +2607,7 @@ function convertToThaiDate(dateStr) {
                 playPriceChangeSound();
                 speakPriceChange(data.count || 0, _goldLatestChange || 0, newPrice.toLocaleString());
                 sendPushNotification('💰 ราคาทองคำเปลี่ยนแปลง!', `ทองคำแท่ง: ${newPrice.toLocaleString()} บาท\nเปลี่ยนแปลง: ${goldChangeToday}`);
-                autoShareToLINE();
+                // LINE notification handled by GAS time-based trigger (no duplicate)
             } else if (lastGoldBarBuy < 0 && newPrice > 0) { lastGoldBarBuy = newPrice; }
         } else {
             document.getElementById('gold-status-text').innerText = 'ดึงข้อมูลล้มเหลว — ลองใหม่อีกครั้ง';
