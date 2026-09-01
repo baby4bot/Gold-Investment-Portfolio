@@ -761,7 +761,9 @@ function syncHistoryManual() {
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
     var html = response.getContentText("UTF-8");
     var FIREBASE_URL = 'https://gold-portfolio-db-default-rtdb.asia-southeast1.firebasedatabase.app';
-    var dateStr = matchText(html, /(\d{1,2}\s+[ก-๙]+\s+\d{4})/);
+    var dateStrRaw = matchText(html, /(\d{1,2}\s+[ก-๙]+\s+\d{4})/);
+    // Normalize: remove leading zero from day (e.g. '01 กันยายน' -> '1 กันยายน')
+    var dateStr = dateStrRaw ? dateStrRaw.replace(/^(\d+)/, function(m) { return parseInt(m, 10).toString(); }) : '';
     var now = new Date().getTime();
     var savedCount = 0;
     // Parse only today's table (first table)
