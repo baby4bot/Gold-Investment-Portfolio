@@ -396,17 +396,15 @@ function checkGoldAndNotify() {
       msg += "📊 วันนี้    " + todayIcon + " " + todayAbs + "\n";
       msg += "\n(by นักเลงคีย์บอร์ด)";
 
-      // ★★★ Cross-account LINE dedup ★★★
-      var DEDUP_WINDOW_MS = 300000; // 5 minutes
+      // ★★★ Cross-account LINE dedup (count-based) ★★★
       var lineSkipped = false;
       if (autoShareEnabled && LINE_TOKEN && LINE_TOKEN.length > 10) {
-        // Check Firebase _lastLineNotify
+        // Check Firebase _lastLineNotifyCount = countStr ที่ส่งล่าสุด
         try {
-          var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { muteHttpExceptions: true });
-          var checkData = JSON.parse(checkResp.getContentText());
-          if (checkData && (Date.now() - checkData) < DEDUP_WINDOW_MS) {
-            var secsAgo = Math.round((Date.now() - checkData) / 1000);
-            Logger.log("LINE skipped: already sent " + secsAgo + "s ago");
+          var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { muteHttpExceptions: true });
+          var lastCount = JSON.parse(checkResp.getContentText());
+          if (lastCount && String(lastCount) === String(countStr)) {
+            Logger.log("LINE skipped: count " + countStr + " already sent by other account");
             lineSkipped = true;
           }
         } catch(e) { /* first time = no data = proceed */ }
@@ -420,9 +418,9 @@ function checkGoldAndNotify() {
               muteHttpExceptions: true
             });
             var lineStatus = lineResp.getResponseCode();
-            Logger.log("LINE sent! Status: " + lineStatus + " | " + lastBarBuy + " -> " + currentBarBuy);
-            // Mark as sent in Firebase
-            try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { method: 'put', payload: JSON.stringify(Date.now()), muteHttpExceptions: true }); } catch(e) {}
+            Logger.log("LINE sent! Status: " + lineStatus + " | count=" + countStr + " | " + lastBarBuy + " -> " + currentBarBuy);
+            // Mark count as sent in Firebase
+            try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { method: 'put', payload: JSON.stringify(countStr), muteHttpExceptions: true }); } catch(e) {}
           } catch(lineErr) {
             Logger.log("LINE send error: " + lineErr.toString());
           }
@@ -671,16 +669,13 @@ function sendLatestToLine() {
     msg += "📊 ล่าสุด  " + prevIcon + " " + prevAbs + "\n";
     msg += "📊 วันนี้    " + todayIcon + " " + todayAbs + "\n";
     msg += "\n(by นักเลงคีย์บอร์ด)";
-    // ===== Cross-account dedup: check Firebase _lastLineNotify =====
-    // window = 300 วินาที (5 นาที) ครอบคลุม triggering cycle ของ 2 บัญชี
-    var DEDUP_WINDOW_MS = 300000; // 5 minutes
+    // ===== Cross-account dedup (count-based) =====
     if (firebaseUrl) {
       try {
-        var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { muteHttpExceptions: true });
-        var checkData = JSON.parse(checkResp.getContentText());
-        if (checkData && (Date.now() - checkData) < DEDUP_WINDOW_MS) {
-          var secsAgo = Math.round((Date.now() - checkData) / 1000);
-          return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE already sent ' + secsAgo + 's ago (within ' + (DEDUP_WINDOW_MS/1000) + 's window)' })).setMimeType(ContentService.MimeType.JSON);
+        var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { muteHttpExceptions: true });
+        var lastCount = JSON.parse(checkResp.getContentText());
+        if (lastCount && String(lastCount) === String(countStr)) {
+          return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE count ' + countStr + ' already sent' })).setMimeType(ContentService.MimeType.JSON);
         }
       } catch(e) { /* first time = no data = proceed */ }
     }
@@ -691,9 +686,9 @@ function sendLatestToLine() {
       payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
       muteHttpExceptions: true
     });
-    // ===== บันทึกว่าส่งแล้ว ( Firebase _lastLineNotify ) =====
+    // ===== บันทึก count ที่ส่งแล้ว =====
     if (firebaseUrl) {
-      try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { method: 'put', payload: JSON.stringify(Date.now()), muteHttpExceptions: true }); } catch(e) {}
+      try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { method: 'put', payload: JSON.stringify(countStr), muteHttpExceptions: true }); } catch(e) {}
     }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Latest price sent to LINE' })).setMimeType(ContentService.MimeType.JSON);
   } catch(e) {
