@@ -757,7 +757,7 @@ function sendAllTodayToLine() {
 // ============================================================
 function syncHistoryManual() {
   try {
-    var url = "https://xn--42cah7d0cxcvbbb9x.com/";
+    var url = "https://xn--42cah7d0cxcvbbb9x.com/%E0%B8%A3%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%97%E0%B8%AD%E0%B8%87%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87/";
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
     var html = response.getContentText("UTF-8");
     var tables = html.match(/<table[\s\S]*?<\/table>/gi) || [];
@@ -804,7 +804,7 @@ function syncHistoryManual() {
           changeToday: changeNum || 0, latestChange: 0,
           date: dateStr, time: timeStr,
           count: parseInt(countStr) || 0,
-          timestamp: now - (30 - parseInt(countStr)) * 60000
+          timestamp: now - ((parseInt(countStr) || 30) - parseInt(cells[1].replace(/<[^>]+>/g, '').trim() || '0')) * 60000
         };
         UrlFetchApp.fetch(FIREBASE_URL + '/gold_price_history/' + recordKey + '.json', {
           method: 'PUT', payload: JSON.stringify(historyData), muteHttpExceptions: true
