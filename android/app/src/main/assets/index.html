@@ -2047,11 +2047,13 @@ function convertToThaiDate(dateStr) {
                 const barSellNum = parseFloat(data.bar_sell.toString().replace(/,/g, ''));
                 const ornamentBuyNum = parseFloat(data.ornament_buy.toString().replace(/,/g, ''));
                 const ornamentSellNum = parseFloat(data.ornament_sell.toString().replace(/,/g, ''));
-                const isDuplicate = allHistoryData && allHistoryData.some(h =>
-                    h.date === data.date && h.time === data.time && h.barBuy === barBuyNum
-                );
+                const normDate = data.date ? data.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : data.date;
+                const isDuplicate = allHistoryData && allHistoryData.some(h => {
+                    const hNormDate = h.date ? h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : h.date;
+                    return hNormDate === normDate && h.time === data.time && h.barBuy === barBuyNum;
+                });
                 if (!isDuplicate) {
-                    const recordKey = `${data.date}_${data.time}_${barBuyNum}`.replace(/[\/\s:]/g, '-');
+                    const recordKey = `${normDate}_${data.time}_${barBuyNum}`.replace(/[\/\s:]/g, '-');
                     db.ref('gold_price_history/' + recordKey).set({
                         barBuy: barBuyNum, barSell: barSellNum,
                         ornamentBuy: ornamentBuyNum, ornamentSell: ornamentSellNum,
@@ -2069,15 +2071,6 @@ function convertToThaiDate(dateStr) {
                     changeToday: parseFloat(data.change) || 0, latestChange: parseFloat(data.prev_change) || 0,
                     date: data.date, time: data.time, count: parseInt(data.count) || 0, timestamp: Date.now()
                 });
-            }
-            // Auto-sync ประวัติถ้า count ไม่ตรง
-            if (data.count && allHistoryData) {
-                const todayRecords = allHistoryData.filter(h => h.date === data.date);
-                const webCount = parseInt(data.count) || 0;
-                if (webCount > 0 && todayRecords.length < webCount) {
-                    console.log(`🔄 Auto-sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${webCount} — กำลังดึงอัตโนมัติ...`);
-                    setTimeout(() => syncHistoryFromWeb(), 2000);
-                }
             }
             if (priceChanged && transactionsData.length > 0) renderData();
             if (priceChanged && newPrice > 0 && lastGoldBarBuy > 0 && newPrice !== lastGoldBarBuy) {
@@ -2518,16 +2511,20 @@ function convertToThaiDate(dateStr) {
     // ===== Auto-dedup: ลบ record ซ้ำอัตโนมัติ =====
     let lastDedupTime = 0;
     const DEDUP_INTERVAL = 60000; // เช็คทุก 1 นาที
+    let _normalizeDone = false; // run leading-zero cleanup only until done
+    let _dedupDone = false; // run dedup only once on first load
     function autoDedupHistory() {
         if (!db || !allHistoryData || allHistoryData.length < 2) return;
+        if (_dedupDone && _normalizeDone) return; // all cleanup done
         const now = Date.now();
         if (now - lastDedupTime < DEDUP_INTERVAL) return;
         lastDedupTime = now;
 
-        // จัดกลุ่ม record ตาม date+time+barBuy
+        // จัดกลุ่ม record ตาม date+time+barBuy (normalize leading zero in day)
         const groups = {};
         allHistoryData.forEach(h => {
-            const key = `${h.date}_${h.time}_${h.barBuy}`;
+            const normDate = h.date ? h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : h.date;
+            const key = `${normDate}_${h.time}_${h.barBuy}`;
             if (!groups[key]) groups[key] = [];
             groups[key].push(h);
         });
@@ -2550,6 +2547,35 @@ function convertToThaiDate(dateStr) {
             db.ref('gold_price_history').update(updates).then(() => {
                 console.log('Auto-dedup: removed ' + keysToDelete.length + ' duplicate records');
             });
+        }
+        _dedupDone = true;
+
+        // Fix records with leading-zero day (batch: max 200 per cycle, stop when done)
+        if (!_normalizeDone) {
+            const BATCH_SIZE = 200;
+            let batchCount = 0;
+            const batchUpdates = {};
+            allHistoryData.forEach(h => {
+                if (!h.date || !h.id || batchCount >= BATCH_SIZE) return;
+                const normDate = h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString());
+                if (normDate !== h.date) {
+                    const hasNormalized = allHistoryData.some(x => x.id !== h.id && x.date === normDate && x.time === h.time && x.barBuy === h.barBuy);
+                    if (hasNormalized) {
+                        batchUpdates['gold_price_history/' + h.id] = null;
+                        batchCount++;
+                    } else {
+                        batchUpdates['gold_price_history/' + h.id + '/date'] = normDate;
+                        batchCount++;
+                    }
+                }
+            });
+            if (batchCount > 0) {
+                db.ref().update(batchUpdates).then(() => {
+                    console.log('Normalized ' + batchCount + ' records with leading-zero dates');
+                });
+            } else {
+                _normalizeDone = true;
+            }
         }
     }
 
@@ -3876,9 +3902,9 @@ function convertToThaiDate(dateStr) {
                     allHistoryData.push({ id: child.key, ...child.val() });
                 });
             }
-            if(document.getElementById('price-history-modal').style.display === 'flex') {
-                renderHistoryList();
-            }
+            // NOTE: Removed auto-render of price history list on Firebase update.
+            // The list now only refreshes when the modal is opened (openPriceHistory).
+            // This prevents the record count from jumping while the user is viewing history.
             // Auto-cleanup records older than 30 days
             cleanupOldHistory();
             // Auto-dedup ลบ record ซ้ำอัตโนมัติ
@@ -3890,34 +3916,7 @@ function convertToThaiDate(dateStr) {
         });
     }
 
-    // ===== Periodic History Sync: ตรวจ count ทุก 15 วินาที =====
-    let _lastAutoSyncTime = 0;
-    setInterval(() => {
-        if (!allHistoryData || allHistoryData.length === 0 || !db) return;
-        var latestCount = parseInt(document.getElementById('gold-update-count')?.innerText?.replace(/[^0-9]/g, '') || '0');
-        if (latestCount <= 0) return;
-        db.ref('latest_gold_price/date').once('value', snap => {
-            var todayStr = snap.val() || '';
-            if (!todayStr) return;
-            var todayRecords = allHistoryData.filter(h => h.date === todayStr);
-            if (todayRecords.length < latestCount && (Date.now() - _lastAutoSyncTime) > 30000) {
-                _lastAutoSyncTime = Date.now();
-                console.log(`🔄 Auto-sync: ${todayRecords.length}/${latestCount} — calling GAS...`);
-                const validUrls = GAS_API_URLS.filter(u => u && u.length > 10);
-                if (validUrls.length > 0) {
-                    fetch(validUrls[0] + '?action=syncHistory', { redirect: 'follow' })
-                        .then(r => r.json())
-                        .then(result => {
-                            console.log('✅ Auto-sync result:', result);
-                            if (result.status === 'success' && result.count > 0) {
-                                loadHistoryGlobal();
-                            }
-                        })
-                        .catch(e => console.warn('Auto-sync failed:', e.message));
-                }
-            }
-        });
-    }, 15000);
+    // ===== Auto-sync removed: user can manually sync via the sync button =====
 
     // ===== แชร์เว็บไซต์ =====
     const SHARE_URL = 'https://baby4bot.github.io/Gold-Investment-Portfolio/';

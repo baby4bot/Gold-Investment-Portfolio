@@ -121,12 +121,15 @@ function parseGoldPrice(html) {
 
     let dateStr = "";
     if (dateMatch) {
-      dateStr = dateMatch[1] + " " + thaiMonths[parseInt(dateMatch[0].split(/\s/)[1]) - 1 || 0] + " " + dateMatch[2];
+      dateStr = parseInt(dateMatch[1], 10) + " " + thaiMonths[parseInt(dateMatch[0].split(/\s/)[1]) - 1 || 0] + " " + dateMatch[2];
     }
     // Fallback: try Thai date format directly
     if (!dateStr) {
       const thDateMatch = html.match(/(\d{1,2}\s+(?:มกราคม|กุมภาพันธ์|มีนาคม|เมษายน|พฤษภาคม|มิถุนายน|กรกฎาคม|สิงหาคม|กันยายน|ตุลาคม|พฤศจิกายน|ธันวาคม)\s+\d{4})/);
-      if (thDateMatch) dateStr = thDateMatch[1];
+      if (thDateMatch) {
+        const parts = thDateMatch[1].split(/\s+/);
+        dateStr = parseInt(parts[0], 10) + " " + parts[1] + " " + parts[2];
+      }
     }
 
     // ดึงค่าเปลี่ยนแปลง
@@ -218,13 +221,23 @@ function parseHistoryTable(html) {
 // Helper: Save history to Firebase (skip duplicates)
 async function saveHistoryToFirebase(priceData) {
   const now = Date.now();
-  const safeDate = (priceData.date || "").replace(/[\s\/]/g, "");
+  // Normalize date: strip leading zero from day number
+  const normalizedDate = (priceData.date || "").replace(/^(\d+)/, (m) => parseInt(m, 10).toString());
+  const safeDate = normalizedDate.replace(/[\s\/]/g, "");
   const safeTime = (priceData.time || "").replace(/[\s.:น]/g, "");
   const recordKey = `${safeDate}_${safeTime}_${priceData.barBuy}`;
 
-  // เช็คซ้ำ
+  // เช็คซ้ำ (also check with raw date in case old records exist)
+  const rawSafeDate = (priceData.date || "").replace(/[\s\/]/g, "");
+  const rawKey = `${rawSafeDate}_${safeTime}_${priceData.barBuy}`;
   const existing = await db.ref("gold_price_history/" + recordKey).once("value");
-  if (existing.exists()) return;
+  const existingRaw = recordKey !== rawKey ? await db.ref("gold_price_history/" + rawKey).once("value") : null;
+  if (existing.exists() || (existingRaw && existingRaw.exists())) return;
+
+  // Delete old record with leading-zero date if it exists
+  if (existingRaw && existingRaw.exists() && recordKey !== rawKey) {
+    await db.ref("gold_price_history/" + rawKey).remove();
+  }
 
   await db.ref("gold_price_history/" + recordKey).set({
     barBuy: priceData.barBuy,
