@@ -3796,18 +3796,22 @@ function convertToThaiDate(dateStr) {
                 const safeTime = d.time.replace(/[\s\.:น]/g, '');
                 const recordKey = `IMP_${safeDate}_${safeTime}`;
 
+                // คำนวณ timestamp จากวันที่+เวลาจริง เพื่อให้ sort ถูกต้อง
+                const importTimestamp = new Date(d.date.replace(/(\d+)\s+(\S+)\s+(\d+)/, function(m, day, month, year) {
+                    const monthMap = {'มกราคม':'0','กุมภาพันธ์':'1','มีนาคม':'2','เมษายน':'3','พฤษภาคม':'4','มิถุนายน':'5','กรกฎาคม':'6','สิงหาคม':'7','กันยายน':'8','ตุลาคม':'9','พฤศจิกายน':'10','ธันวาคม':'11'};
+                    return monthMap[month] + '/' + day + '/' + year;
+                }) + ' ' + d.time).getTime() || Date.now();
                 await db.ref('gold_price_history/' + recordKey).set({
                     barBuy: d.barBuy,
                     barSell: d.barSell,
                     ornamentBuy: d.ornamentBuy,
                     ornamentSell: d.ornamentSell,
                     changeToday: d.changeToday,
-                    prev_change: 0,
-                    price: d.barBuy,
+                    latestChange: 0,
                     date: d.date,
                     time: d.time,
                     count: 0,
-                    timestamp: Date.now()
+                    timestamp: importTimestamp
                 });
                 // allHistoryData จะอัปเดตอัตโนมัติจาก Firebase listener
                 successCount++;

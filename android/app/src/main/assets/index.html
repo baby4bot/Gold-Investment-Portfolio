@@ -3250,18 +3250,21 @@ function convertToThaiDate(dateStr) {
                 const safeTime = d.time.replace(/[\s\.:น]/g, '');
                 const recordKey = `IMP_${safeDate}_${safeTime}`;
 
+                const importTimestamp = new Date(d.date.replace(/(\d+)\s+(\S+)\s+(\d+)/, function(m, day, month, year) {
+                    const monthMap = {'\u0e21\u0e01\u0e23\u0e32\u0e07\u0e04\u0e4c':'0','\u0e01\u0e39\u0e49\u0e21\u0e31\u0e19\u0e23\u0e2d':'1','\u0e44\u0e21\u0e48\u0e19\u0e32\u0e07\u0e04\u0e32':'2','\u0e40\u0e21\u0e23\u0e32\u0e22\u0e2d\u0e14':'3','\u0e1e\u0e23\u0e37\u0e2d\u0e22\u0e07\u0e27\u0e32\u0e07':'4','\u0e21\u0e34\u0e40\u0e19\u0e37\u0e2d\u0e23\u0e32\u0e22':'5','\u0e01\u0e23\u0e32\u0e07\u0e25\u0e32\u0e14':'6','\u0e2a\u0e34\u0e49\u0e19\u0e32\u0e22':'7','\u0e21\u0e32\u0e23\u0e04\u0e32\u0e23\u0e13':'8','\u0e15\u0e37\u0e2d\u0e2d\u0e32\u0e25\u0e30\u0e04\u0e27\u0e19':'9','\u0e1e\u0e37\u0e30\u0e15\u0e32\u0e07\u0e25\u0e2d':'10','\u0e22\u0e1b\u0e32\u0e14\u0e23\u0e2d\u0e22':'11'};
+                    return monthMap[month] + '/' + day + '/' + year;
+                }) + ' ' + d.time).getTime() || Date.now();
                 await db.ref('gold_price_history/' + recordKey).set({
                     barBuy: d.barBuy,
                     barSell: d.barSell,
                     ornamentBuy: d.ornamentBuy,
                     ornamentSell: d.ornamentSell,
                     changeToday: d.changeToday,
-                    prev_change: 0,
-                    price: d.barBuy,
+                    latestChange: 0,
                     date: d.date,
                     time: d.time,
                     count: 0,
-                    timestamp: Date.now()
+                    timestamp: importTimestamp
                 });
                 // allHistoryData จะอัปเดตอัตโนมัติจาก Firebase listener
                 successCount++;
