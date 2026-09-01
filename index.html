@@ -3840,21 +3840,21 @@ function convertToThaiDate(dateStr) {
         _syncRunning = true;
         const btn = document.getElementById('hist-btn-sync');
         if (btn) { btn.innerHTML = '<i class="ph ph-spinner animate-spin" style="font-size:16px"></i>'; btn.disabled = true; }
-        showWarningToast('🔄 กำลังดึงประวัติราคาทอง...');
+        showToggleCard('🔄', 'กำลังดึงประวัติราคาทอง', 'กรุณารอสักครู่...', { duration: 2000 });
 
         // วิธี 1: ลอง GAS API syncHistory ก่อน
         const validGasUrls = GAS_API_URLS.filter(u => u && u.length > 10);
         let syncSuccess = false;
         for (let i = 0; i < validGasUrls.length; i++) {
             try {
-                showWarningToast(`🔄 ลอง GAS Account ${i + 1}...`);
+                showToggleCard('🔄', `ลอง GAS Account ${i + 1}`, 'กำลังเชื่อมต่อ...', { duration: 2000 });
                 const ctrl = new AbortController();
                 const timer = setTimeout(() => ctrl.abort(), 20000);
                 const resp = await fetch(validGasUrls[i] + '?action=syncHistory', { signal: ctrl.signal, redirect: 'follow' });
                 clearTimeout(timer);
                 const result = await resp.json();
                 if (result.status === 'success' && result.count > 0) {
-                    showWarningToast(`✅ sync สำเร็จ! ${result.count} รายการ — กำลังโหลด...`);
+                    showToggleCard('✅', `sync สำเร็จ! ${result.count} รายการ`, 'กำลังโหลดข้อมูล...', { duration: 2500 });
                     await new Promise(r => setTimeout(r, 2000));
                     loadHistoryGlobal();
                     setTimeout(() => renderHistoryList(), 1000);
