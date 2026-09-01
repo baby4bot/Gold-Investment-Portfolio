@@ -299,9 +299,12 @@ function doPost(e) {
 // syncFullHistory() เรียกเฉพาะตอนราคาเปลี่ยนเท่านั้น
 // ============================================================
 function checkGoldAndNotify() {
+  // ★ Cross-account dedup: random sleep เพื่อลด race condition
+  Utilities.sleep(Math.floor(Math.random() * 3000));
   var props = PropertiesService.getScriptProperties();
   var LINE_TOKEN = props.getProperty('lineChannelToken') || '';
   var autoShareEnabled = props.getProperty('autoShareEnabled') === 'true';
+  var firebaseUrl = props.getProperty('firebaseUrl') || 'https://gold-portfolio-db-default-rtdb.asia-southeast1.firebasedatabase.app';
   var url = "https://xn--42cah7d0cxcvbbb9x.com/";
   try {
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
@@ -393,18 +396,36 @@ function checkGoldAndNotify() {
       msg += "📊 วันนี้    " + todayIcon + " " + todayAbs + "\n";
       msg += "\n(by นักเลงคีย์บอร์ด)";
 
+      // ★★★ Cross-account LINE dedup ★★★
+      var DEDUP_WINDOW_MS = 300000; // 5 minutes
+      var lineSkipped = false;
       if (autoShareEnabled && LINE_TOKEN && LINE_TOKEN.length > 10) {
+        // Check Firebase _lastLineNotify
         try {
-          var lineResp = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + LINE_TOKEN },
-            payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
-            muteHttpExceptions: true
-          });
-          var lineStatus = lineResp.getResponseCode();
-          Logger.log("LINE sent! Status: " + lineStatus + " | " + lastBarBuy + " -> " + currentBarBuy);
-        } catch(lineErr) {
-          Logger.log("LINE send error: " + lineErr.toString());
+          var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { muteHttpExceptions: true });
+          var checkData = JSON.parse(checkResp.getContentText());
+          if (checkData && (Date.now() - checkData) < DEDUP_WINDOW_MS) {
+            var secsAgo = Math.round((Date.now() - checkData) / 1000);
+            Logger.log("LINE skipped: already sent " + secsAgo + "s ago");
+            lineSkipped = true;
+          }
+        } catch(e) { /* first time = no data = proceed */ }
+
+        if (!lineSkipped) {
+          try {
+            var lineResp = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
+              method: 'post',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + LINE_TOKEN },
+              payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
+              muteHttpExceptions: true
+            });
+            var lineStatus = lineResp.getResponseCode();
+            Logger.log("LINE sent! Status: " + lineStatus + " | " + lastBarBuy + " -> " + currentBarBuy);
+            // Mark as sent in Firebase
+            try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { method: 'put', payload: JSON.stringify(Date.now()), muteHttpExceptions: true }); } catch(e) {}
+          } catch(lineErr) {
+            Logger.log("LINE send error: " + lineErr.toString());
+          }
         }
       } else {
         Logger.log("LINE not sent: autoShare=" + autoShareEnabled + " token_len=" + (LINE_TOKEN ? LINE_TOKEN.length : 0));
