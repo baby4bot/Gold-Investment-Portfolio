@@ -45,7 +45,32 @@ exports.scheduledGoldSync = functions.pubsub
       // 4. บันทึกประวัติลง Firebase
       await saveHistoryToFirebase(priceData);
 
-      // 5. บันทึกราคาเก่าสำหรับ comparison (LINE notification handled by GAS script)
+      // 5. Sync full history จากหน้าประวัติย้อนหลัง
+      try {
+        const historyHtml = await fetchUrl("https://xn--42cah7d0cxcvbbb9x.com/%E0%B8%A3%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%97%E0%B8%AD%E0%B8%87%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87/");
+        if (historyHtml) {
+          const historyRecords = parseHistoryTable(historyHtml);
+          let saved = 0;
+          for (const record of historyRecords) {
+            const safeDate = record.date.replace(/[\s\/]/g, "");
+            const safeTime = record.time.replace(/[\s.:น]/g, "");
+            const key = `${safeDate}_${safeTime}_${record.barBuy}`;
+            const existing = await db.ref("gold_price_history/" + key).once("value");
+            if (!existing.exists()) {
+              await db.ref("gold_price_history/" + key).set({
+                ...record,
+                timestamp: Date.now() - (30 - record.count) * 60000,
+              });
+              saved++;
+            }
+          }
+          console.log(`🔄 History sync: ${saved} new records from ${historyRecords.length} total`);
+        }
+      } catch (e) {
+        console.error("History sync error:", e.message);
+      }
+
+      // 6. บันทึกราคาเก่าสำหรับ comparison
       await db.ref("prev_gold_price/barBuy").set(priceData.barBuy);
 
       console.log("✅ Gold sync completed:", priceData.date, priceData.time, "ครั้งที่", priceData.count);
