@@ -1040,7 +1040,7 @@
     @keyframes pulseRing { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
 
     /* ========== TOGGLE MODAL CARD ========== */
-    .toggle-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .toggle-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
     .toggle-modal-overlay.show { opacity: 1; visibility: visible; }
     .toggle-modal-card { width: 280px; padding: 32px 24px 24px; border-radius: 24px; text-align: center; transform: scale(0.8) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.3); box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(212,160,23,0.1); }
     .toggle-modal-overlay.show .toggle-modal-card { transform: scale(1) translateY(0); }
