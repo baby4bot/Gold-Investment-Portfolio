@@ -8,7 +8,6 @@ function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) || '';
   if (action === 'sendLatest') return sendLatestToLine();
   if (action === 'sendAllToday') return sendAllTodayToLine();
-  if (action === 'syncHistory') return syncHistoryManual();
 
   var url = "https://xn--42cah7d0cxcvbbb9x.com/";
   try {
@@ -300,12 +299,9 @@ function doPost(e) {
 // syncFullHistory() เรียกเฉพาะตอนราคาเปลี่ยนเท่านั้น
 // ============================================================
 function checkGoldAndNotify() {
-  // ★ Cross-account dedup: random sleep เพื่อลด race condition
-  Utilities.sleep(Math.floor(Math.random() * 3000));
   var props = PropertiesService.getScriptProperties();
   var LINE_TOKEN = props.getProperty('lineChannelToken') || '';
   var autoShareEnabled = props.getProperty('autoShareEnabled') === 'true';
-  var firebaseUrl = props.getProperty('firebaseUrl') || 'https://gold-portfolio-db-default-rtdb.asia-southeast1.firebasedatabase.app';
   var url = "https://xn--42cah7d0cxcvbbb9x.com/";
   try {
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
@@ -397,34 +393,18 @@ function checkGoldAndNotify() {
       msg += "📊 วันนี้    " + todayIcon + " " + todayAbs + "\n";
       msg += "\n(by นักเลงคีย์บอร์ด)";
 
-      // ★★★ Cross-account LINE dedup (count-based) ★★★
-      var lineSkipped = false;
       if (autoShareEnabled && LINE_TOKEN && LINE_TOKEN.length > 10) {
-        // Check Firebase _lastLineNotifyCount = countStr ที่ส่งล่าสุด
         try {
-          var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { muteHttpExceptions: true });
-          var lastCount = JSON.parse(checkResp.getContentText());
-          if (lastCount && String(lastCount) === String(countStr)) {
-            Logger.log("LINE skipped: count " + countStr + " already sent by other account");
-            lineSkipped = true;
-          }
-        } catch(e) { /* first time = no data = proceed */ }
-
-        if (!lineSkipped) {
-          try {
-            var lineResp = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
-              method: 'post',
-              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + LINE_TOKEN },
-              payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
-              muteHttpExceptions: true
-            });
-            var lineStatus = lineResp.getResponseCode();
-            Logger.log("LINE sent! Status: " + lineStatus + " | count=" + countStr + " | " + lastBarBuy + " -> " + currentBarBuy);
-            // Mark count as sent in Firebase
-            try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { method: 'put', payload: JSON.stringify(countStr), muteHttpExceptions: true }); } catch(e) {}
-          } catch(lineErr) {
-            Logger.log("LINE send error: " + lineErr.toString());
-          }
+          var lineResp = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + LINE_TOKEN },
+            payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
+            muteHttpExceptions: true
+          });
+          var lineStatus = lineResp.getResponseCode();
+          Logger.log("LINE sent! Status: " + lineStatus + " | " + lastBarBuy + " -> " + currentBarBuy);
+        } catch(lineErr) {
+          Logger.log("LINE send error: " + lineErr.toString());
         }
       } else {
         Logger.log("LINE not sent: autoShare=" + autoShareEnabled + " token_len=" + (LINE_TOKEN ? LINE_TOKEN.length : 0));
@@ -618,9 +598,7 @@ function sendLatestToLine() {
   if (!LINE_TOKEN || LINE_TOKEN.length < 10) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'LINE Token not configured' })).setMimeType(ContentService.MimeType.JSON);
   }
-  var firebaseUrl = props.getProperty('firebaseUrl') || '';
   try {
-    // 1. ดึงราคาทองจากเว็บ
     var url = "https://xn--42cah7d0cxcvbbb9x.com/";
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
     var html = response.getContentText("UTF-8");
@@ -670,27 +648,12 @@ function sendLatestToLine() {
     msg += "📊 ล่าสุด  " + prevIcon + " " + prevAbs + "\n";
     msg += "📊 วันนี้    " + todayIcon + " " + todayAbs + "\n";
     msg += "\n(by นักเลงคีย์บอร์ด)";
-    // ===== Cross-account dedup (count-based) =====
-    if (firebaseUrl) {
-      try {
-        var checkResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { muteHttpExceptions: true });
-        var lastCount = JSON.parse(checkResp.getContentText());
-        if (lastCount && String(lastCount) === String(countStr)) {
-          return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE count ' + countStr + ' already sent' })).setMimeType(ContentService.MimeType.JSON);
-        }
-      } catch(e) { /* first time = no data = proceed */ }
-    }
-    // ===== ส่ง LINE Notification =====
     UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
       method: 'post',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + LINE_TOKEN },
       payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
       muteHttpExceptions: true
     });
-    // ===== บันทึก count ที่ส่งแล้ว =====
-    if (firebaseUrl) {
-      try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotifyCount.json', { method: 'put', payload: JSON.stringify(countStr), muteHttpExceptions: true }); } catch(e) {}
-    }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Latest price sent to LINE' })).setMimeType(ContentService.MimeType.JSON);
   } catch(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() })).setMimeType(ContentService.MimeType.JSON);
@@ -747,61 +710,6 @@ function sendAllTodayToLine() {
       Utilities.sleep(500);
     });
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', count: count, message: 'Sent ' + count + ' messages to LINE' })).setMimeType(ContentService.MimeType.JSON);
-  } catch(e) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// ============================================================
-// ★ syncHistoryManual: ดึงประวัติราคาทองจากเว็บลง Firebase (ทุกวัน) ★
-// ============================================================
-function syncHistoryManual() {
-  try {
-    var url = "https://xn--42cah7d0cxcvbbb9x.com/%E0%B8%A3%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%97%E0%B8%AD%E0%B8%87%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87/";
-    var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-    var html = response.getContentText("UTF-8");
-    var FIREBASE_URL = 'https://gold-portfolio-db-default-rtdb.asia-southeast1.firebasedatabase.app';
-    var dateStr = matchText(html, /(\d{1,2}\s+[ก-๙]+\s+\d{4})/);
-    var now = new Date().getTime();
-    var savedCount = 0;
-    // Parse only today's table (first table)
-    var todayMatch = html.match(/<table[^>]*>([\s\S]*?)<\/table>/i);
-    if (!todayMatch) return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No table found' })).setMimeType(ContentService.MimeType.JSON);
-    var tableHtml = todayMatch[0];
-    var rows = tableHtml.match(/<tr[\s\S]*?<\/tr>/gi);
-    if (!rows) return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No rows found' })).setMimeType(ContentService.MimeType.JSON);
-    rows.forEach(function(row) {
-      var cells = row.match(/<td[\s\S]*?<\/td>/gi);
-      if (cells && cells.length >= 6) {
-        var cellTexts = cells.map(function(c) { return c.replace(/<[^>]+>/g, '').trim(); });
-        var timeMatch = cellTexts[0].match(/(\d{1,2}:\d{2})/);
-        if (!timeMatch) return;
-        var timeStr = timeMatch[1];
-        var countNum = parseInt(cellTexts[1]) || 0;
-        var barBuyNum = parseFloat(cellTexts[2].replace(/,/g, ''));
-        var barSellNum = parseFloat(cellTexts[3].replace(/,/g, ''));
-        var ornBuyNum = parseFloat(cellTexts[4].replace(/,/g, ''));
-        var ornSellNum = parseFloat(cellTexts[5].replace(/,/g, ''));
-        var changeNum = cells.length > 8 ? parseInt(cellTexts[8].replace(/[^\-\d]/g, '')) || 0 : 0;
-        if (barBuyNum <= 0) return;
-        var safeDate = dateStr.replace(/[\/\s]/g, '-');
-        var safeTime = timeStr.replace(/:/g, '-');
-        var recordKey = safeDate + '_' + safeTime + '_' + barBuyNum;
-        var historyData = {
-          barBuy: barBuyNum, barSell: barSellNum,
-          ornamentBuy: ornBuyNum, ornamentSell: ornSellNum,
-          changeToday: changeNum, latestChange: 0,
-          date: dateStr, time: timeStr,
-          count: countNum,
-          timestamp: now - (countNum) * 60000
-        };
-        UrlFetchApp.fetch(FIREBASE_URL + '/gold_price_history/' + recordKey + '.json', {
-          method: 'PUT', payload: JSON.stringify(historyData), muteHttpExceptions: true
-        });
-        savedCount++;
-      }
-    });
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', count: savedCount })).setMimeType(ContentService.MimeType.JSON);
   } catch(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
