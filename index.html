@@ -3788,39 +3788,102 @@ function convertToThaiDate(dateStr) {
         _syncRunning = true;
         const btn = document.getElementById('hist-btn-sync');
         if (btn) { btn.innerHTML = '<i class="ph ph-spinner animate-spin" style="font-size:16px"></i>'; btn.disabled = true; }
-        showWarningToast('🔄 กำลังดึงประวัติราคาทองผ่าน GAS...');
+        showWarningToast('🔄 กำลังดึงประวัติราคาทองจากเว็บ...');
 
-        // เรียก GAS API syncHistory ทั้ง 2 URLs
-        const validGasUrls = GAS_API_URLS.filter(u => u && u.length > 10);
-        let syncSuccess = false;
-        for (let i = 0; i < validGasUrls.length; i++) {
-            try {
-                showWarningToast(`🔄 ลอง GAS Account ${i + 1}...`);
-                const ctrl = new AbortController();
-                const timer = setTimeout(() => ctrl.abort(), 20000);
-                const resp = await fetch(validGasUrls[i] + '?action=syncHistory', { signal: ctrl.signal, redirect: 'follow' });
-                clearTimeout(timer);
-                const result = await resp.json();
-                if (result.status === 'success' && result.count > 0) {
-                    showWarningToast(`✅ GAS ${i + 1} sync สำเร็จ! ${result.count} รายการ — กำลังโหลดจาก Firebase...`);
-                    await new Promise(r => setTimeout(r, 3000));
-                    loadHistoryGlobal();
-                    setTimeout(() => renderHistoryList(), 1500);
-                    syncSuccess = true;
+        try {
+            // ดึงหน้าประวัติย้อนหลังจากเว็บผ่าน CORS proxy
+            const historyUrl = 'https://xn--42cah7d0cxcvbbb9x.com/%E0%B8%A3%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%97%E0%B8%AD%E0%B8%87%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87/';
+            const proxies = [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?'
+            ];
+            let html = '';
+            for (const proxy of proxies) {
+                try {
+                    const ctrl = new AbortController();
+                    const timer = setTimeout(() => ctrl.abort(), 15000);
+                    const resp = await fetch(proxy + encodeURIComponent(historyUrl), { signal: ctrl.signal });
+                    clearTimeout(timer);
+                    html = await resp.text();
+                    if (html && html.includes('<table')) break;
+                } catch(e) { console.warn('Proxy failed:', proxy, e.message); }
+            }
+            if (!html || !html.includes('<table')) {
+                showWarningToast('⚠️ ไม่สามารถดึงข้อมูลจากเว็บได้');
+                _syncRunning = false;
+                if (btn) { btn.innerHTML = '<i class="ph ph-arrows-clockwise" style="font-size:16px"></i>'; btn.disabled = false; }
+                return;
+            }
+
+            // Parse ตารางประวัติ
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const tables = doc.querySelectorAll('table');
+            let historyTable = null;
+            for (const t of tables) {
+                if (t.className.includes('flip') || t.className.includes('pdtable') || t.querySelector('td[data-column]')) {
+                    historyTable = t;
                     break;
-                } else if (result.status === 'success' && result.count === 0) {
-                    console.warn('GAS ' + (i+1) + ' returned 0 records');
                 }
-            } catch(e) { console.warn('GAS ' + (i+1) + ' failed:', e.message); }
-        }
+            }
+            if (!historyTable && tables.length > 0) historyTable = tables[tables.length - 1];
+            if (!historyTable) {
+                showWarningToast('⚠️ ไม่พบตารางประวัติ');
+                _syncRunning = false;
+                if (btn) { btn.innerHTML = '<i class="ph ph-arrows-clockwise" style="font-size:16px"></i>'; btn.disabled = false; }
+                return;
+            }
 
-        if (!syncSuccess) {
-            showWarningToast('⚠️ sync ไม่สำเร็จ — ต้องอัพเดท GAS script v2 แล้วรัน setupTrigger');
+            const rows = historyTable.querySelectorAll('tr');
+            const dateText = doc.body.innerText.match(/(\d{1,2}\s+[ก-๙]+\s+\d{4})/);
+            const dateStr = dateText ? dateText[1] : '';
+            let savedCount = 0;
+
+            for (const row of rows) {
+                const cells = row.querySelectorAll('td');
+                if (cells.length < 6) continue;
+                const timeText = cells[0]?.innerText?.trim() || '';
+                const timeMatch = timeText.match(/(\d{1,2}:\d{2})/);
+                if (!timeMatch) continue;
+                const timeStr = timeMatch[1];
+                const countText = cells[1]?.innerText?.trim() || '0';
+                const barBuy = parseFloat((cells[2]?.innerText?.trim() || '0').replace(/,/g, ''));
+                const barSell = parseFloat((cells[3]?.innerText?.trim() || '0').replace(/,/g, ''));
+                const ornBuy = parseFloat((cells[4]?.innerText?.trim() || '0').replace(/,/g, ''));
+                const ornSell = parseFloat((cells[5]?.innerText?.trim() || '0').replace(/,/g, ''));
+                const changeText = cells.length > 8 ? (cells[8]?.innerText?.trim() || '0').replace(/[^\-\d]/g, '') : '0';
+                const changeNum = parseInt(changeText) || 0;
+                const countNum = parseInt(countText) || 0;
+                const safeDate = dateStr.replace(/[\/\s]/g, '-');
+                const safeTime = timeStr.replace(/:/g, '-');
+                const recordKey = safeDate + '_' + safeTime + '_' + barBuy;
+                const now = Date.now();
+                const historyData = {
+                    barBuy, barSell, ornamentBuy: ornBuy, ornamentSell: ornSell,
+                    changeToday: changeNum, latestChange: 0,
+                    date: dateStr, time: timeStr, count: countNum,
+                    timestamp: now - ((parseInt(countText) || 30) - countNum) * 60000
+                };
+                // บันทึกลง Firebase
+                await db.ref('gold_price_history/' + recordKey).set(historyData);
+                savedCount++;
+            }
+
+            if (savedCount > 0) {
+                showWarningToast(`✅ sync สำเร็จ! ${savedCount} รายการ — กำลังโหลด...`);
+                await new Promise(r => setTimeout(r, 1000));
+                loadHistoryGlobal();
+                setTimeout(() => renderHistoryList(), 1000);
+            } else {
+                showWarningToast('⚠️ ไม่พบข้อมูลใหม่');
+            }
+        } catch(e) {
+            console.error('Sync error:', e);
+            showWarningToast('❌ sync ไม่สำเร็จ: ' + e.message);
         }
 
         _syncRunning = false;
         if (btn) { btn.innerHTML = '<i class="ph ph-arrows-clockwise" style="font-size:16px"></i>'; btn.disabled = false; }
-
     }
 
     // ===== Gold Price Trend Chart =====
