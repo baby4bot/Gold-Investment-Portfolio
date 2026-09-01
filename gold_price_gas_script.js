@@ -774,7 +774,7 @@ function syncHistoryManual() {
       var dateHeaderMatch = beforeTable.match(/(\d{1,2})\s+([ก-๙]+)\s+(\d{2,4})/);
       var tableDateStr = '';
       if (dateHeaderMatch) {
-        var day = dateHeaderMatch[1];
+        var day = String(parseInt(dateHeaderMatch[1], 10)); // Remove leading zero
         var month = dateHeaderMatch[2];
         var year = dateHeaderMatch[3];
         if (year.length === 2) year = '25' + year;
