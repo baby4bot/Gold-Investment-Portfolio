@@ -2569,11 +2569,13 @@ function convertToThaiDate(dateStr) {
                 const barSellNum = parseFloat(data.bar_sell.toString().replace(/,/g, ''));
                 const ornamentBuyNum = parseFloat(data.ornament_buy.toString().replace(/,/g, ''));
                 const ornamentSellNum = parseFloat(data.ornament_sell.toString().replace(/,/g, ''));
-                const isDuplicate = allHistoryData && allHistoryData.some(h =>
-                    h.date === data.date && h.time === data.time && h.barBuy === barBuyNum
-                );
+                const normDate = data.date ? data.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : data.date;
+                const isDuplicate = allHistoryData && allHistoryData.some(h => {
+                    const hNormDate = h.date ? h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : h.date;
+                    return hNormDate === normDate && h.time === data.time && h.barBuy === barBuyNum;
+                });
                 if (!isDuplicate) {
-                    const recordKey = `${data.date}_${data.time}_${barBuyNum}`.replace(/[\/\s:]/g, '-');
+                    const recordKey = `${normDate}_${data.time}_${barBuyNum}`.replace(/[\/\s:]/g, '-');
                     db.ref('gold_price_history/' + recordKey).set({
                         barBuy: barBuyNum, barSell: barSellNum,
                         ornamentBuy: ornamentBuyNum, ornamentSell: ornamentSellNum,
@@ -3048,17 +3050,20 @@ function convertToThaiDate(dateStr) {
 
     // ===== Auto-dedup: ลบ record ซ้ำอัตโนมัติ =====
     let lastDedupTime = 0;
-    const DEDUP_INTERVAL = 60000; // เช็คทุก 1 นาที
+    const DEDUP_INTERVAL = 60000;
+    let _dedupDone = false;
     function autoDedupHistory() {
         if (!db || !allHistoryData || allHistoryData.length < 2) return;
+        if (_dedupDone) return;
         const now = Date.now();
         if (now - lastDedupTime < DEDUP_INTERVAL) return;
         lastDedupTime = now;
 
-        // จัดกลุ่ม record ตาม date+time+barBuy
+        // จัดกลุ่ม record ตาม date+time+barBuy (normalize leading zero)
         const groups = {};
         allHistoryData.forEach(h => {
-            const key = `${h.date}_${h.time}_${h.barBuy}`;
+            const normDate = h.date ? h.date.replace(/^(\d+)/, m => parseInt(m, 10).toString()) : h.date;
+            const key = `${normDate}_${h.time}_${h.barBuy}`;
             if (!groups[key]) groups[key] = [];
             groups[key].push(h);
         });
@@ -3067,7 +3072,6 @@ function convertToThaiDate(dateStr) {
         const keysToDelete = [];
         Object.values(groups).forEach(group => {
             if (group.length > 1) {
-                // เรียงตาม timestamp ใหม่สุดก่อน แล้วลบตัวที่เก่ากว่า
                 group.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 for (let i = 1; i < group.length; i++) {
                     keysToDelete.push(group[i].id);
@@ -3082,6 +3086,7 @@ function convertToThaiDate(dateStr) {
                 console.log('Auto-dedup: removed ' + keysToDelete.length + ' duplicate records');
             });
         }
+        _dedupDone = true;
     }
 
     function openDatePicker() {
