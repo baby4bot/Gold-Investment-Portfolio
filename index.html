@@ -6482,31 +6482,12 @@ function convertToThaiDate(dateStr) {
     }
     function saveLocalVersionData(data) { localStorage.setItem(VER_KEY, JSON.stringify(data)); }
     function loadVersionFromFirebase() {
-        // Firebase = single source of truth — all users see the same version
+        // Hardcoded version is always authoritative — sync TO Firebase, never FROM it
         const hardcodedVer = Object.assign({}, currentVersion);
+        currentVersion = hardcodedVer;
+        updateVersionDisplay();
         if (db) {
-            db.ref('app_settings/version').on('value', snap => {
-                const val = snap.val();
-                if (val && val.version) {
-                    const fbVer = parseVersion(val.version);
-                    // Use whichever is newer: Firebase or hardcoded
-                    if (compareVersions(hardcodedVer, fbVer) >= 0) {
-                        currentVersion = hardcodedVer;
-                        db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
-                    } else {
-                        currentVersion = fbVer;
-                    }
-                } else {
-                    // First time: push hardcoded to Firebase
-                    currentVersion = hardcodedVer;
-                    db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
-                }
-                updateVersionDisplay();
-            });
-        } else {
-            const local = loadLocalVersionData();
-            currentVersion = parseVersion(local.version);
-            updateVersionDisplay();
+            db.ref('app_settings/version').set({ version: versionToString(currentVersion) });
         }
     }
     function compareVersions(a, b) {
@@ -6612,9 +6593,7 @@ function convertToThaiDate(dateStr) {
         // Also seed to Firebase so ALL users see it
         if (db) {
             hardcoded.forEach(entry => {
-                db.ref('app_settings/changelog/' + entry.version.replace(/\./g, '_')).once('value', snap => {
-                    if (!snap.val()) db.ref('app_settings/changelog/' + entry.version.replace(/\./g, '_')).set(entry);
-                });
+                db.ref('app_settings/changelog/' + entry.version.replace(/\./g, '_')).set(entry);
             });
         }
     }
