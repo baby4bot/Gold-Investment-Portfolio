@@ -2592,15 +2592,6 @@ function convertToThaiDate(dateStr) {
                     date: data.date, time: data.time, count: parseInt(data.count) || 0, timestamp: Date.now()
                 });
             }
-            // Auto-sync ประวัติถ้า count ไม่ตรง
-            if (data.count && allHistoryData) {
-                const todayRecords = allHistoryData.filter(h => h.date === data.date);
-                const webCount = parseInt(data.count) || 0;
-                if (webCount > 0 && todayRecords.length < webCount && webCount - todayRecords.length > 2) {
-                    console.log(`🔄 Auto-sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${webCount} — กำลังดึงอัตโนมัติ...`);
-                    setTimeout(() => syncHistoryFromWeb(), 2000);
-                }
-            }
             if (priceChanged && transactionsData.length > 0) renderData();
             if (priceChanged && newPrice > 0 && lastGoldBarBuy > 0 && newPrice !== lastGoldBarBuy) {
                 lastGoldBarBuy = newPrice;
