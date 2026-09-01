@@ -1365,6 +1365,25 @@
                         <div id="gold-latest-change" class="gold-stat-value">-</div>
                     </div>
                 </div>
+                <!-- Gold Price Trend Chart -->
+                <div id="gold-chart-section" class="px-4 py-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold" style="color: var(--text-secondary);"><i class="ph ph-chart-line-up"></i> แนวโน้มราคา</span>
+                        <div class="flex gap-1 flex-wrap justify-end">
+                            <button onclick="setChartRange('1h')" id="chart-btn-1h" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" title="ข้อมูลจะสะสมเมื่อราคาทองมีการอัปเดตทุก 30 วินาที" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">1 ชม.</button>
+                            <button onclick="setChartRange('12h')" id="chart-btn-12h" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">12 ชม.</button>
+                            <button onclick="setChartRange('24h')" id="chart-btn-24h" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--accent-gold); color: #0c0e14;">24 ชม.</button>
+                            <button onclick="setChartRange('7d')" id="chart-btn-7d" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">7 วัน</button>
+                            <button onclick="setChartRange('30d')" id="chart-btn-30d" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">30 วัน</button>
+                        </div>
+                    </div>
+                    <p id="chart-hint" class="text-[9px] text-center mb-1" style="color: var(--text-muted); display: none;"><i class="ph ph-lightbulb"></i> ข้อมูลจะสะสมอัตโนมัติเมื่อราคาทองมีการอัปเดต</p>
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 14px; padding: 12px; height: 220px;">
+                        <canvas id="gold-price-chart"></canvas>
+                    </div>
+                </div>
+                </div><!-- end gold-capture-area -->
+
                 <!-- Toggles: เสียงเตือน / เสียงพูด / LINE -->
                 <style>
                     .toggle-track { width: 40px; height: 22px; border-radius: 11px; background: var(--bg-elevated); border: 1px solid var(--border-primary); position: relative; cursor: pointer; transition: all 0.3s; }
@@ -1390,24 +1409,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Gold Price Trend Chart -->
-                <div id="gold-chart-section" class="px-4 py-3">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold" style="color: var(--text-secondary);"><i class="ph ph-chart-line-up"></i> แนวโน้มราคา</span>
-                        <div class="flex gap-1 flex-wrap justify-end">
-                            <button onclick="setChartRange('1h')" id="chart-btn-1h" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" title="ข้อมูลจะสะสมเมื่อราคาทองมีการอัปเดตทุก 30 วินาที" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">1 ชม.</button>
-                            <button onclick="setChartRange('12h')" id="chart-btn-12h" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">12 ชม.</button>
-                            <button onclick="setChartRange('24h')" id="chart-btn-24h" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--accent-gold); color: #0c0e14;">24 ชม.</button>
-                            <button onclick="setChartRange('7d')" id="chart-btn-7d" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">7 วัน</button>
-                            <button onclick="setChartRange('30d')" id="chart-btn-30d" class="text-[10px] px-2 py-0.5 rounded-lg font-bold transition" style="background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-primary);">30 วัน</button>
-                        </div>
-                    </div>
-                    <p id="chart-hint" class="text-[9px] text-center mb-1" style="color: var(--text-muted); display: none;"><i class="ph ph-lightbulb"></i> ข้อมูลจะสะสมอัตโนมัติเมื่อราคาทองมีการอัปเดต</p>
-                    <div style="background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 14px; padding: 12px; height: 220px;">
-                        <canvas id="gold-price-chart"></canvas>
-                    </div>
-                </div>
-                </div><!-- end gold-capture-area -->
 
                 <!-- ========== QUICK ACTION BUTTONS ========== -->
                 <div class="px-4 pt-3">
