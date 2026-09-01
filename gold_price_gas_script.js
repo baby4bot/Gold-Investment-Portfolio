@@ -598,24 +598,6 @@ function sendLatestToLine() {
   if (!LINE_TOKEN || LINE_TOKEN.length < 10) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'LINE Token not configured' })).setMimeType(ContentService.MimeType.JSON);
   }
-  // Dedup: skip if LINE was already sent within last 120 seconds (via Firebase)
-  var cache = CacheService.getScriptCache();
-  var lastSent = cache.get('_lastLineSend');
-  if (lastSent) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE already sent recently (cache)' })).setMimeType(ContentService.MimeType.JSON);
-  }
-  // Also check Firebase _lastLineNotify (cross-system dedup with Cloud Functions)
-  var firebaseUrl = props.getProperty('firebaseUrl') || '';
-  if (firebaseUrl) {
-    try {
-      var notifyResp = UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { muteHttpExceptions: true });
-      var notifyData = JSON.parse(notifyResp.getContentText());
-      if (notifyData && (Date.now() - notifyData) < 120000) {
-        cache.put('_lastLineSend', '1', 120);
-        return ContentService.createTextOutput(JSON.stringify({ status: 'skipped', message: 'LINE already sent by Cloud Functions' })).setMimeType(ContentService.MimeType.JSON);
-      }
-    } catch(e) { /* ignore Firebase check error, proceed to send */ }
-  }
   try {
     var url = "https://xn--42cah7d0cxcvbbb9x.com/";
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
@@ -672,11 +654,6 @@ function sendLatestToLine() {
       payload: JSON.stringify({ messages: [{ type: 'text', text: msg }] }),
       muteHttpExceptions: true
     });
-    // Mark as sent in cache + Firebase (dedup for 120 seconds)
-    cache.put('_lastLineSend', '1', 120);
-    if (firebaseUrl) {
-      try { UrlFetchApp.fetch(firebaseUrl + '/_lastLineNotify.json', { method: 'put', payload: JSON.stringify(Date.now()), muteHttpExceptions: true }); } catch(e) {}
-    }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Latest price sent to LINE' })).setMimeType(ContentService.MimeType.JSON);
   } catch(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() })).setMimeType(ContentService.MimeType.JSON);
