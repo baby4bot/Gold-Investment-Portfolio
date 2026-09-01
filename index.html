@@ -4484,6 +4484,19 @@ function convertToThaiDate(dateStr) {
         });
     }
 
+    // ===== Periodic History Sync: ตรวจ count ทุก 30 วินาที =====
+    setInterval(() => {
+        if (!allHistoryData || allHistoryData.length === 0) return;
+        var latestCount = parseInt(document.getElementById('gold-update-count')?.innerText?.replace(/[^0-9]/g, '') || '0');
+        if (latestCount <= 0) return;
+        var todayStr = allHistoryData.length > 0 ? allHistoryData[allHistoryData.length - 1].date : '';
+        var todayRecords = allHistoryData.filter(h => h.date === todayStr);
+        if (todayRecords.length < latestCount) {
+            console.log(`🔄 Periodic sync: Firebase มี ${todayRecords.length} รายการ แต่เว็บมี ${latestCount} — กำลังดึงอัตโนมัติ...`);
+            syncHistoryFromWeb();
+        }
+    }, 30000);
+
     // ===== แชร์เว็บไซต์ =====
     const SHARE_URL = 'https://baby4bot.github.io/Gold-Investment-Portfolio/';
     const SHARE_TITLE = 'พอร์ตทองคำ - ติดตามราคาทองคำแบบ Realtime';
