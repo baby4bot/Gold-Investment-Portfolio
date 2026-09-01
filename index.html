@@ -3503,15 +3503,63 @@ function convertToThaiDate(dateStr) {
             deleteAllBtn.disabled = true;
             deleteAllBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> กำลังลบ...';
         }
-        let deletePromises = filtered.map(d => {
-            if (d.id) return db.ref('gold_price_history/' + d.id).remove();
-            return Promise.resolve();
-        });
-        Promise.all(deletePromises).then(() => {
-            showWarningToast(`✅ ลบประวัติราคา ${filterName} สำเร็จ ${filtered.length} รายการ!`);
-            loadHistoryGlobal();
-            renderHistoryList();
-        }).catch(e => {
+        // Show progress modal
+        const total = filtered.length;
+        let deleted = 0;
+        const progressModal = document.createElement('div');
+        progressModal.id = 'delete-progress-modal';
+        progressModal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:99999';
+        progressModal.innerHTML = `
+            <div style="background:var(--bg-card,#1a1a2e);border-radius:16px;padding:24px;width:90%;max-width:350px;text-align:center;border:1px solid var(--border-primary,#333)">
+                <div style="font-size:32px;margin-bottom:8px">🗑️</div>
+                <div style="color:var(--text-primary,#fff);font-weight:bold;font-size:16px;margin-bottom:4px">กำลังลบประวัติราคา ${filterName}</div>
+                <div id="delete-progress-count" style="color:var(--accent-gold,#d4a017);font-size:28px;font-weight:900;margin:12px 0">${total} / ${total}</div>
+                <div style="background:rgba(255,255,255,0.1);border-radius:8px;height:8px;overflow:hidden;margin-bottom:8px">
+                    <div id="delete-progress-bar" style="background:linear-gradient(90deg,#d4a017,#f59e0b);height:100%;width:0%;border-radius:8px;transition:width 0.3s"></div>
+                </div>
+                <div id="delete-progress-eta" style="color:var(--text-secondary,#999);font-size:12px">กำลังเตรียม...</div>
+            </div>
+        `;
+        document.body.appendChild(progressModal);
+        const startTime = Date.now();
+        let prevDeleted = 0;
+        let timeWindow = [];
+        function updateProgress() {
+            const remaining = total - deleted;
+            document.getElementById('delete-progress-count').textContent = `${deleted} / ${total}`;
+            document.getElementById('delete-progress-bar').style.width = ((deleted / total) * 100) + '%';
+            if (deleted > 0 && timeWindow.length >= 2) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                const rate = deleted / elapsed;
+                const eta = Math.ceil(remaining / Math.max(rate, 0.1));
+                document.getElementById('delete-progress-eta').textContent = `เหลืออีก ${eta} วินาที • ${deleted}/${total} รายการ`;
+            }
+        }
+        const progressInterval = setInterval(updateProgress, 200);
+        // Delete one by one with delay for visual feedback
+        async function deleteSequentially() {
+            for (let i = 0; i < filtered.length; i++) {
+                if (filtered[i].id) {
+                    await db.ref('gold_price_history/' + filtered[i].id).remove();
+                }
+                deleted = i + 1;
+                if (deleted % 5 === 0 || deleted === total) updateProgress();
+                if (deleted % 10 === 0) await new Promise(r => setTimeout(r, 50));
+            }
+            clearInterval(progressInterval);
+            document.getElementById('delete-progress-count').textContent = 'เสร็จสิ้น!';
+            document.getElementById('delete-progress-bar').style.width = '100%';
+            document.getElementById('delete-progress-eta').textContent = `ลบ ${total} รายการสำเร็จ`;
+            setTimeout(() => {
+                progressModal.remove();
+                showWarningToast(`✅ ลบประวัติราคา ${filterName} สำเร็จ ${total} รายการ!`);
+                loadHistoryGlobal();
+                renderHistoryList();
+            }, 800);
+        }
+        deleteSequentially().catch(e => {
+            clearInterval(progressInterval);
+            progressModal.remove();
             showWarningToast('❌ ลบไม่สำเร็จ: ' + e.message);
         }).finally(() => {
             if (deleteAllBtn) {
