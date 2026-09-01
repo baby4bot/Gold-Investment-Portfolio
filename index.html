@@ -3406,7 +3406,7 @@ function convertToThaiDate(dateStr) {
                     <span class="text-xs font-bold" style="color: var(--accent-gold);">#${filtered.length - i}</span>
                     <div class="flex items-center gap-2">
                         <span class="text-xs" style="color: var(--text-secondary);">${d.date || '-'} ${d.time || ''}</span>
-                        <button onclick="deletePriceHistory('${d.id}')" class="cursor-pointer transition bg-transparent border-none p-1" style="color: var(--accent-red); opacity: 0.6; font-size: 14px;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"><i class="ph ph-trash"></i></button>
+                        ${currentRole === 'admin' ? `<button onclick="deletePriceHistory('${d.id}')" class="cursor-pointer transition bg-transparent border-none p-1" style="color: var(--accent-red); opacity: 0.6; font-size: 14px;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"><i class="ph ph-trash"></i></button>` : ''}
                     </div>
                 </div>
                 <table class="w-full text-xs" style="border-collapse: collapse; table-layout: fixed;">
@@ -3460,6 +3460,24 @@ function convertToThaiDate(dateStr) {
                 cleanupBtn.classList.remove('hidden');
             } else {
                 cleanupBtn.classList.add('hidden');
+            }
+        }
+        // Show sync button only for admin
+        const syncBtn = document.getElementById('hist-btn-sync');
+        if (syncBtn) {
+            if (currentRole === 'admin') {
+                syncBtn.classList.remove('hidden');
+            } else {
+                syncBtn.classList.add('hidden');
+            }
+        }
+        // Show delete-all button only for admin
+        const deleteAllBtn = document.getElementById('hist-btn-delete-all');
+        if (deleteAllBtn) {
+            if (currentRole === 'admin') {
+                deleteAllBtn.classList.remove('hidden');
+            } else {
+                deleteAllBtn.classList.add('hidden');
             }
         }
     }
