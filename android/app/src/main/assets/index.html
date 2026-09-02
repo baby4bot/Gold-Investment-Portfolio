@@ -5413,7 +5413,7 @@ function convertToThaiDate(dateStr) {
             }
         });
     }
-    setTimeout(loadSplashFromFirebase, 500);
+    loadSplashFromFirebase();
 
     function handleImgBase(input, callback) { const file = input.target ? input.target.files[0] : (input.files ? input.files[0] : null); if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX_SIZE = 400; let width = img.width; let height = img.height; if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } } canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
     function previewProfileImg(input, imgId, hiddenId) {
