@@ -2075,43 +2075,49 @@
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center ml-3" style="background: var(--accent-gold);"><i class="ph ph-arrow-circle-up text-lg" style="color: #000;"></i></div>
                 <div class="text-left"><div class="text-sm">อัปเดตเวอร์ชัน</div><div class="text-[11px] text-[#94a3b8]">ดูประวัติการอัปเดต</div></div>
             </button>
-            <!-- Card Style Selector -->
-            <div class="bg-[rgba(0,0,0,0.3)] p-4 rounded-xl border border-[rgba(255,255,255,0.06)]">
-                <div class="flex items-center gap-3 mb-3">
+            <!-- Card Style Selector (Accordion) -->
+            <div class="bg-[rgba(0,0,0,0.3)] rounded-xl border border-[rgba(255,255,255,0.06)]">
+                <div class="flex items-center gap-3 p-4 cursor-pointer select-none" onclick="toggleAccordion('card-style-body')">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--accent-gold);"><i class="ph ph-squares-four text-lg" style="color: #000;"></i></div>
-                    <div><div class="text-sm text-gray-200 font-bold">สไตล์การ์ดลงทุน</div><div class="text-[11px] text-[#94a3b8]">เลือกรูปแบบการแสดงผล</div></div>
+                    <div class="flex-1"><div class="text-sm text-gray-200 font-bold">สไตล์การ์ดลงทุน</div><div class="text-[11px] text-[#94a3b8]">เลือกรูปแบบการแสดงผล</div></div>
+                    <i class="ph ph-caret-down text-lg transition-transform duration-300" id="card-style-chevron" style="color:#94a3b8;"></i>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="setCardStyle('border')" id="card-style-border" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2 flex items-center justify-center gap-2">
-                        <span>🔲</span>
-                        <span>กรอบสี</span>
-                    </button>
-                    <button onclick="setCardStyle('solid')" id="card-style-solid" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2 flex items-center justify-center gap-2">
-                        <span>🎨</span>
-                        <span>สีทึบ</span>
-                    </button>
+                <div id="card-style-body" style="display:none;">
+                    <div class="flex gap-2 px-4 pb-4">
+                        <button onclick="setCardStyle('border')" id="card-style-border" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2 flex items-center justify-center gap-2">
+                            <span>🔲</span>
+                            <span>กรอบสี</span>
+                        </button>
+                        <button onclick="setCardStyle('solid')" id="card-style-solid" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2 flex items-center justify-center gap-2">
+                            <span>🎨</span>
+                            <span>สีทึบ</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <!-- Splash Screen Settings -->
-            <div class="bg-[rgba(0,0,0,0.3)] p-4 rounded-xl border border-[rgba(255,255,255,0.06)]">
-                <div class="flex items-center gap-3 mb-3">
+            <!-- Splash Screen Settings (Accordion) -->
+            <div class="bg-[rgba(0,0,0,0.3)] rounded-xl border border-[rgba(255,255,255,0.06)]">
+                <div class="flex items-center gap-3 p-4 cursor-pointer select-none" onclick="toggleAccordion('splash-body')">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--accent-gold);"><i class="ph ph-image text-lg" style="color: #000;"></i></div>
-                    <div><div class="text-sm text-gray-200 font-bold">ภาพหน้าจอเริ่มต้น</div><div class="text-[11px] text-[#94a3b8]">Splash Screen — เปลี่ยนได้โดยไม่ต้องแก้โค้ด</div></div>
+                    <div class="flex-1"><div class="text-sm text-gray-200 font-bold">ภาพหน้าจอเริ่มต้น</div><div class="text-[11px] text-[#94a3b8]">Splash Screen — เปลี่ยนได้โดยไม่ต้องแก้โค้ด</div></div>
+                    <i class="ph ph-caret-down text-lg transition-transform duration-300" id="splash-chevron" style="color:#94a3b8;"></i>
                 </div>
-                <div class="flex flex-col items-center gap-3">
-                    <div id="splash-preview-wrap" class="w-full rounded-xl overflow-hidden" style="border: 2px dashed rgba(212,160,23,0.3); aspect-ratio: 9/16; max-height: 200px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
-                        <img id="splash-preview-img" src="splash.png" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
-                        <div id="splash-preview-placeholder" class="text-center">
-                            <i class="ph ph-image text-3xl" style="color: #64748b;"></i>
-                            <p class="text-[11px] mt-1" style="color: #64748b;">ยังไม่ได้ตั้งค่า</p>
+                <div id="splash-body" style="display:none;">
+                    <div class="flex flex-col items-center gap-3 px-4 pb-4">
+                        <div id="splash-preview-wrap" class="w-full rounded-xl overflow-hidden" style="border: 2px dashed rgba(212,160,23,0.3); aspect-ratio: 9/16; max-height: 200px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                            <img id="splash-preview-img" src="splash.png" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                            <div id="splash-preview-placeholder" class="text-center">
+                                <i class="ph ph-image text-3xl" style="color: #64748b;"></i>
+                                <p class="text-[11px] mt-1" style="color: #64748b;">ยังไม่ได้ตั้งค่า</p>
+                            </div>
                         </div>
+                        <input type="file" id="splash-file-input" accept="image/*" onchange="handleSplashUpload(event)" class="hidden" />
+                        <div class="flex gap-2 w-full">
+                            <button onclick="document.getElementById('splash-file-input').click()" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #d4a017, #b8941f); color: #0c0e14;"><i class="ph ph-upload-simple"></i> เลือกรูป</button>
+                            <button onclick="resetSplashImage()" id="splash-reset-btn" class="py-2.5 px-4 rounded-xl text-xs font-bold transition hidden" style="background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);"><i class="ph ph-trash"></i></button>
+                        </div>
+                        <p class="text-[10px] text-center" style="color: #64748b;">รองรับ JPG, PNG — แนะนำขนาด 1080x1920 px</p>
                     </div>
-                    <input type="file" id="splash-file-input" accept="image/*" onchange="handleSplashUpload(event)" class="hidden" />
-                    <div class="flex gap-2 w-full">
-                        <button onclick="document.getElementById('splash-file-input').click()" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #d4a017, #b8941f); color: #0c0e14;"><i class="ph ph-upload-simple"></i> เลือกรูป</button>
-                        <button onclick="resetSplashImage()" id="splash-reset-btn" class="py-2.5 px-4 rounded-xl text-xs font-bold transition hidden" style="background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);"><i class="ph ph-trash"></i></button>
-                    </div>
-                    <p class="text-[10px] text-center" style="color: #64748b;">รองรับ JPG, PNG — แนะนำขนาด 1080x1920 px</p>
                 </div>
             </div>
         </div>
@@ -6411,6 +6417,26 @@ function convertToThaiDate(dateStr) {
     function closeAdminSettingsModal() { var m = document.getElementById('admin-settings-modal'); m.style.display = 'none'; m.classList.add('hidden'); document.getElementById('admin-settings-pass').reset(); resetSettingPin(); }
     
     // ========== Card Style Functions ==========
+    // Accordion for admin settings sections
+    function toggleAccordion(bodyId) {
+        const body = document.getElementById(bodyId);
+        const chevronId = bodyId === 'card-style-body' ? 'card-style-chevron' : 'splash-chevron';
+        const chevron = document.getElementById(chevronId);
+        const isOpen = body.style.display !== 'none';
+        // Close all accordion bodies first
+        ['card-style-body', 'splash-body'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+            const ch = document.getElementById(id === 'card-style-body' ? 'card-style-chevron' : 'splash-chevron');
+            if (ch) ch.style.transform = 'rotate(0deg)';
+        });
+        // Toggle clicked one
+        if (!isOpen) {
+            body.style.display = 'block';
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+        }
+    }
+    
     let currentCardStyle = 'border';
     
     function setCardStyle(style) {

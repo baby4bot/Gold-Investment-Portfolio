@@ -1670,21 +1670,24 @@
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center ml-3" style="background: var(--accent-gold);"><i class="ph ph-arrow-circle-up text-lg" style="color: #000;"></i></div>
                 <div class="text-left"><div class="text-sm">อัปเดตเวอร์ชัน</div><div class="text-[11px] text-[#94a3b8]">ดูประวัติการอัปเดต</div></div>
             </button>
-            <!-- Card Style Selector -->
-            <div class="bg-[rgba(0,0,0,0.3)] p-4 rounded-xl border border-[rgba(255,255,255,0.06)]">
-                <div class="flex items-center gap-3 mb-3">
+            <!-- Card Style Selector (Accordion) -->
+            <div class="bg-[rgba(0,0,0,0.3)] rounded-xl border border-[rgba(255,255,255,0.06)]">
+                <div class="flex items-center gap-3 p-4 cursor-pointer select-none" onclick="toggleAccordion('card-style-body')">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--accent-gold);"><i class="ph ph-squares-four text-lg" style="color: #000;"></i></div>
-                    <div><div class="text-sm text-gray-200 font-bold">สไตล์การ์ดลงทุน</div><div class="text-[11px] text-[#94a3b8]">เลือกรูปแบบการแสดงผล</div></div>
+                    <div class="flex-1"><div class="text-sm text-gray-200 font-bold">สไตล์การ์ดลงทุน</div><div class="text-[11px] text-[#94a3b8]">เลือกรูปแบบการแสดงผล</div></div>
+                    <i class="ph ph-caret-down text-lg transition-transform duration-300" id="card-style-chevron" style="color:#94a3b8;"></i>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="setCardStyle('border')" id="card-style-border" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2">
-                        <div class="text-lg mb-1">🔲</div>
-                        <div>กรอบสี</div>
-                    </button>
-                    <button onclick="setCardStyle('solid')" id="card-style-solid" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2">
-                            <div class="text-lg mb-1">🎨</div>
-                            <div>สีทึบ</div>
-                    </button>
+                <div id="card-style-body" style="display:none;">
+                    <div class="flex gap-2 px-4 pb-4">
+                        <button onclick="setCardStyle('border')" id="card-style-border" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2">
+                            <div class="text-lg mb-1">🔲</div>
+                            <div>กรอบสี</div>
+                        </button>
+                        <button onclick="setCardStyle('solid')" id="card-style-solid" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all active:scale-95 border-2">
+                                <div class="text-lg mb-1">🎨</div>
+                                <div>สีทึบ</div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5692,6 +5695,24 @@ function convertToThaiDate(dateStr) {
     }
 
     function closeAdminSettingsModal() { var m = document.getElementById('admin-settings-modal'); m.style.display = 'none'; m.classList.add('hidden'); document.getElementById('admin-settings-pass').reset(); resetSettingPin(); }
+    
+    // Accordion for admin settings sections
+    function toggleAccordion(bodyId) {
+        const body = document.getElementById(bodyId);
+        const chevronId = bodyId === 'card-style-body' ? 'card-style-chevron' : 'splash-chevron';
+        const chevron = document.getElementById(chevronId);
+        const isOpen = body.style.display !== 'none';
+        ['card-style-body', 'splash-body'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+            const ch = document.getElementById(id === 'card-style-body' ? 'card-style-chevron' : 'splash-chevron');
+            if (ch) ch.style.transform = 'rotate(0deg)';
+        });
+        if (!isOpen) {
+            body.style.display = 'block';
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+        }
+    }
     
     // ========== Card Style Functions ==========
     let currentCardStyle = 'border';
