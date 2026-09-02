@@ -6085,10 +6085,10 @@ function convertToThaiDate(dateStr) {
             document.getElementById('splash-preview-img').style.display = 'none';
             document.getElementById('splash-preview-placeholder').style.display = '';
             document.getElementById('splash-reset-btn').classList.add('hidden');
-            // Reset splash on page to default
+            // Remove custom splash image from DOM
             const splashImg = document.querySelector('#splash-screen img');
-            if (splashImg) splashImg.src = 'splash.png';
-            showToggleCard('\u2705', 'รีเซ็ตภาพสำเร็จ!', 'กลับใช้ภาพเริ่มต้น');
+            if (splashImg) splashImg.remove();
+            showToggleCard('\u2705', 'รีเซ็ตภาพสำเร็จ!', 'กลับใช้หน้าจอเริ่มต้น');
         });
     }
     function loadSplashFromFirebase() {
@@ -6096,8 +6096,16 @@ function convertToThaiDate(dateStr) {
         db.ref('app_settings/splash_image').once('value').then(snap => {
             const val = snap.val();
             if (val) {
-                const splashImg = document.querySelector('#splash-screen img');
-                if (splashImg) splashImg.src = val;
+                // Add custom image to splash screen
+                const splash = document.getElementById('splash-screen');
+                let splashImg = splash.querySelector('img');
+                if (!splashImg) {
+                    splashImg = document.createElement('img');
+                    splash.insertBefore(splashImg, splash.firstChild);
+                }
+                splashImg.src = val;
+                splashImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
+                splash.style.justifyContent = 'flex-end';
                 // Also update admin preview if open
                 const preview = document.getElementById('splash-preview-img');
                 if (preview) { preview.src = val; preview.style.display = 'block'; }
