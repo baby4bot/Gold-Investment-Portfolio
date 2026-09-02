@@ -2019,13 +2019,13 @@
         <!-- แท็บ: บัญชี -->
         <div id="admin-tab-content-account" class="hidden flex flex-col gap-3 pl-4">
             <!-- ==================== หมวด PIN Code (Accordion) ==================== -->
-            <div style="background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(212,160,23,0.03)); border: 1px solid rgba(212,160,23,0.2); border-radius: 16px; overflow: hidden; margin-top: 4px;">
+            <div class="bg-[rgba(0,0,0,0.3)] rounded-xl border border-[rgba(255,255,255,0.06)]">
                 <!-- Header: กดเพื่อยุบ/ขยาย -->
-                <button onclick="togglePinCategory()" id="pin-category-header" class="w-full flex items-center gap-2 p-4 transition" style="background: transparent; border: none; cursor: pointer;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(212,160,23,0.2);"><i class="ph ph-shield-check text-sm" style="color: #d4a017;"></i></div>
-                    <div class="text-sm font-black flex-1 text-left" style="color: #d4a017;">การตั้งค่า PIN Code</div>
-                    <i class="ph ph-caret-down text-lg" id="pin-category-arrow" style="color: #d4a017; transition: transform 0.3s;"></i>
-                </button>
+                <div class="flex items-center gap-3 p-4 cursor-pointer select-none" onclick="togglePinCategory()" id="pin-category-header">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center"><i class="ph ph-shield-check text-lg" style="color: #fff;"></i></div>
+                    <div class="flex-1"><div class="text-sm text-gray-200 font-bold">การตั้งค่า PIN Code</div><div class="text-[11px] text-[#94a3b8]">รหัส 6 หลัก</div></div>
+                    <i class="ph ph-caret-down text-lg transition-transform duration-300" id="pin-category-arrow" style="color:#94a3b8;"></i>
+                </div>
                 <!-- Content: ยุบ/ขยาย -->
                 <div id="pin-category-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease; padding: 0 16px;">
                     <div class="flex flex-col gap-2 pb-4">
