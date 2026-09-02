@@ -7440,7 +7440,9 @@ function convertToThaiDate(dateStr) {
     // ---------- PULL TO REFRESH ----------
     let _pullRefreshStartY = 0, _isPulling = false;
     document.addEventListener('touchstart', (e) => {
-        if (window.scrollY === 0 && currentView === 'dashboard') { _pullRefreshStartY = e.touches[0].clientY; _isPulling = true; }
+        // Don't pull-refresh when any modal is open
+        const anyModalOpen = document.querySelector('.fixed.inset-0:not(.hidden):not([id*="login"]):not([id*="register"])');
+        if (window.scrollY === 0 && currentView === 'dashboard' && !anyModalOpen) { _pullRefreshStartY = e.touches[0].clientY; _isPulling = true; }
     });
     document.addEventListener('touchmove', (e) => {
         if (!_isPulling) return;
