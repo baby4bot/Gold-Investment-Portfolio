@@ -1323,9 +1323,6 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
             <div id="gold-dashboard-card" class="gold-dashboard-card md:col-span-2 lg:col-span-3">
                 <div class="gold-action-bar" aria-label="เครื่องมือราคาทอง">
-                    <button type="button" id="btn-sim-toggle" onclick="openSimModal()" class="gold-action-btn" aria-label="จำลอง" title="จำลองราคาทอง">
-                        <i class="ph ph-magic-wand" style="font-size:19px;"></i>
-                    </button>
                     <button type="button" class="gold-action-btn gold-share-btn" onclick="shareGoldPriceCard()" aria-label="แชร์" title="แชร์ราคาทอง">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10"></path>
@@ -1508,6 +1505,9 @@
                 </h3>
             </div>
             <div class="flex items-center gap-3">
+                        <button type="button" id="btn-sim-toggle" onclick="openSimModal()" class="gold-action-btn" aria-label="จำลอง" title="จำลองราคาทอง">
+                            <i class="ph ph-magic-wand text-base"></i>
+                        </button>
 
                 <span class="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap" style="background: #eab308; color: #0c0e14;" id="total-items-count">0 รายการ</span>
 
