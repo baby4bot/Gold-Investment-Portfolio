@@ -5402,14 +5402,9 @@ function convertToThaiDate(dateStr) {
             const val = snap.val();
             if (val) {
                 const splash = document.getElementById('splash-screen');
-                let splashImg = splash.querySelector('img');
-                if (!splashImg) {
-                    splashImg = document.createElement('img');
-                    splash.insertBefore(splashImg, splash.firstChild);
-                }
-                splashImg.src = val;
-                splashImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
-                splash.style.justifyContent = 'flex-end';
+                splash.style.backgroundImage = 'url(' + val + ')';
+                splash.style.backgroundSize = 'cover';
+                splash.style.backgroundPosition = 'center';
             }
         });
     }
