@@ -6386,14 +6386,21 @@ function convertToThaiDate(dateStr) {
     function collapseAllAccordions() {
         // System tab: card-style, splash
         ['card-style-body', 'splash-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
-        document.getElementById('card-style-chevron').style.transform = 'rotate(0deg)';
-        document.getElementById('splash-chevron').style.transform = 'rotate(0deg)';
+        var cch = document.getElementById('card-style-chevron');
+        if (cch) cch.style.transform = 'rotate(0deg)';
+        var sch = document.getElementById('splash-chevron');
+        if (sch) sch.style.transform = 'rotate(0deg)';
         // Account tab: PIN Code
         var pinContent = document.getElementById('pin-category-content');
         if (pinContent) { pinContent.style.maxHeight = '0'; pinContent.style.padding = '0 16px'; }
         var pinArrow = document.getElementById('pin-category-arrow');
         if (pinArrow) pinArrow.style.transform = 'rotate(0deg)';
-        // Profile tab: password fields
+        // Profile tab (admin settings): password accordion
+        var passCat = document.getElementById('pass-category-content');
+        if (passCat) { passCat.style.maxHeight = '0'; passCat.style.padding = '0'; }
+        var passArrow = document.getElementById('pass-category-arrow');
+        if (passArrow) passArrow.style.transform = 'rotate(0deg)';
+        // Profile tab (standalone): password fields
         var passFields = document.getElementById('pf-pass-fields');
         if (passFields) passFields.classList.add('hidden');
         var passCaret = document.getElementById('pf-pass-caret');
