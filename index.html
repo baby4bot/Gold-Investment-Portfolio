@@ -6382,8 +6382,30 @@ function convertToThaiDate(dateStr) {
         }
     }
 
+    // Collapse all accordions when switching tabs
+    function collapseAllAccordions() {
+        // System tab: card-style, splash
+        ['card-style-body', 'splash-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+        document.getElementById('card-style-chevron').style.transform = 'rotate(0deg)';
+        document.getElementById('splash-chevron').style.transform = 'rotate(0deg)';
+        // Account tab: PIN Code
+        var pinContent = document.getElementById('pin-category-content');
+        if (pinContent) { pinContent.style.maxHeight = '0'; pinContent.style.padding = '0 16px'; }
+        var pinArrow = document.getElementById('pin-category-arrow');
+        if (pinArrow) pinArrow.style.transform = 'rotate(0deg)';
+        // Profile tab: password fields
+        var passFields = document.getElementById('pf-pass-fields');
+        if (passFields) passFields.classList.add('hidden');
+        var passCaret = document.getElementById('pf-pass-caret');
+        if (passCaret) passCaret.style.transform = 'rotate(0deg)';
+        var toggleLabel = document.querySelector('#pf-pass-toggle span');
+        if (toggleLabel) toggleLabel.textContent = 'เปลี่ยนรหัสผ่าน';
+    }
+    
     // ฟังก์ชันสลับแท็บตั้งค่าระบบ
     function switchAdminTab(tab) {
+        // ยุบ accordions ทั้งหมดก่อนสลับแท็บ
+        collapseAllAccordions();
         // ซ่อนทุกแท็บ + ซ่อนฟอร์ม PIN
         document.querySelectorAll('[id^="admin-tab-content-"]').forEach(el => el.classList.add('hidden'));
         var pinEl = document.getElementById('admin-settings-pin');
