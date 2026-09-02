@@ -1125,6 +1125,18 @@
 <datalist id="shop-list"></datalist>
 <datalist id="buyer-list"></datalist> 
 
+<!-- Splash Screen -->
+<div id="splash-screen" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:#0c0e14;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease;">
+    <img src="splash.jpg" alt="พอร์ตทองคำ" style="max-width:90%;max-height:60vh;border-radius:16px;object-fit:contain;">
+    <div style="margin-top:24px;text-align:center;">
+        <p style="color:#d4a017;font-size:16px;font-weight:800;margin-bottom:12px;">กำลังโหลดข้อมูล...</p>
+        <div style="width:220px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
+            <div id="splash-progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,#d4a017,#f59e0b);border-radius:3px;transition:width 0.3s ease;"></div>
+        </div>
+        <p id="splash-progress-text" style="color:#94a3b8;font-size:12px;margin-top:8px;">0%</p>
+    </div>
+</div>
+
 <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[800] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
 
 <!-- PIN Ban Floating Badge -->
@@ -4477,11 +4489,32 @@ function convertToThaiDate(dateStr) {
                 if (awayMs > 300000) notifyAdminLogin(currentUser.username);
             }
         }
-        // ทำงานพร้อมกันเพื่อความเร็ว
-        Promise.allSettled([
-            fetchGoldPrice(),
-            fetchGoldNews()
-        ]);
+        // Splash screen animation
+        (function() {
+            const splash = document.getElementById('splash-screen');
+            const bar = document.getElementById('splash-progress-bar');
+            const txt = document.getElementById('splash-progress-text');
+            if (!splash || !bar) return;
+            let pct = 0;
+            const tick = setInterval(() => {
+                if (pct < 85) { pct += Math.random() * 8 + 2; if (pct > 85) pct = 85; }
+                bar.style.width = pct + '%';
+                txt.textContent = Math.round(pct) + '%';
+            }, 200);
+            function dismissSplash() {
+                clearInterval(tick);
+                bar.style.width = '100%';
+                txt.textContent = '100%';
+                setTimeout(() => { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); }, 300);
+            }
+            // ทำงานพร้อมกันเพื่อความเร็ว
+            Promise.allSettled([
+                fetchGoldPrice().then(() => dismissSplash()),
+                fetchGoldNews()
+            ]);
+            // Fallback: ปิด splash ภายใน 10 วินาที แม้ data ไม่มา
+            setTimeout(() => { if (splash.style.display !== 'none') dismissSplash(); }, 10000);
+        })();
         setInterval(() => { fetchGoldPrice(); }, 30000);
         updateAutoShareStatus();
     }
