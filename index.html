@@ -2103,18 +2103,16 @@
                     <i class="ph ph-caret-down text-lg transition-transform duration-300" id="splash-chevron" style="color:#94a3b8;"></i>
                 </div>
                 <div id="splash-body" style="display:none;">
-                    <div class="flex flex-col items-center gap-3 px-4 pb-4">
-                        <div id="splash-preview-wrap" class="w-full rounded-xl overflow-hidden" style="border: 2px dashed rgba(212,160,23,0.3); aspect-ratio: 9/16; max-height: 200px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                    <div class="flex flex-col gap-3 px-4 pb-4">
+                        <div id="splash-preview-wrap" class="w-full rounded-xl overflow-hidden relative" style="border: 2px dashed rgba(212,160,23,0.3); aspect-ratio: 9/16; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
                             <img id="splash-preview-img" src="splash.png" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
                             <div id="splash-preview-placeholder" class="text-center">
                                 <i class="ph ph-image text-3xl" style="color: #64748b;"></i>
                                 <p class="text-[11px] mt-1" style="color: #64748b;">ยังไม่ได้ตั้งค่า</p>
                             </div>
-                        </div>
-                        <input type="file" id="splash-file-input" accept="image/*" onchange="handleSplashUpload(event)" class="hidden" />
-                        <div class="flex gap-2 w-full">
-                            <button onclick="document.getElementById('splash-file-input').click()" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #d4a017, #b8941f); color: #0c0e14;"><i class="ph ph-upload-simple"></i> เลือกรูป</button>
-                            <button onclick="resetSplashImage()" id="splash-reset-btn" class="py-2.5 px-4 rounded-xl text-xs font-bold transition hidden" style="background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);"><i class="ph ph-trash"></i></button>
+                            <input type="file" id="splash-file-input" accept="image/*" onchange="handleSplashUpload(event)" class="hidden" />
+                            <button onclick="document.getElementById('splash-file-input').click()" class="absolute top-2 right-2 w-9 h-9 rounded-full flex items-center justify-center z-10" style="background: rgba(212,160,23,0.9); color: #000;"><i class="ph ph-upload-simple text-base"></i></button>
+                            <button onclick="resetSplashImage()" id="splash-reset-btn" class="absolute top-2 right-14 w-9 h-9 rounded-full flex items-center justify-center z-10 hidden" style="background: rgba(239,68,68,0.85); color: #fff;"><i class="ph ph-trash text-base"></i></button>
                         </div>
                         <p class="text-[10px] text-center" style="color: #64748b;">รองรับ JPG, PNG — แนะนำขนาด 1080x1920 px</p>
                     </div>
