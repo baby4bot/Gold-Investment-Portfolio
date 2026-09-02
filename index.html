@@ -6384,6 +6384,9 @@ function convertToThaiDate(dateStr) {
 
     // Collapse all accordions when switching tabs
     function collapseAllAccordions() {
+        // Reset boolean flags so toggle functions work correctly
+        _pinCategoryOpen = false;
+        _passCategoryOpen = false;
         // System tab: card-style, splash
         ['card-style-body', 'splash-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
         var cch = document.getElementById('card-style-chevron');

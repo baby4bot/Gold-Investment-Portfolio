@@ -5666,6 +5666,8 @@ function convertToThaiDate(dateStr) {
 
     // Collapse all accordions when switching tabs
     function collapseAllAccordions() {
+        _pinCategoryOpen = false;
+        _passCategoryOpen = false;
         ['card-style-body', 'splash-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
         var cch = document.getElementById('card-style-chevron');
         if (cch) cch.style.transform = 'rotate(0deg)';
