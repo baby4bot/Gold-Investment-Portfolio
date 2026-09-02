@@ -4519,41 +4519,68 @@ function convertToThaiDate(dateStr) {
                 if (awayMs > 300000) notifyAdminLogin(currentUser.username);
             }
         }
-        // Splash screen animation
+        // Splash screen animation — check real data before dismissing
         (function() {
             const splash = document.getElementById('splash-screen');
             const bar = document.getElementById('splash-progress-bar');
             const txt = document.getElementById('splash-progress-text');
             if (!splash || !bar) return;
             let pct = 0;
-            let tick = null;
-            function startTick() {
-                tick = setInterval(() => {
-                    if (pct < 85) { pct += Math.random() * 8 + 2; if (pct > 85) pct = 85; }
-                    bar.style.width = pct + '%';
-                    txt.textContent = Math.round(pct) + '%';
-                }, 200);
-            }
-            // Wait for splash to be visible (image loaded) before starting animation
-            const waitSplash = setInterval(() => {
-                if (splash.style.display === 'flex') { clearInterval(waitSplash); startTick(); }
-            }, 50);
-            // Fallback: if splash never shows, start anyway after 2s
-            setTimeout(() => { if (!tick) { clearInterval(waitSplash); startTick(); } }, 2000);
+            let dataTick = null;
+            let dismissed = false;
             function dismissSplash() {
-                if (tick) clearInterval(tick);
-                clearInterval(waitSplash);
+                if (dismissed) return;
+                dismissed = true;
+                if (dataTick) clearInterval(dataTick);
                 bar.style.width = '100%';
                 txt.textContent = '100%';
                 setTimeout(() => { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); }, 300);
             }
-            // ทำงานพร้อมกันเพื่อความเร็ว
-            Promise.allSettled([
-                fetchGoldPrice().then(() => dismissSplash()),
-                fetchGoldNews()
-            ]);
-            // Fallback: ปิด splash ภายใน 10 วินาที แม้ data ไม่มา
-            setTimeout(() => { if (splash.style.display !== 'none') dismissSplash(); }, 10000);
+            function checkDataReady() {
+                const dateEl = document.getElementById('gold-as-date');
+                const timeEl = document.getElementById('gold-as-time');
+                const buyEl = document.getElementById('gold-bar-buy');
+                const sellEl = document.getElementById('gold-bar-sell');
+                const ornBuyEl = document.getElementById('gold-ornament-buy');
+                const ornSellEl = document.getElementById('gold-ornament-sell');
+                const countEl = document.getElementById('gold-update-count');
+                const checks = [
+                    dateEl && dateEl.textContent && !dateEl.textContent.includes('---'),
+                    timeEl && timeEl.textContent && !timeEl.textContent.includes('---'),
+                    buyEl && buyEl.textContent && buyEl.textContent !== '-',
+                    sellEl && sellEl.textContent && sellEl.textContent !== '-',
+                    ornBuyEl && ornBuyEl.textContent && ornBuyEl.textContent !== '-',
+                    ornSellEl && ornSellEl.textContent && ornSellEl.textContent !== '-',
+                    countEl && countEl.textContent && !countEl.textContent.includes('--'),
+                ];
+                const loaded = checks.filter(Boolean).length;
+                const total = checks.length;
+                // Map loaded count to percentage: 0→10%, 7/7→95%
+                const target = Math.max(10, Math.round((loaded / total) * 95));
+                // Smoothly approach target
+                if (pct < target) { pct += Math.max(1, Math.round((target - pct) / 3)); }
+                bar.style.width = pct + '%';
+                txt.textContent = Math.round(pct) + '%';
+                if (loaded >= total) {
+                    // All data loaded — wait 300ms then dismiss
+                    clearInterval(dataTick);
+                    setTimeout(dismissSplash, 300);
+                }
+            }
+            // Wait for splash to be visible before starting data check
+            const waitSplash = setInterval(() => {
+                if (splash.style.display === 'flex') {
+                    clearInterval(waitSplash);
+                    // Start checking data every 200ms
+                    dataTick = setInterval(checkDataReady, 200);
+                }
+            }, 50);
+            // Fallback: if splash never shows, start checking after 2s
+            setTimeout(() => { if (!dataTick) { clearInterval(waitSplash); dataTick = setInterval(checkDataReady, 200); } }, 2000);
+            // Start fetching data
+            Promise.allSettled([fetchGoldPrice(), fetchGoldNews()]);
+            // Hard fallback: dismiss after 12s even if data never loads
+            setTimeout(() => { if (splash.style.display !== 'none') dismissSplash(); }, 12000);
         })();
         setInterval(() => { fetchGoldPrice(); }, 30000);
         updateAutoShareStatus();

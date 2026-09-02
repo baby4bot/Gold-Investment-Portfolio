@@ -3859,39 +3859,60 @@ function convertToThaiDate(dateStr) {
                 logUserLogin(currentUser.username);
             }
         }
-        // Splash screen animation
+        // Splash screen animation — check real data before dismissing
         (function() {
             const splash = document.getElementById('splash-screen');
             const bar = document.getElementById('splash-progress-bar');
             const txt = document.getElementById('splash-progress-text');
             if (!splash || !bar) return;
             let pct = 0;
-            let tick = null;
-            function startTick() {
-                tick = setInterval(() => {
-                    if (pct < 85) { pct += Math.random() * 8 + 2; if (pct > 85) pct = 85; }
-                    bar.style.width = pct + '%';
-                    txt.textContent = Math.round(pct) + '%';
-                }, 200);
-            }
-            const waitSplash = setInterval(() => {
-                if (splash.style.display === 'flex') { clearInterval(waitSplash); startTick(); }
-            }, 50);
-            setTimeout(() => { if (!tick) { clearInterval(waitSplash); startTick(); } }, 2000);
+            let dataTick = null;
+            let dismissed = false;
             function dismissSplash() {
-                if (tick) clearInterval(tick);
-                clearInterval(waitSplash);
+                if (dismissed) return;
+                dismissed = true;
+                if (dataTick) clearInterval(dataTick);
                 bar.style.width = '100%';
                 txt.textContent = '100%';
                 setTimeout(() => { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); }, 300);
             }
-            // ทำงานพร้อมกันเพื่อความเร็ว
-            Promise.allSettled([
-                fetchGoldPrice().then(() => dismissSplash()),
-                fetchGoldNews()
-            ]);
-            // Fallback: ปิด splash ภายใน 10 วินาที แม้ data ไม่มา
-            setTimeout(() => { if (splash.style.display !== 'none') dismissSplash(); }, 10000);
+            function checkDataReady() {
+                const dateEl = document.getElementById('gold-as-date');
+                const timeEl = document.getElementById('gold-as-time');
+                const buyEl = document.getElementById('gold-bar-buy');
+                const sellEl = document.getElementById('gold-bar-sell');
+                const ornBuyEl = document.getElementById('gold-ornament-buy');
+                const ornSellEl = document.getElementById('gold-ornament-sell');
+                const countEl = document.getElementById('gold-update-count');
+                const checks = [
+                    dateEl && dateEl.textContent && !dateEl.textContent.includes('---'),
+                    timeEl && timeEl.textContent && !timeEl.textContent.includes('---'),
+                    buyEl && buyEl.textContent && buyEl.textContent !== '-',
+                    sellEl && sellEl.textContent && sellEl.textContent !== '-',
+                    ornBuyEl && ornBuyEl.textContent && ornBuyEl.textContent !== '-',
+                    ornSellEl && ornSellEl.textContent && ornSellEl.textContent !== '-',
+                    countEl && countEl.textContent && !countEl.textContent.includes('--'),
+                ];
+                const loaded = checks.filter(Boolean).length;
+                const total = checks.length;
+                const target = Math.max(10, Math.round((loaded / total) * 95));
+                if (pct < target) { pct += Math.max(1, Math.round((target - pct) / 3)); }
+                bar.style.width = pct + '%';
+                txt.textContent = Math.round(pct) + '%';
+                if (loaded >= total) {
+                    clearInterval(dataTick);
+                    setTimeout(dismissSplash, 300);
+                }
+            }
+            const waitSplash = setInterval(() => {
+                if (splash.style.display === 'flex') {
+                    clearInterval(waitSplash);
+                    dataTick = setInterval(checkDataReady, 200);
+                }
+            }, 50);
+            setTimeout(() => { if (!dataTick) { clearInterval(waitSplash); dataTick = setInterval(checkDataReady, 200); } }, 2000);
+            Promise.allSettled([fetchGoldPrice(), fetchGoldNews()]);
+            setTimeout(() => { if (splash.style.display !== 'none') dismissSplash(); }, 12000);
         })();
         setInterval(() => { fetchGoldPrice(); }, 30000);
         updateAutoShareStatus();
