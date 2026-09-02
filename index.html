@@ -462,8 +462,8 @@
     .gold-header h1 { padding: 0 76px; }
     .gold-action-bar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 8px; padding-right: 14px; }
     .gold-action-btn { width: 42px; height: 42px; padding: 0; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border-primary); background: rgba(26,26,36,0.8); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); color: var(--text-primary); transition: all .2s ease; cursor: pointer; user-select: none; }
-    #btn-sim-toggle { border-radius: 50% !important; background: rgba(168,85,247,0.15) !important; border-color: rgba(168,85,247,0.4) !important; color: #a855f7 !important; }
-    #btn-sim-toggle:hover { background: rgba(168,85,247,0.25) !important; border-color: rgba(168,85,247,0.6) !important; box-shadow: 0 0 12px rgba(168,85,247,0.3); }
+    #btn-sim-toggle, #btn-hide-admin { border-radius: 50% !important; background: rgba(168,85,247,0.15) !important; border-color: rgba(168,85,247,0.4) !important; color: #a855f7 !important; width: 42px !important; height: 42px !important; }
+    #btn-sim-toggle:hover, #btn-hide-admin:hover { background: rgba(168,85,247,0.25) !important; border-color: rgba(168,85,247,0.6) !important; box-shadow: 0 0 12px rgba(168,85,247,0.3); }
     .gold-action-btn svg { width: 19px; height: 19px; stroke: currentColor; }
     .gold-action-btn:hover { background: #252525; border-color: #444; }
     .gold-action-btn:active { transform: scale(0.95); }
@@ -477,7 +477,7 @@
         .gold-header { padding: 14px 12px 8px; }
         .gold-header h1 { font-size: 16px; }
         .gold-action-btn { width: 36px; height: 36px; border-radius: 11px; }
-        #btn-sim-toggle { border-radius: 50% !important; }
+        #btn-sim-toggle, #btn-hide-admin { border-radius: 50% !important; width: 36px !important; height: 36px !important; }
         .gold-action-btn svg { width: 17px; height: 17px; }
     }
     /* ===== Premium Theme Overrides ===== */
@@ -1499,7 +1499,7 @@
         <div class="flex justify-between items-center mb-4 px-1" id="portfolio-title-sec">
             <div class="flex items-center gap-2">
                 <h3 class="text-xl font-black text-white flex items-center gap-2">รายการลงทุน <span id="current-user-title"></span>
-                    <button id="btn-hide-admin" onclick="toggleAdminPort()" class="gold-action-btn text-gray-400 hidden" style="width:42px;height:42px;border-radius:50%;" title="ซ่อนพอร์ต Admin">
+                    <button id="btn-hide-admin" onclick="toggleAdminPort()" class="gold-action-btn text-gray-400 hidden" title="ซ่อนพอร์ต Admin">
                         <svg id="icon-eye-admin" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </button>
                 </h3>
