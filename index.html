@@ -2093,6 +2093,28 @@
                     </button>
                 </div>
             </div>
+            <!-- Splash Screen Settings -->
+            <div class="bg-[rgba(0,0,0,0.3)] p-4 rounded-xl border border-[rgba(255,255,255,0.06)]">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--accent-gold);"><i class="ph ph-image text-lg" style="color: #000;"></i></div>
+                    <div><div class="text-sm text-gray-200 font-bold">ภาพหน้าจอเริ่มต้น</div><div class="text-[11px] text-[#94a3b8]">Splash Screen — เปลี่ยนได้โดยไม่ต้องแก้โค้ด</div></div>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <div id="splash-preview-wrap" class="w-full rounded-xl overflow-hidden" style="border: 2px dashed rgba(212,160,23,0.3); aspect-ratio: 9/16; max-height: 200px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                        <img id="splash-preview-img" src="splash.png" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                        <div id="splash-preview-placeholder" class="text-center">
+                            <i class="ph ph-image text-3xl" style="color: #64748b;"></i>
+                            <p class="text-[11px] mt-1" style="color: #64748b;">ยังไม่ได้ตั้งค่า</p>
+                        </div>
+                    </div>
+                    <input type="file" id="splash-file-input" accept="image/*" onchange="handleSplashUpload(event)" class="hidden" />
+                    <div class="flex gap-2 w-full">
+                        <button onclick="document.getElementById('splash-file-input').click()" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #d4a017, #b8941f); color: #0c0e14;"><i class="ph ph-upload-simple"></i> เลือกรูป</button>
+                        <button onclick="resetSplashImage()" id="splash-reset-btn" class="py-2.5 px-4 rounded-xl text-xs font-bold transition hidden" style="background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);"><i class="ph ph-trash"></i></button>
+                    </div>
+                    <p class="text-[10px] text-center" style="color: #64748b;">รองรับ JPG, PNG — แนะนำขนาด 1080x1920 px</p>
+                </div>
+            </div>
         </div>
         
         <form onsubmit="saveAdminPass(event)" class="hidden flex flex-col gap-4" id="admin-settings-pass">
@@ -6028,6 +6050,68 @@ function convertToThaiDate(dateStr) {
     function updateAutocomplete() { const shops = [...new Set(transactionsData.map(tx => tx.shop))]; const txBuyers = transactionsData.map(tx => tx.buyer); const appUserNames = Object.values(appUsers).map(u => u.name); const buyers = [...new Set([...txBuyers, ...appUserNames, adminDisplayName])].filter(Boolean); document.getElementById('shop-list').innerHTML = shops.map(s => `<option value="${s}">`).join(''); document.getElementById('buyer-list').innerHTML = buyers.map(b => `<option value="${b}">`).join(''); }
     function handleFormImageUpload(event) { handleImgBase(event, base64Data => { document.getElementById('form_prof_base64').value = base64Data; document.getElementById('form_prof_preview').src = base64Data; }); }
     function handleUserImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('u_prof_base64').value = base64Data; document.getElementById('u_prof_preview').src = base64Data; }); }
+    // ========== SPLASH SCREEN SETTINGS ==========
+    function handleSplashUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX = 1080;
+                let w = img.width, h = img.height;
+                if (w > MAX) { h *= MAX / w; w = MAX; }
+                if (h > MAX) { w *= MAX / h; h = MAX; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const base64 = canvas.toDataURL('image/jpeg', 0.85);
+                if (db) {
+                    db.ref('app_settings/splash_image').set(base64).then(() => {
+                        document.getElementById('splash-preview-img').src = base64;
+                        document.getElementById('splash-preview-img').style.display = 'block';
+                        document.getElementById('splash-preview-placeholder').style.display = 'none';
+                        document.getElementById('splash-reset-btn').classList.remove('hidden');
+                        showToggleCard('\u2705', 'เปลี่ยนภาพสำเร็จ!', 'Splash Screen ถูกอัปเดตแล้ว');
+                    });
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+    function resetSplashImage() {
+        if (!db) return;
+        db.ref('app_settings/splash_image').remove().then(() => {
+            document.getElementById('splash-preview-img').style.display = 'none';
+            document.getElementById('splash-preview-placeholder').style.display = '';
+            document.getElementById('splash-reset-btn').classList.add('hidden');
+            // Reset splash on page to default
+            const splashImg = document.querySelector('#splash-screen img');
+            if (splashImg) splashImg.src = 'splash.png';
+            showToggleCard('\u2705', 'รีเซ็ตภาพสำเร็จ!', 'กลับใช้ภาพเริ่มต้น');
+        });
+    }
+    function loadSplashFromFirebase() {
+        if (!db) return;
+        db.ref('app_settings/splash_image').once('value').then(snap => {
+            const val = snap.val();
+            if (val) {
+                const splashImg = document.querySelector('#splash-screen img');
+                if (splashImg) splashImg.src = val;
+                // Also update admin preview if open
+                const preview = document.getElementById('splash-preview-img');
+                if (preview) { preview.src = val; preview.style.display = 'block'; }
+                const ph = document.getElementById('splash-preview-placeholder');
+                if (ph) ph.style.display = 'none';
+                const rb = document.getElementById('splash-reset-btn');
+                if (rb) rb.classList.remove('hidden');
+            }
+        });
+    }
+    // Load splash on page init
+    setTimeout(loadSplashFromFirebase, 500);
+
     function handleAdminImgUpload(event) { handleImgBase(event, base64Data => { document.getElementById('admin_prof_base64').value = base64Data; document.getElementById('admin_prof_preview').src = base64Data; if (db) { var profileName = (currentRole === 'admin') ? adminDisplayName : (currentUser ? (currentUser.name || currentUser.username) : ''); db.ref('user_profiles/' + profileName).set(base64Data); showWarningToast('\u2705 \u0e1a\u0e31\u0e07\u0e17\u0e35\u0e48\u0e23\u0e39\u0e1a\u0e1e\u0e23\u0e23\u0e25\u0e4c \u0e2a\u0e35\u0e02!'); } }); }
     function handleImgBase(input, callback) { const file = input.target ? input.target.files[0] : (input.files ? input.files[0] : null); if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX_SIZE = 400; let width = img.width; let height = img.height; if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } } canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
     function previewProfileImg(input, imgId, hiddenId) {
