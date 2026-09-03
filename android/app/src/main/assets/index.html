@@ -1634,7 +1634,7 @@
         </div>
         <div class="mb-4 p-3 rounded-xl" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06);">
             <p class="text-xs font-bold" style="color: #94a3b8;">เวอร์ชันปัจจุบัน</p>
-            <p class="text-2xl font-black" style="color: #d4a017;" id="current-version-display">v1.2.6</p>
+            <p class="text-2xl font-black" style="color: #d4a017;" id="current-version-display">v1.2.7</p>
         </div>
         <div class="mb-4">
             <label class="block text-xs font-bold mb-2" style="color: #94a3b8;">เวอร์ชันใหม่</label>
@@ -1645,7 +1645,7 @@
                     <option value="major">Major (เปลี่ยนแปลงใหญ่) +1.0.0</option>
                 </select>
             </div>
-            <p class="text-xs mt-2 font-bold" style="color: var(--accent-green);">เวอร์ชันถัดไป: <span id="next-version-display">v1.2.7</span></p>
+            <p class="text-xs mt-2 font-bold" style="color: var(--accent-green);">เวอร์ชันถัดไป: <span id="next-version-display">v1.2.8</span></p>
         </div>
         <div class="mb-4">
             <label class="block text-xs font-bold mb-2" style="color: #94a3b8;">สิ่งที่เปลี่ยนแปลง (Separated by new line)</label>
@@ -6447,6 +6447,7 @@ function convertToThaiDate(dateStr) {
     function seedLocalStorageChangelog() {
         let localData = loadLocalVersionData();
         const hardcoded = [
+            { version: 'v1.2.7', date: '4 กันยายน 2569', items: '<li>✅ แก้ไขปัญหาการเลื่อนบนมือถือ — ลบ JavaScript ที่บล็อกการเลื่อน</li><li>✅ เพิ่ม overscroll-behavior-y บน html และ body ป้องกัน pull-to-refresh</li><li>✅ แก้ไขธีมสว่าง — ปุ่มต่างๆ มองเห็นชัดเจน, ลบแถบพื้นหลังปุ่มปิด</li><li>✅ แก้ไขการแจ้งเตือน — เปลี่ยนเป็น modal card style ทุกจุด</li><li>✅ แก้ไขการแคปเจอร์ — แก้ไขข้อความภาษาไทยถูกต้อง</li><li>✅ แก้ไขการจำธีม — บันทึกลง Firebase ทุกครั้งที่เปลี่ยน</li><li>✅ แก้ไข AI Prediction section — ขยายให้เท่ากับ announcement card</li><li>✅ ย้าย toggle buttons (เสียงเตือน/เสียงพูด/รับแจ้งเตือน) ขึ้นไปข้างบน</li>', timestamp: Date.now() },
             { version: 'v1.2.6', date: '2 กันยายน 2569', items: '<li>✅ ย้ายปุ่มเสียงเตือน/เสียงพูด/LINE ใต้กราฟ</li><li>✅ ซ่อนปุ่ม sync/import/delete สำหรับ user ธรรมดา</li><li>✅ เพิ่มปุ่ม "เมื่อวาน" ในหน้าประวัติราคาย้อนหลัง</li><li>✅ ใส่คอมม่าในตัวเลข (SMA, จำนวนรายการ, พอร์ต)</li><li>✅ ออกแบบ datetime bar ใหม่ สไตล์ pill โมเดิร์น</li><li>✅ แก้ record ซ้ำ "01 กันยายน" + normalize วันที่</li><li>✅ Progress bar ตอนลบประวัติและลบซ้ำ</li>', timestamp: Date.now() },
             { version: 'v1.2.5', date: '1 กันยายน 2569', items: '<li>✅ แก้ไขธีมสว่าง — หน้าตั้งค่า headers เห็นชัดทุกแท็บ</li><li>✅ แก้ IP ไม่แสดงตอน user เปิด/refresh แอป</li><li>✅ Welcome modal ครั้งแรกของวัน</li><li>✅ การ์ดลงทุน — จัดกลาง, วันที่ไทย, ค่าบล็อก, ไอคอนทอง</li><li>✅ แจ้งเตือน user login/logout แบบ modal card</li><li>✅ เปลี่ยนปุ่มเสียงเป็นเสียงเตือน, จัดบรรทัดเดียวกัน</li><li>✅ สรุปภาพรวม / สรุปโครงการคนละครึ่ง สั้นลง</li>', timestamp: Date.now() },
             { version: 'v1.2.4', date: '31 สิงหาคม 2569', items: '<li>✅ อัปเดตไอคอนใหม่ — Megaphone, Shield, Bell, Hand-coins, Share arrow</li><li>✅ ล็อก Header หน้าจัดการข้อมูลทอง & ผู้ใช้งาน</li><li>✅ ลบช่องว่างเกินหลังรายการสุดท้าย</li><li>✅ Toast notification สไตล์ Badge ใหม่</li>', timestamp: Date.now() },
