@@ -3373,20 +3373,19 @@ function convertToThaiDate(dateStr) {
     }
     // ===== Dark/Light Theme Toggle =====
     function setTheme(theme, showToast) {
-        console.log('[Theme] setTheme called:', theme, 'showToast:', showToast, 'currentUser:', currentUser?.username);
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
         // Update toggle switch state
         const toggle = document.getElementById('theme-toggle');
         if (toggle) toggle.checked = (theme === 'light');
-        if (showToast && db && currentUser) {
+        // Always save to Firebase if user is logged in
+        if (db && currentUser) {
             const themeRef = (currentUser.username === 'admin') ? 'admin_settings' : 'user_themes/' + currentUser.username;
-            console.log('[Theme] Saving to Firebase:', themeRef);
             db.ref(themeRef).update({ theme: theme });
+        }
+        if (showToast) {
             const labels = {dark: '🌙 มืด mode', light: '☀️ สว่าง mode'};
             showWarningToast(labels[theme] || theme);
-        } else {
-            console.log('[Theme] Not saving to Firebase - showToast:', showToast, 'db:', !!db, 'currentUser:', !!currentUser);
         }
         // Re-render cards to apply theme, then patch inline styles
         setTimeout(function() {
@@ -4840,20 +4839,30 @@ function convertToThaiDate(dateStr) {
         // โหลด theme จาก Firebase ของ user ตัวเอง (ไม่ใช่จาก localStorage ของ user อื่น)
         if (currentUser && db) {
             var themeRef = (currentUser.username === 'admin') ? 'admin_settings' : 'user_themes/' + currentUser.username;
-            console.log('[Theme] Loading from Firebase:', themeRef);
             db.ref(themeRef + '/theme').once('value', function(snap) {
                 var savedTheme = snap.val();
-                console.log('[Theme] Firebase value:', savedTheme);
                 if (savedTheme) {
                     localStorage.setItem('theme', savedTheme);
                     setTheme(savedTheme);
                 } else {
-                    console.log('[Theme] No Firebase value, using localStorage');
                     loadTheme();
                 }
             });
+        } else if (db) {
+            // db is ready but no user - wait and try again
+            setTimeout(function() {
+                if (currentUser) {
+                    var themeRef2 = (currentUser.username === 'admin') ? 'admin_settings' : 'user_themes/' + currentUser.username;
+                    db.ref(themeRef2 + '/theme').once('value', function(snap2) {
+                        var t2 = snap2.val();
+                        if (t2) { localStorage.setItem('theme', t2); setTheme(t2); }
+                        else { loadTheme(); }
+                    });
+                } else {
+                    loadTheme();
+                }
+            }, 500);
         } else {
-            console.log('[Theme] No currentUser or db, using localStorage');
             loadTheme(); loadPinEnabledSetting();
         }
         updateUIRole(); loadAdminSettings(); loadVersionFromFirebase(); loadChangelogFromFirebase(); loadUsers(); loadProfiles(); _skipPresenceNotif = true; setupOnlineStatusListener(); setTimeout(() => { _skipPresenceNotif = false; }, 3000);

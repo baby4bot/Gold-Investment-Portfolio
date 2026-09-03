@@ -2711,9 +2711,12 @@ function convertToThaiDate(dateStr) {
         // Update toggle switch state
         const toggle = document.getElementById('theme-toggle');
         if (toggle) toggle.checked = (theme === 'light');
-        if (showToast && db && currentUser) {
+        // Always save to Firebase if user is logged in
+        if (db && currentUser) {
             const themeRef = (currentUser.username === 'admin') ? 'admin_settings' : 'user_themes/' + currentUser.username;
             db.ref(themeRef).update({ theme: theme });
+        }
+        if (showToast) {
             const labels = {dark: '🌙 มืด mode', light: '☀️ สว่าง mode'};
             showWarningToast(labels[theme] || theme);
         }
@@ -4088,6 +4091,20 @@ function convertToThaiDate(dateStr) {
                     loadTheme();
                 }
             });
+        } else if (db) {
+            // db is ready but no user - wait and try again
+            setTimeout(function() {
+                if (currentUser) {
+                    var themeRef2 = (currentUser.username === 'admin') ? 'admin_settings' : 'user_themes/' + currentUser.username;
+                    db.ref(themeRef2 + '/theme').once('value', function(snap2) {
+                        var t2 = snap2.val();
+                        if (t2) { localStorage.setItem('theme', t2); setTheme(t2); }
+                        else { loadTheme(); }
+                    });
+                } else {
+                    loadTheme();
+                }
+            }, 500);
         } else {
             loadTheme(); loadPinEnabledSetting();
         }
