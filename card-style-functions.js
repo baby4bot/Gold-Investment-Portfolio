@@ -6,7 +6,7 @@
         if(db) db.ref('admin_settings/cardStyle').set(style);
         updateCardStyleUI();
         renderData();
-        showToggleCard(style === 'border' ? '✅ เปลี่ยนเป็นเวอร์ชั่นกรอบสีแล้ว' : '✅ เปลี่ยนเป็นเวอร์ชั่นสีทึบแล้ว');
+        showToggleCard('✅', style === 'border' ? 'กรอบสี' : 'สีทึบ', style === 'border' ? 'เปลี่ยนเป็นกรอบสีแล้ว' : 'เปลี่ยนเป็นสีทึบแล้ว');
     }
     
     function updateCardStyleUI() {
