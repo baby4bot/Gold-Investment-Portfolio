@@ -363,11 +363,10 @@
                 try {
                     await navigator.clipboard.writeText(getGoldShareText());
                 } catch (_) {}
-                showWarningToast('⚠️ เบราว์เซอร์นี้ไม่รองรับหน้าต่างแชร์ จึงบันทึกภาพไว้ให้แล้ว');
+                showToggleCard('\u26a0\ufe0f', 'ไม่รองรับการแชร์', 'เบราว์เซอร์นี้ไม่รองรับหน้าต่างแชร์ จึงบันทึกภาพไว้ให้แล้ว');
                 return;
             }
 
-            showWarningToast('📤 กำลังเตรียมภาพสำหรับแชร์...');
             const canvas = await createGoldPriceCanvas();
             const blob = await canvasToBlob(canvas);
             const fileName = getGoldCaptureFileName();
@@ -382,7 +381,7 @@
             // WhatsApp, Facebook และแอปอื่น ๆ ที่ติดตั้งอยู่
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share(shareData);
-                showWarningToast('✅ เปิดหน้าต่างแชร์แล้ว');
+                showToggleCard('\u2705', 'เปิดหน้าต่างแชร์แล้ว', 'เลือกแอปที่ต้องการแชร์ได้เลย');
                 return;
             }
 
@@ -392,7 +391,7 @@
                     title: 'ประกาศราคาทองคำ',
                     text: getGoldShareText() + '\n' + window.location.href
                 });
-                showWarningToast('✅ เปิดหน้าต่างแชร์แล้ว');
+                showToggleCard('\u2705', 'เปิดหน้าต่างแชร์แล้ว', 'เลือกแอปที่ต้องการแชร์ได้เลย');
             } catch (fallbackError) {
                 if (fallbackError?.name !== 'AbortError') throw fallbackError;
             }
@@ -400,12 +399,9 @@
             // ผู้ใช้กดปิดหน้าต่างแชร์เอง ไม่ต้องแจ้งว่าเป็นข้อผิดพลาด
             if (error?.name === 'AbortError') return;
             console.error('Share error:', error);
-            showWarningToast(`❌ แชร์ไม่สำเร็จ: ${error.message || 'กรุณาเปิดเว็บผ่าน HTTPS แล้วลองใหม่'}`);
+            showToggleCard('\u274c', 'แชร์ไม่สำเร็จ', error.message || 'กรุณาเปิดเว็บผ่าน HTTPS แล้วลองใหม่');
         }
-    }
-
-</script>
-<style>
+    }<style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
     /* ===== Modern Glassmorphism Dark Theme ===== */
     :root {
