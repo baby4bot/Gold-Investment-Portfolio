@@ -189,13 +189,10 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
         }
         const cardL = 115, cardR = 605, cardCX = (cardL + cardR) / 2;
 
-        // === DATE/TIME BAR ===
-        const barY = L('date','y') || 348, barH = 40;
+        // === DATE/TIME ===
+        const barY = L('date','y') || 348;
         const barL = cardL + 20, barR = cardR - 20;
-        tmp.fillStyle = 'rgba(37,99,235,0.25)';
-        tmp.beginPath(); tmp.roundRect(barL, barY - barH/2, barR - barL, barH, 16); tmp.fill();
-        textAt('\ud83d\udcc5 ' + date, L('date','x') || (barL + 20), barY, '600 22px Sarabun, sans-serif', '#93c5fd', 'left');
-        textAt('\ud83d\udd52 ' + time + ' \u0e19.', L('time','x') || (barR - 20), barY, '600 22px Sarabun, sans-serif', '#93c5fd', 'right');
+        textAt(date + '  ' + time + ' \u0e19.', L('date','x') || ((barL + barR) / 2), barY, '600 22px Sarabun, sans-serif', '#93c5fd', 'center');
 
         // === UPDATE BADGE ===
         const statusY = L('updateBadge','y') || 410;
