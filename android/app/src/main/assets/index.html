@@ -1169,9 +1169,9 @@
                         <h1 style="white-space: nowrap;">💰 ประกาศสมาคมค้าทองคำ</h1>
                     </div>
                 <div class="gold-datetime-bar">
-                    <div style="display:flex;align-items:center;gap:6px;"><i class="ph ph-calendar-blank" style="font-size:14px;color:#60a5fa;"></i><span id="gold-as-date" class="dt-val">--/--/----</span></div>
+                    <div style="display:flex;align-items:center;justify-content:center;"><i class="ph ph-calendar-blank" style="font-size:14px;color:#60a5fa;"></i><span id="gold-as-date" class="dt-val">--/--/----</span></div>
                     
-                    <div style="display:flex;align-items:center;gap:6px;"><i class="ph ph-clock" style="font-size:14px;color:#60a5fa;"></i><span id="gold-as-time" class="dt-val">--:--</span><span style="font-size:11px;color:#6b7280;">น.</span></div>
+                    <div style="display:flex;align-items:center;justify-content:center;"><i class="ph ph-clock" style="font-size:14px;color:#60a5fa;"></i><span id="gold-as-time" class="dt-val">--:--</span><span style="font-size:11px;color:#6b7280;">น.</span></div>
                 </div>
                 <div class="gold-status-bar">
                     <div><span class="gold-pulse-dot"></span><span id="gold-status-text">กำลังโหลด...</span></div>
@@ -7075,11 +7075,11 @@ function convertToThaiDate(dateStr) {
         saveCaptureLayout(layout);
         window._cleDirty = false;
         updateCleSaveButton();
-        showToggleCard('✅', 'บันทึกเลย์เอาต์แคปเจอร์', 'เลย์เอาต์ถูกบันทึกเรียบร้อยแล้ว');
+        showWarningToast('✅ บันทึกเลย์เอาต์แคปเจอร์แล้ว');
     }
 
     function cleTestCapture() {
-        // First save current positions
+        showToggleCard('✅', 'บันทึกเลย์เอาต์แคปเจอร์', 'เลย์เอาต์ถูกบันทึกเรียบร้อยแล้ว');
         const layout = getCaptureLayout();
         const NW = 720, NH = 1468;
         const displayW = Math.min(360, window.innerWidth - 32);
@@ -7101,7 +7101,7 @@ function convertToThaiDate(dateStr) {
             overlay.innerHTML = '<div style="color:#d4a017;font-weight:bold;font-size:14px;margin-bottom:8px;">📸 ตัวอย่าง Capture</div>' +
                 '<canvas id="cle-preview-canvas"></canvas>' +
                 '<div style="margin-top:12px;display:flex;gap:12px;">' +
-                '<button onclick="document.getElementById('cle-preview-overlay').remove()" style="padding:10px 24px;border-radius:12px;background:rgba(255,255,255,0.1);color:#94a3b8;font-weight:bold;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;"><i class="ph ph-x" style="font-size:18px;"></i></button>' +
+                '<button onclick="document.getElementById(\'cle-preview-overlay\').remove()" style="padding:10px 24px;border-radius:12px;background:rgba(255,255,255,0.1);color:#94a3b8;font-weight:bold;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;"><i class="ph ph-x" style="font-size:18px;"></i></button>' +
                 '<button onclick="cleDownloadPreview()" style="padding:10px 24px;border-radius:12px;background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;font-weight:bold;display:flex;align-items:center;justify-content:center;"><i class="ph ph-download-simple" style="font-size:18px;"></i></button>' +
                 '</div>';
             document.body.appendChild(overlay);
