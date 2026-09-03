@@ -4961,7 +4961,11 @@ function convertToThaiDate(dateStr) {
         var histOpen = histModal && histModal.style.display === 'flex';
         var itemModal = document.getElementById('item-modal');
         var itemOpen = itemModal && itemModal.style.opacity === '1';
-        if (!isDashboard || histOpen || itemOpen) {
+        var adminModal = document.getElementById('admin-settings-modal');
+        var adminOpen = adminModal && adminModal.style.display === 'flex';
+        var profileModal = document.getElementById('profile-modal');
+        var profileOpen = profileModal && profileModal.style.display === 'flex';
+        if (!isDashboard || histOpen || itemOpen || adminOpen || profileOpen) {
             const dy = e.touches[0].clientY - _pullStartY;
             if (dy > 0) {
                 // หา scrollable container จาก touch target
@@ -8575,7 +8579,7 @@ function convertToThaiDate(dateStr) {
         saveCaptureLayout(layout);
         window._cleDirty = false;
         updateCleSaveButton();
-        showWarningToast('✅ บันทึกเลย์เอาต์แคปเจอร์แล้ว');
+        showToggleCard('✅', 'บันทึกเลย์เอาต์แคปเจอร์', 'เลย์เอาต์ถูกบันทึกเรียบร้อยแล้ว');
     }
 
     function cleTestCapture() {
@@ -8601,8 +8605,8 @@ function convertToThaiDate(dateStr) {
             overlay.innerHTML = '<div style="color:#d4a017;font-weight:bold;font-size:14px;margin-bottom:8px;">📸 ตัวอย่าง Capture</div>' +
                 '<canvas id="cle-preview-canvas"></canvas>' +
                 '<div style="margin-top:12px;display:flex;gap:12px;">' +
-                '<button onclick="document.getElementById(\'cle-preview-overlay\').remove()" style="padding:10px 24px;border-radius:12px;background:rgba(255,255,255,0.1);color:#94a3b8;font-weight:bold;border:1px solid rgba(255,255,255,0.1);">✕ ปิด</button>' +
-                '<button onclick="cleDownloadPreview()" style="padding:10px 24px;border-radius:12px;background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;font-weight:bold;display:flex;align-items:center;gap:6px;"><i class="ph ph-download-simple" style="font-size:18px;"></i> บันทึกภาพ</button>' +
+                '<button onclick="document.getElementById('cle-preview-overlay').remove()" style="padding:10px 24px;border-radius:12px;background:rgba(255,255,255,0.1);color:#94a3b8;font-weight:bold;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;"><i class="ph ph-x" style="font-size:18px;"></i></button>' +
+                '<button onclick="cleDownloadPreview()" style="padding:10px 24px;border-radius:12px;background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;font-weight:bold;display:flex;align-items:center;justify-content:center;"><i class="ph ph-download-simple" style="font-size:18px;"></i></button>' +
                 '</div>';
             document.body.appendChild(overlay);
 
