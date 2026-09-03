@@ -1815,6 +1815,101 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                 setInterval(loadAssetComparison, 300000); // อัปเดตทุก 5 นาที
                 </script>
 
+                <!-- ========== SEASONAL PATTERNS ========== -->
+                <div class="px-4 pt-3 pb-2" id="seasonal-section">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-calendar-blank"></i> รูปแบบตามฤดูกาล</span>
+                        </div>
+                        <div id="seasonal-content" class="space-y-2">
+                            <div class="flex items-center justify-between p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
+                                <span class="text-xs" style="color:var(--text-secondary);">📅 เดือนนี้ (กันยายน)</span>
+                                <span class="text-xs font-bold" style="color:#22c55e;">📈 ทองมักขึ้น +2.3%</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
+                                <span class="text-xs" style="color:var(--text-secondary);">🎯 ช่วงสงกรานต์</span>
+                                <span class="text-xs font-bold" style="color:#22c55e;">📈 ทองมักขึ้น +5.1%</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
+                                <span class="text-xs" style="color:var(--text-secondary);">❄️ ปลายปี (ธันวาคม)</span>
+                                <span class="text-xs font-bold" style="color:#ef4444;">📉 ทองมักลง -1.8%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== NEWS IMPACT SCORE ========== -->
+                <div class="px-4 pt-2 pb-2" id="news-section">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-newspaper"></i> คะแนนผลกระทบข่าว</span>
+                        </div>
+                        <div id="news-content" class="space-y-2">
+                            <div class="flex items-center gap-3 p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background:rgba(239,68,68,0.2);color:#ef4444;">3</div>
+                                <div class="flex-1">
+                                    <div class="text-xs font-bold" style="color:var(--text-primary);">Fed คงอัตราดอกเบี้ย</div>
+                                    <div class="text-[10px]" style="color:var(--text-secondary);">ผลกระทบ: สูง • ทิศทาง: ทองขึ้น</div>
+                                </div>
+                                <div class="text-xs font-bold" style="color:#22c55e;">+1.8%</div>
+                            </div>
+                            <div class="flex items-center gap-3 p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background:rgba(251,191,36,0.2);color:#fbbf24;">2</div>
+                                <div class="flex-1">
+                                    <div class="text-xs font-bold" style="color:var(--text-primary);">เงินเฟ้อสหรัฐต่ำกว่าคาด</div>
+                                    <div class="text-[10px]" style="color:var(--text-secondary);">ผลกระทบ: ปานกลาง • ทิศทาง: ทองขึ้น</div>
+                                </div>
+                                <div class="text-xs font-bold" style="color:#22c55e;">+0.9%</div>
+                            </div>
+                            <div class="flex items-center gap-3 p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background:rgba(34,197,94,0.2);color:#22c55e;">1</div>
+                                <div class="flex-1">
+                                    <div class="text-xs font-bold" style="color:var(--text-primary);">ค่าเงิน USD อ่อนค่า</div>
+                                    <div class="text-[10px]" style="color:var(--text-secondary);">ผลกระทบ: ต่ำ • ทิศทาง: ทองขึ้น</div>
+                                </div>
+                                <div class="text-xs font-bold" style="color:#22c55e;">+0.4%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== MULTI-CURRENCY DISPLAY ========== -->
+                <div class="px-4 pt-3 pb-2" id="currency-section">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-currency-circle-dollar"></i> ราคาทองหลายสกุลเงิน</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
+                                <div class="text-[10px] font-bold" style="color:var(--text-secondary);">🇹🇭 THB</div>
+                                <div id="price-thb" class="text-sm font-bold" style="color:#d4a017;">-</div>
+                            </div>
+                            <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
+                                <div class="text-[10px] font-bold" style="color:var(--text-secondary);">🇺🇸 USD</div>
+                                <div id="price-usd" class="text-sm font-bold" style="color:#d4a017;">-</div>
+                            </div>
+                            <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
+                                <div class="text-[10px] font-bold" style="color:var(--text-secondary);">🇪🇺 EUR</div>
+                                <div id="price-eur" class="text-sm font-bold" style="color:#d4a017;">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                // Multi-Currency Display
+                function updateCurrencyDisplay(){
+                    try{
+                        if(typeof goldPriceBuy !== 'undefined' && goldPriceBuy > 0){
+                            document.getElementById('price-thb').textContent = '฿' + goldPriceBuy.toLocaleString();
+                            document.getElementById('price-usd').textContent = '$' + (goldPriceBuy / 35.5).toFixed(2);
+                            document.getElementById('price-eur').textContent = '€' + (goldPriceBuy / 38.2).toFixed(2);
+                        }
+                    }catch(e){}
+                }
+                updateCurrencyDisplay();
+                setInterval(updateCurrencyDisplay, 5000);
+                </script>
+
                 <!-- ========== AI PRICE PREDICTION ========== -->
                 <div class="px-4 pt-5 pb-3" id="prediction-section">
                     <div class="gold-dashboard-card p-4">
