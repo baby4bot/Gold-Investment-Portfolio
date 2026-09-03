@@ -260,21 +260,39 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
         const changeTodayY = L('changeToday','y') || 640;
         const changeLatestX = L('changeLatest','x') || 480;
         const changeLatestY = L('changeLatest','y') || 640;
-        const boxW = 230, boxH = 90, boxR = 18;
+        const boxW = 230, boxH = 110, boxR = 18;
 
-        // Left box (today)
+        // Left box (today) — web style
         tmp.fillStyle = todayBg; tmp.strokeStyle = todayBd; tmp.lineWidth = 2;
         tmp.beginPath(); tmp.roundRect(changeTodayX - boxW/2, changeTodayY - boxH/2, boxW, boxH, boxR); tmp.fill(); tmp.stroke();
-        textAt('\ud83d\udcc5 \u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49', changeTodayX, changeTodayY - 22, '500 16px Sarabun, sans-serif', '#94a3b8');
-        textAt('\ud83d\udcc8 ' + todayLabel, changeTodayX, changeTodayY, '500 16px Sarabun, sans-serif', '#94a3b8');
-        textAt(cToday.arrow + ' ' + cToday.amount, changeTodayX, changeTodayY + 26, '800 32px Sarabun, sans-serif', todayColor);
+        // Title with calendar icon
+        drawCalIcon(changeTodayX - tmp.measureText('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49').width * 0.3 - 14, changeTodayY - 35, 18, '#94a3b8');
+        textAt('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49', changeTodayX + 4, changeTodayY - 35, '500 15px Sarabun, sans-serif', '#94a3b8', 'center');
+        // Badge (เพิ่มขึ้น/ลดลง)
+        tmp.font = '700 13px Sarabun, sans-serif';
+        const tBadgeW = tmp.measureText(todayLabel).width + 20;
+        const tBadgeX = changeTodayX - tBadgeW/2, tBadgeY = changeTodayY - 16;
+        tmp.fillStyle = todayBg; tmp.strokeStyle = todayBd; tmp.lineWidth = 1.5;
+        tmp.beginPath(); tmp.roundRect(tBadgeX, tBadgeY, tBadgeW, 24, 12); tmp.fill(); tmp.stroke();
+        textAt(todayLabel, changeTodayX, tBadgeY + 12, '700 13px Sarabun, sans-serif', todayColor, 'center');
+        // Amount with arrow
+        textAt(cToday.arrow + ' ' + cToday.amount, changeTodayX, changeTodayY + 28, '800 28px Sarabun, sans-serif', todayColor, 'center');
 
-        // Right box (latest)
+        // Right box (latest) — web style
         tmp.fillStyle = latestBg; tmp.strokeStyle = latestBd; tmp.lineWidth = 2;
         tmp.beginPath(); tmp.roundRect(changeLatestX - boxW/2, changeLatestY - boxH/2, boxW, boxH, boxR); tmp.fill(); tmp.stroke();
-        textAt('\ud83d\udd50 \u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e25\u0e48\u0e32\u0e2a\u0e38\u0e14', changeLatestX, changeLatestY - 22, '500 16px Sarabun, sans-serif', '#94a3b8');
-        textAt('\ud83d\udcc8 ' + latestLabel, changeLatestX, changeLatestY, '500 16px Sarabun, sans-serif', '#94a3b8');
-        textAt(cLatest.arrow + ' ' + cLatest.amount, changeLatestX, changeLatestY + 26, '800 32px Sarabun, sans-serif', latestColor);
+        // Title with clock icon
+        drawClockIcon(changeLatestX - tmp.measureText('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e25\u0e48\u0e32\u0e2a\u0e38\u0e14').width * 0.3 - 14, changeLatestY - 35, 18, '#94a3b8');
+        textAt('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e25\u0e48\u0e32\u0e2a\u0e38\u0e14', changeLatestX + 4, changeLatestY - 35, '500 15px Sarabun, sans-serif', '#94a3b8', 'center');
+        // Badge (เพิ่มขึ้น/ลดลง)
+        tmp.font = '700 13px Sarabun, sans-serif';
+        const lBadgeW = tmp.measureText(latestLabel).width + 20;
+        const lBadgeX = changeLatestX - lBadgeW/2, lBadgeY = changeLatestY - 16;
+        tmp.fillStyle = latestBg; tmp.strokeStyle = latestBd; tmp.lineWidth = 1.5;
+        tmp.beginPath(); tmp.roundRect(lBadgeX, lBadgeY, lBadgeW, 24, 12); tmp.fill(); tmp.stroke();
+        textAt(latestLabel, changeLatestX, lBadgeY + 12, '700 13px Sarabun, sans-serif', latestColor, 'center');
+        // Amount with arrow
+        textAt(cLatest.arrow + ' ' + cLatest.amount, changeLatestX, changeLatestY + 28, '800 28px Sarabun, sans-serif', latestColor, 'center');
 
         // Step 2: Downscale to final output size
         const W = 390, H = 870;
