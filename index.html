@@ -1756,22 +1756,9 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                     </div>
                 </div>
 
-                <!-- ========== AI PRICE PREDICTION ========== -->
-                <div class="px-4 pt-5 pb-3" id="prediction-section">
-                    <div class="gold-dashboard-card p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-magic-wand"></i> ทำนายราคาทอง (AI Prediction)</span>
-                            <span id="prediction-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1" style="background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(245,158,11,0.15)); color: #d4a017; border: 1px solid rgba(212,160,23,0.3);"><i class="ph ph-magic-wand" style="font-size:11px;"></i> วิเคราะห์ AI</span>
-                        </div>
-                        <div id="prediction-content">
-                            <div class="flex items-center justify-center py-6">
-                                <div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--accent-gold);"></div>
-                                <span class="ml-2 text-xs" style="color: var(--text-secondary);">กำลังวิเคราะห์...</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
+                <!-- ========== GOLDEN HOUR TIMER ========== -->
+                <div class="px-4 pt-3 pb-2">
                     <div class="gold-dashboard-card p-4">
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-clock"></i> จับเวลาทอง (Golden Hour)</span>
@@ -1784,6 +1771,22 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                                 <p class="text-sm font-bold mb-1" style="color:var(--text-primary);">เวลาที่ทองมักเปลี่ยนมาก</p>
                                 <p class="text-[11px]" style="color:var(--text-secondary);">ช่วง 09:00-11:00 และ 14:00-16:00</p>
                                 <p class="text-[10px] mt-1" style="color:var(--text-muted);">⏱ เวลาที่เหลือ: <span id="gh-countdown" class="font-bold" style="color:#d4a017;">--:--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== AI PRICE PREDICTION ========== -->
+                <div class="px-4 pt-3 pb-3" id="prediction-section">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-magic-wand"></i> ทำนายราคาทอง (AI Prediction)</span>
+                            <span id="prediction-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1" style="background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(245,158,11,0.15)); color: #d4a017; border: 1px solid rgba(212,160,23,0.3);"><i class="ph ph-magic-wand" style="font-size:11px;"></i> วิเคราะห์ AI</span>
+                        </div>
+                        <div id="prediction-content">
+                            <div class="flex items-center justify-center py-6">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--accent-gold);"></div>
+                                <span class="ml-2 text-xs" style="color: var(--text-secondary);">กำลังวิเคราะห์...</span>
                             </div>
                         </div>
                     </div>
