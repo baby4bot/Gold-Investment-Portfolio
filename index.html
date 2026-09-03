@@ -1873,39 +1873,6 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                     </div>
                 </div>
 
-                <!-- ========== MULTI-CURRENCY DISPLAY ========== -->
-                <div class="px-4 pt-3 pb-2" id="currency-section">
-                    <div class="gold-dashboard-card p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-currency-circle-dollar"></i> ราคาทองหลายสกุลเงิน</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
-                                <div class="text-[10px] font-bold" style="color:var(--text-secondary);">🇹🇭 THB</div>
-                                <div id="price-thb" class="text-sm font-bold" style="color:#d4a017;">-</div>
-                            </div>
-                            <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
-                                <div class="text-[10px] font-bold" style="color:var(--text-secondary);">🇺🇸 USD</div>
-                                <div id="price-usd" class="text-sm font-bold" style="color:#d4a017;">-</div>
-                            </div>
-                            <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
-                                <div class="text-[10px] font-bold" style="color:var(--text-secondary);">🇪🇺 EUR</div>
-                                <div id="price-eur" class="text-sm font-bold" style="color:#d4a017;">-</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <script>
-                // Multi-Currency Display
-                function updateCurrencyDisplay(){
-                    try{
-                        if(typeof goldPriceBuy !== 'undefined' && goldPriceBuy > 0){
-                            document.getElementById('price-thb').textContent = '฿' + goldPriceBuy.toLocaleString();
-                            document.getElementById('price-usd').textContent = '$' + (goldPriceBuy / 35.5).toFixed(2);
-                            document.getElementById('price-eur').textContent = '€' + (goldPriceBuy / 38.2).toFixed(2);
-                        }
-                    }catch(e){}
-                }
                 updateCurrencyDisplay();
                 setInterval(updateCurrencyDisplay, 5000);
                 </script>
