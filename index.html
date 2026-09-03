@@ -216,16 +216,20 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
             tmp.beginPath(); tmp.moveTo(cx, cy); tmp.lineTo(cx, cy - 5*s); tmp.moveTo(cx, cy); tmp.lineTo(cx + 4*s, cy + 1*s); tmp.stroke();
             tmp.restore();
         }
-        // Measure text to position icons
+        // Draw date with calendar icon
         tmp.font = '600 22px Sarabun, sans-serif';
-        const dateStr = date + '   ' + time + ' \u0e19.';
-        const totalW = tmp.measureText(dateStr).width;
-        const centerX = L('date','x') || ((barL + barR) / 2);
-        const iconY = barY;
-        const iconSz = 22;
-        drawCalIcon(centerX - totalW/2 - 14, iconY, iconSz, '#93c5fd');
-        drawClockIcon(centerX + totalW/2 + 14, iconY, iconSz, '#93c5fd');
-        textAt(dateStr, centerX, barY, '600 22px Sarabun, sans-serif', '#93c5fd', 'center');
+        const dateX = L('date','x') || ((barL + barR) / 3);
+        const dateY = L('date','y') || barY;
+        const dateW = tmp.measureText(date).width;
+        drawCalIcon(dateX - dateW/2 - 14, dateY, 22, '#93c5fd');
+        textAt(date, dateX, dateY, '600 22px Sarabun, sans-serif', '#93c5fd', 'center');
+        // Draw time with clock icon
+        const timeX = L('time','x') || ((barL + barR) * 2 / 3);
+        const timeY = L('time','y') || barY;
+        const timeStr = time + ' \u0e19.';
+        const timeW = tmp.measureText(timeStr).width;
+        drawClockIcon(timeX - timeW/2 - 14, timeY, 22, '#93c5fd');
+        textAt(timeStr, timeX, timeY, '600 22px Sarabun, sans-serif', '#93c5fd', 'center');
 
         // === UPDATE BADGE ===
         const statusY = L('updateBadge','y') || 410;
