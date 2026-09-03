@@ -2364,11 +2364,19 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                     </div>
                 </div>
             </div>
-            <!-- จัดเลย์เอาต์แคปเจอร์ -->
-            <button onclick="openCaptureLayoutEditor()" class="w-full bg-[rgba(0,0,0,0.3)] hover:bg-gray-600/80 text-gray-200 py-4 rounded-xl font-bold flex items-center gap-3 transition border border-[rgba(255,255,255,0.06)]">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center ml-3"><i class="ph ph-arrows-out-simple text-lg" style="color: #fff;"></i></div>
-                <div class="text-left"><div class="text-sm">จัดเลย์เอาต์แคปเจอร์</div><div class="text-[11px] text-[#94a3b8]">ปรับตำแหน่งองค์ประกอบในภาพแคปเจอร์</div></div>
-            </button>
+            <!-- จัดเลย์เอาต์แคปเจอร์ (Accordion) -->
+            <div class="bg-[rgba(0,0,0,0.3)] rounded-xl border border-[rgba(255,255,255,0.06)]">
+                <div class="flex items-center gap-3 p-4 cursor-pointer select-none" onclick="toggleAccordion('cle-body')">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center"><i class="ph ph-arrows-out-simple text-lg" style="color: #fff;"></i></div>
+                    <div class="flex-1"><div class="text-sm text-gray-200 font-bold">จัดเลย์เอาต์แคปเจอร์</div><div class="text-[11px] text-[#94a3b8]">ปรับตำแหน่งองค์ประกอบในภาพแคปเจอร์</div></div>
+                    <i class="ph ph-caret-down text-lg transition-transform duration-300" id="cle-chevron" style="color:#94a3b8;"></i>
+                </div>
+                <div id="cle-body" style="display:none;">
+                    <div class="px-4 pb-4">
+                        <button onclick="openCaptureLayoutEditor()" class="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;"><i class="ph ph-arrows-out-simple text-base"></i> เปิดจัดเลย์เอาต์</button>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <form onsubmit="saveAdminPass(event)" class="hidden flex flex-col gap-4" id="admin-settings-pass">
@@ -6671,12 +6679,9 @@ function convertToThaiDate(dateStr) {
         // Reset boolean flags so toggle functions work correctly
         _pinCategoryOpen = false;
         _passCategoryOpen = false;
-        // System tab: card-style, splash
-        ['card-style-body', 'splash-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
-        var cch = document.getElementById('card-style-chevron');
-        if (cch) cch.style.transform = 'rotate(0deg)';
-        var sch = document.getElementById('splash-chevron');
-        if (sch) sch.style.transform = 'rotate(0deg)';
+        // System tab: card-style, splash, capture layout
+        ['card-style-body', 'splash-body', 'cle-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+        ['card-style-chevron', 'splash-chevron', 'cle-chevron'].forEach(id => { var ch = document.getElementById(id); if (ch) ch.style.transform = 'rotate(0deg)'; });
         // Account tab: PIN Code
         var pinContent = document.getElementById('pin-category-content');
         if (pinContent) { pinContent.style.maxHeight = '0'; pinContent.style.padding = '0 16px'; }
@@ -6734,14 +6739,14 @@ function convertToThaiDate(dateStr) {
     // Accordion for admin settings sections
     function toggleAccordion(bodyId) {
         const body = document.getElementById(bodyId);
-        const chevronId = bodyId === 'card-style-body' ? 'card-style-chevron' : 'splash-chevron';
-        const chevron = document.getElementById(chevronId);
+        const chevronMap = { 'card-style-body': 'card-style-chevron', 'splash-body': 'splash-chevron', 'cle-body': 'cle-chevron' };
+        const chevron = document.getElementById(chevronMap[bodyId]);
         const isOpen = body.style.display !== 'none';
         // Close all accordion bodies first
-        ['card-style-body', 'splash-body'].forEach(id => {
+        ['card-style-body', 'splash-body', 'cle-body'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
-            const ch = document.getElementById(id === 'card-style-body' ? 'card-style-chevron' : 'splash-chevron');
+            const ch = document.getElementById(chevronMap[id]);
             if (ch) ch.style.transform = 'rotate(0deg)';
         });
         // Toggle clicked one
@@ -7141,15 +7146,19 @@ function convertToThaiDate(dateStr) {
         document.getElementById('version-update-modal').classList.remove('hidden');
         document.getElementById('current-version-display').textContent = versionToString(currentVersion);
         updateNextVersion();
-        // Auto-detect code changes (function/menu/button additions)
-        const detected = detectRecentChanges();
         const textarea = document.getElementById('changelog-input');
-        if (detected) {
-            textarea.value = detected;
-        } else {
-            textarea.value = '';
-            textarea.placeholder = 'ไม่พบการเปลี่ยนแปลงโค้ดใหม่\n(เพิ่ม/ลบ ฟังก์ชัน, ปุ่ม, เมนู, Modal, ฟอร์ม)';
-        }
+        textarea.value = '';
+        textarea.placeholder = 'กำลังตรวจจับการเปลี่ยนแปลง...';
+        // Auto-detect code changes async to avoid blocking UI
+        setTimeout(() => {
+            const detected = detectRecentChanges();
+            if (detected) {
+                textarea.value = detected;
+            } else {
+                textarea.value = '';
+                textarea.placeholder = 'ไม่พบการเปลี่ยนแปลงโค้ดใหม่\n(เพิ่ม/ลบ ฟังก์ชัน, ปุ่ม, เมนู, Modal, ฟอร์ม)';
+            }
+        }, 50);
     }
     function closeVersionUpdateModal() { document.getElementById('version-update-modal').classList.add('hidden'); openAdminSettingsModal(); switchAdminTab('system'); }
     function updateNextVersion() {
