@@ -4822,7 +4822,13 @@ function convertToThaiDate(dateStr) {
                     setupPresence('admin');
                     logUserLogin('admin');
                     if (currentRole === 'admin') setupAdminNotifListener();
-                    loadTheme(); loadPinEnabledSetting();
+                    loadPinEnabledSetting();
+                    // Load theme from Firebase for auto-login admin
+                    db.ref('admin_settings/theme').once('value', function(snap) {
+                        var t = snap.val();
+                        if (t) { localStorage.setItem('theme', t); setTheme(t); }
+                        else { loadTheme(); }
+                    });
                 }
             });
         }
@@ -4831,9 +4837,13 @@ function convertToThaiDate(dateStr) {
         if (currentUser && db) {
             var themeRef = (currentUser.username === 'admin') ? 'admin_settings' : 'user_themes/' + currentUser.username;
             db.ref(themeRef + '/theme').once('value', function(snap) {
-                var savedTheme = snap.val() || 'dark';
-                localStorage.setItem('theme', savedTheme);
-                setTheme(savedTheme);
+                var savedTheme = snap.val();
+                if (savedTheme) {
+                    localStorage.setItem('theme', savedTheme);
+                    setTheme(savedTheme);
+                } else {
+                    loadTheme();
+                }
             });
         } else {
             loadTheme(); loadPinEnabledSetting();
