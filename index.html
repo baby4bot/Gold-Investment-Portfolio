@@ -6439,7 +6439,7 @@ function convertToThaiDate(dateStr) {
     function showWarningToast(msg) { if (navigator.vibrate) navigator.vibrate(200); const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'badge-toast transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-3 w-full max-w-sm mx-auto'; toast.style.cssText = 'padding: 12px 16px; border-radius: 16px; font-weight: 700; font-size: 13px; border: 1px solid rgba(212,160,23,0.4); background: linear-gradient(135deg, rgba(28,28,36,0.95), rgba(20,20,24,0.95)); backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(212,160,23,0.15); color: #d4a017;'; toast.innerHTML = `<span style="font-size:20px;">🔔</span> <span style="color: var(--text-primary);">${msg}</span>`; container.appendChild(toast); requestAnimationFrame(() => { toast.classList.remove('translate-y-[-20px]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }); setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-20px]', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
     function showToggleCard(icon, title, desc, opts) {
-        if (navigator.vibrate) navigator.vibrate(100);
+        if (navigator.vibrate && !(opts && opts.silent)) navigator.vibrate(100);
         const overlay = document.getElementById('toggle-modal-overlay');
         const iconEl = document.getElementById('toggle-modal-icon');
         const titleEl = document.getElementById('toggle-modal-title');
@@ -8617,7 +8617,7 @@ function convertToThaiDate(dateStr) {
     }
 
     function cleTestCapture() {
-        showToggleCard('✅', 'บันทึกเลย์เอาต์แคปเจอร์', 'เลย์เอาต์ถูกบันทึกเรียบร้อยแล้ว');
+        showToggleCard('✅', 'บันทึกเลย์เอาต์แคปเจอร์', 'เลย์เอาต์ถูกบันทึกเรียบร้อยแล้ว', { silent: true });
         const layout = getCaptureLayout();
         const NW = 720, NH = 1468;
         const displayW = Math.min(360, window.innerWidth - 32);

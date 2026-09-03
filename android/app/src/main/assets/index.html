@@ -7110,7 +7110,7 @@ function convertToThaiDate(dateStr) {
         saveCaptureLayout(layout);
         window._cleDirty = false;
         updateCleSaveButton();
-        showWarningToast('✅ บันทึกเลย์เอาต์แคปเจอร์แล้ว');
+        showToggleCard('✅', 'บันทึกเลย์เอาต์แคปเจอร์', 'เลย์เอาต์ถูกบันทึกเรียบร้อยแล้ว', { silent: true });
     }
 
     function cleTestCapture() {
