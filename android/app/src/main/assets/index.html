@@ -1065,7 +1065,7 @@
 </div>
 
 <div id="login-modal" class="fixed inset-0 z-[100] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm relative max-h-[90vh] overflow-y-auto custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); box-shadow: 0 8px 40px rgba(0,0,0,0.5); position: relative;">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm relative max-h-[90vh] overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); box-shadow: 0 8px 40px rgba(0,0,0,0.5); position: relative;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
         <div style="padding: 24px 20px 20px 20px;">
         <div class="text-center mb-6 mt-2" id="login-header">
@@ -1125,7 +1125,7 @@
 </div>
 
 <div id="register-modal" class="fixed inset-0 z-[110] justify-center items-center px-4 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm relative max-h-[90vh] overflow-y-auto custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); box-shadow: 0 8px 40px rgba(0,0,0,0.5); position: relative;">
+    <div class="rounded-[1.75rem] shadow-2xl w-full max-w-sm relative max-h-[90vh] overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); box-shadow: 0 8px 40px rgba(0,0,0,0.5); position: relative;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:1.75rem 1.75rem 0 0;"></div>
         <div style="padding: 28px 20px 20px 20px;">
         <div class="text-center mb-6">
@@ -1633,7 +1633,7 @@
 </div>
 
 <div id="profile-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); padding: 8px;">
-    <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-md relative max-h-[92vh] overflow-y-auto custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative;">
+    <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-md relative max-h-[92vh] overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative;">
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
         <button type="button" onclick="document.getElementById('profile-modal').style.display='none';document.getElementById('profile-modal').classList.add('hidden');" style="position:absolute;top:16px;right:16px;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button>
         <h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:24px;display:flex;align-items:center;gap:8px;"><i class="ph ph-user-circle" style="font-size:22px;"></i> โปรไฟล์ของฉัน</h3>
@@ -1679,7 +1679,7 @@
 </div>
 
 <div id="user-form-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); padding: 8px;">
-    <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-md relative max-h-[92vh] overflow-y-auto custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative;">
+    <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-md relative max-h-[92vh] overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative;">
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
         <button type="button" onclick="closeUserModal()" style="position:absolute;top:16px;right:16px;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button>
         <h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:24px;text-align:center;" id="user-modal-title">เพิ่มผู้ใช้งานใหม่</h3>
@@ -1705,7 +1705,7 @@
 </div>
 
 <div id="admin-settings-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); padding: 8px;">
-    <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-sm relative overflow-y-auto custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative; max-height: min(92vh, 680px);">
+    <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-sm relative overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative; max-height: min(92vh, 680px);">
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
         <button onclick="closeAdminSettingsModal()" style="position:absolute;top:16px;right:16px;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button>
         <h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:16px;text-align:center;"><i class="ph ph-gear"></i> ตั้งค่า</h3>
@@ -1962,7 +1962,7 @@
         </div>
         <div id="import-preview" class="mb-4 hidden">
             <p class="text-xs font-bold mb-2" style="color: var(--accent-green);"><i class="ph ph-check-circle"></i> ตรวจสอบข้อมูล (<span id="import-count">0</span> รายการ):</p>
-            <div id="import-preview-list" class="max-h-48 overflow-y-auto rounded-xl p-2" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06);"></div>
+            <div id="import-preview-list" class="max-h-48 overflow-y-auto overflow-x-hidden rounded-xl p-2" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06);"></div>
         </div>
         <div id="import-status" class="hidden mb-4 p-3 rounded-xl text-sm font-bold text-center" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: var(--accent-green);"></div>
         <div class="flex gap-3">
@@ -5223,7 +5223,7 @@ function convertToThaiDate(dateStr) {
             modal.innerHTML = `<div style="background:rgba(22,22,30,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:1.5rem;padding:24px;max-width:360px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.5);">
                 <div class="flex items-center justify-between mb-4"><h3 class="text-white font-black text-lg">📋 ประวัติ Login</h3><button onclick="document.getElementById('login-history-modal').remove()" class="text-[#94a3b8] hover:text-white text-xl font-bold">✕</button></div>
                 <p class="text-gray-400 text-xs mb-3">${displayName} — ล่าสุด ${entries.length} ครั้ง</p>
-                <div class="max-h-[50vh] overflow-y-auto pr-1">${rows}</div>
+                <div class="max-h-[50vh] overflow-y-auto overflow-x-hidden pr-1">${rows}</div>
             </div>`;
         });
     }
@@ -6105,7 +6105,7 @@ function convertToThaiDate(dateStr) {
 
         let avgCostPerBaht = tx.buyprice + tx.blockfee;        document.getElementById('modal-content').innerHTML = `
             <div class="modal-enter relative w-full h-[100dvh] md:max-w-md mx-auto md:h-[85vh] md:mt-8 flex flex-col justify-center">
-                <div class="${modalBg} rounded-none md:rounded-[2rem] p-5 pt-10 md:p-6 relative text-center text-white overflow-y-auto w-full h-full md:max-h-full hide-scroll flex flex-col">
+                <div class="${modalBg} rounded-none md:rounded-[2rem] p-5 pt-10 md:p-6 relative text-center text-white overflow-y-auto overflow-x-hidden w-full h-full md:max-h-full hide-scroll flex flex-col">
                     <!-- Close + Counter -->
                     <div class="absolute top-4 left-4 bg-black/80 px-4 py-1.5 rounded-full text-sm font-black text-gray-300 border border-gray-600">${activeModalIndex + 1} / ${currentViewList.length}</div>
                     <button onclick="closeModal(event)" class="absolute top-4 right-4 modal-close-btn">✕</button>
@@ -6686,7 +6686,7 @@ function convertToThaiDate(dateStr) {
         const displayW = Math.min(360, window.innerWidth - 32);
         const displayH = displayW * (NH / NW);
 
-        let html = '<div id="capture-layout-modal" class="fixed inset-0 z-[950] flex flex-col items-center justify-start overflow-y-auto" style="background:rgba(0,0,0,0.95);backdrop-filter:blur(8px);padding:8px;">';
+        let html = '<div id="capture-layout-modal" class="fixed inset-0 z-[950] flex flex-col items-center justify-start overflow-y-auto overflow-x-hidden" style="background:rgba(0,0,0,0.95);backdrop-filter:blur(8px);padding:8px;">';
         html += '<div class="w-full max-w-lg mx-auto">';
         // Header
         html += '<div class="flex items-center justify-between px-4 py-3">';
@@ -6694,7 +6694,6 @@ function convertToThaiDate(dateStr) {
         html += '<button onclick="closeCaptureLayoutEditor()" class="w-8 h-8 rounded-full flex items-center justify-center" style="background:rgba(255,255,255,0.1);color:#fff;">✕</button>';
         html += '</div>';
         // Instructions
-        html += '<div class="px-4 mb-3 text-xs" style="color:#94a3b8;">ลากจุดสีเหลืองเพื่อย้ายตำแหน่ง · ใช้ปุ่มลูกศรปรับละเอียด · กดบันทึกเมื่อเสร็จ</div>';
         // Canvas container
         html += '<div class="relative mx-auto" style="width:' + displayW + 'px;height:' + displayH + 'px;border:2px solid #d4a017;border-radius:12px;">';
         // Template image
