@@ -146,8 +146,8 @@
         }
         const cToday = parseChange(document.getElementById('gold-change-today'));
         const cLatest = parseChange(document.getElementById('gold-latest-change'));
-        const todayLabel = cToday.cls === 'up' ? 'เพิ่มขึ้น' : cToday.cls === 'down' ? 'ลดลง' : 'คงที่';
-        const latestLabel = cLatest.cls === 'up' ? 'เพิ่มขึ้น' : cLatest.cls === 'down' ? 'ลดลง' : 'คงที่';
+        const todayLabel = cToday.cls === 'up' ? '↗ เพิ่มขึ้น' : cToday.cls === 'down' ? '↘ ลดลง' : 'คงที่';
+        const latestLabel = cLatest.cls === 'up' ? '↗ เพิ่มขึ้น' : cLatest.cls === 'down' ? '↘ ลดลง' : 'คงที่';
         const todayColor = cToday.cls === 'up' ? '#22c55e' : cToday.cls === 'down' ? '#ff3333' : '#94a3b8';
         const latestColor = cLatest.cls === 'up' ? '#22c55e' : cLatest.cls === 'down' ? '#ff3333' : '#94a3b8';
         const todayBg = cToday.cls === 'up' ? 'rgba(22,163,74,0.18)' : cToday.cls === 'down' ? 'rgba(220,38,38,0.18)' : 'rgba(255,255,255,0.05)';
@@ -265,8 +265,8 @@
         tmp.fillStyle = todayBg; tmp.strokeStyle = todayBd; tmp.lineWidth = 2;
         tmp.beginPath(); tmp.roundRect(changeTodayX - boxW/2, changeTodayY - boxH/2, boxW, boxH, boxR); tmp.fill(); tmp.stroke();
         // Title with calendar icon
-        drawCalIcon(changeTodayX - tmp.measureText('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49').width * 0.3 - 14, changeTodayY - 35, 18, '#94a3b8');
-        textAt('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e27\u0e31\u0e19\u0e19\u0e35\u0e49', changeTodayX + 4, changeTodayY - 35, '500 15px Sarabun, sans-serif', '#94a3b8', 'center');
+        drawCalIcon(changeTodayX - tmp.measureText('เปลี่ยนแปลงวันนี้').width * 0.3 - 14, changeTodayY - 35, 18, '#94a3b8');
+        textAt('เปลี่ยนแปลงวันนี้', changeTodayX + 4, changeTodayY - 35, '500 15px Sarabun, sans-serif', '#94a3b8', 'center');
         // Badge (เพิ่มขึ้น/ลดลง)
         tmp.font = '700 13px Sarabun, sans-serif';
         const tBadgeW = tmp.measureText(todayLabel).width + 20;
@@ -281,8 +281,8 @@
         tmp.fillStyle = latestBg; tmp.strokeStyle = latestBd; tmp.lineWidth = 2;
         tmp.beginPath(); tmp.roundRect(changeLatestX - boxW/2, changeLatestY - boxH/2, boxW, boxH, boxR); tmp.fill(); tmp.stroke();
         // Title with clock icon
-        drawClockIcon(changeLatestX - tmp.measureText('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e25\u0e48\u0e32\u0e2a\u0e38\u0e14').width * 0.3 - 14, changeLatestY - 35, 18, '#94a3b8');
-        textAt('\u0e40\u0e1b\u0e34\u0e01\u0e1b\u0e23\u0e31\u0e1a\u0e25\u0e48\u0e32\u0e2a\u0e38\u0e14', changeLatestX + 4, changeLatestY - 35, '500 15px Sarabun, sans-serif', '#94a3b8', 'center');
+        drawClockIcon(changeLatestX - tmp.measureText('เปลี่ยนแปลงล่าสุด').width * 0.3 - 14, changeLatestY - 35, 18, '#94a3b8');
+        textAt('เปลี่ยนแปลงล่าสุด', changeLatestX + 4, changeLatestY - 35, '500 15px Sarabun, sans-serif', '#94a3b8', 'center');
         // Badge (เพิ่มขึ้น/ลดลง)
         tmp.font = '700 13px Sarabun, sans-serif';
         const lBadgeW = tmp.measureText(latestLabel).width + 20;
