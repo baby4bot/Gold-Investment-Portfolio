@@ -345,13 +345,12 @@
 
     async function captureGoldPriceCard() {
         try {
-            showWarningToast('📸 กำลังสร้างภาพราคาทอง...');
             const canvas = await createGoldPriceCanvas();
             downloadGoldCanvas(canvas, getGoldCaptureFileName());
-            showWarningToast('✅ บันทึกภาพราคาทองแล้ว');
+            showToggleCard('\u2705', 'บันทึกรูปภาพ', 'บันทึกราคาทองสำเร็จแล้ว');
         } catch (error) {
             console.error('Capture error:', error);
-            showWarningToast(`❌ แคปเจอร์ไม่สำเร็จ: ${error.message || 'กรุณาลองใหม่'}`);
+            showToggleCard('\u274c', 'แคปเจอร์ไม่สำเร็จ', error.message || 'กรุณาลองใหม่');
         }
     }
 
