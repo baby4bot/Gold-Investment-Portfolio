@@ -1840,17 +1840,12 @@
                     </div>
                 </div>
             </div>
-            <!-- จัดเลย์เอาต์แคปเจอร์ (Accordion) -->
+            <!-- จัดเลย์เอาต์แคปเจอร์ -->
             <div class="bg-[rgba(0,0,0,0.3)] rounded-xl border border-[rgba(255,255,255,0.06)]">
-                <div class="flex items-center gap-3 p-4 cursor-pointer select-none" onclick="toggleAccordion('cle-body')">
+                <div class="flex items-center gap-3 p-4 cursor-pointer select-none" onclick="openCaptureLayoutEditor()">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center"><i class="ph ph-arrows-out-simple text-lg" style="color: #fff;"></i></div>
                     <div class="flex-1"><div class="text-sm text-gray-200 font-bold">จัดเลย์เอาต์แคปเจอร์</div><div class="text-[11px] text-[#94a3b8]">ปรับตำแหน่งองค์ประกอบในภาพแคปเจอร์</div></div>
-                    <i class="ph ph-caret-down text-lg transition-transform duration-300" id="cle-chevron" style="color:#94a3b8;"></i>
-                </div>
-                <div id="cle-body" style="display:none;">
-                    <div class="px-4 pb-4">
-                        <button onclick="openCaptureLayoutEditor()" class="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;"><i class="ph ph-arrows-out-simple text-base"></i> เปิดจัดเลย์เอาต์</button>
-                    </div>
+                    <i class="ph ph-caret-down text-lg" id="cle-chevron" style="color:#94a3b8;"></i>
                 </div>
             </div>
         </div>
@@ -4243,7 +4238,9 @@ function convertToThaiDate(dateStr) {
         var adminOpen = adminModal && adminModal.style.display === 'flex';
         var profileModal = document.getElementById('profile-modal');
         var profileOpen = profileModal && profileModal.style.display === 'flex';
-        if (!isDashboard || histOpen || itemOpen || adminOpen || profileOpen) {
+        var sideMenu = document.getElementById('side-menu');
+        var menuOpen = sideMenu && !sideMenu.classList.contains('pointer-events-none');
+        if (!isDashboard || histOpen || itemOpen || adminOpen || profileOpen || menuOpen) {
             const dy = e.touches[0].clientY - _pullStartY;
             if (dy > 0) {
                 // หา scrollable container จาก touch target
@@ -5857,8 +5854,8 @@ function convertToThaiDate(dateStr) {
     function collapseAllAccordions() {
         _pinCategoryOpen = false;
         _passCategoryOpen = false;
-        ['card-style-body', 'splash-body', 'cle-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
-        ['card-style-chevron', 'splash-chevron', 'cle-chevron'].forEach(id => { var ch = document.getElementById(id); if (ch) ch.style.transform = 'rotate(0deg)'; });
+        ['card-style-body', 'splash-body'].forEach(id => { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+        ['card-style-chevron', 'splash-chevron'].forEach(id => { var ch = document.getElementById(id); if (ch) ch.style.transform = 'rotate(0deg)'; });
         if (sch) sch.style.transform = 'rotate(0deg)';
         var pinContent = document.getElementById('pin-category-content');
         if (pinContent) { pinContent.style.maxHeight = '0'; pinContent.style.padding = '0 16px'; }
@@ -5912,10 +5909,10 @@ function convertToThaiDate(dateStr) {
     // Accordion for admin settings sections
     function toggleAccordion(bodyId) {
         const body = document.getElementById(bodyId);
-        const chevronMap = { 'card-style-body': 'card-style-chevron', 'splash-body': 'splash-chevron', 'cle-body': 'cle-chevron' };
+        const chevronMap = { 'card-style-body': 'card-style-chevron', 'splash-body': 'splash-chevron' };
         const chevron = document.getElementById(chevronMap[bodyId]);
         const isOpen = body.style.display !== 'none';
-        ['card-style-body', 'splash-body', 'cle-body'].forEach(id => {
+        ['card-style-body', 'splash-body'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
             const ch = document.getElementById(chevronMap[id]);
@@ -5935,7 +5932,7 @@ function convertToThaiDate(dateStr) {
         if(db) db.ref('admin_settings/cardStyle').set(style);
         updateCardStyleUI();
         renderData();
-        showWarningToast(style === 'border' ? '✅ เปลี่ยนเป็นเวอร์ชั่นกรอบสีแล้ว' : '✅ เปลี่ยนเป็นเวอร์ชั่นสีทึบแล้ว');
+        showToggleCard(style === 'border' ? '✅ เปลี่ยนเป็นเวอร์ชั่นกรอบสีแล้ว' : '✅ เปลี่ยนเป็นเวอร์ชั่นสีทึบแล้ว');
     }
     
     function updateCardStyleUI() {
@@ -7182,5 +7179,8 @@ function convertToThaiDate(dateStr) {
         const modal = document.getElementById('capture-layout-modal');
         if (modal) modal.remove();
         window._cleSelectedIds = [];
+        // Collapse the accordion arrow
+        const chevron = document.getElementById('cle-chevron');
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
     }
 </script>
