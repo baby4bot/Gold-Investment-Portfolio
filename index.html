@@ -4994,7 +4994,7 @@ function convertToThaiDate(dateStr) {
             // Fallback: copy link + แสดงตัวเลือก
             try {
                 await navigator.clipboard.writeText(SHARE_URL);
-                showWarningToast('📋 คัดลอกลิงก์แล้ว! นำไปวางใน LINE / Messenger / ได้เลย');
+                showToggleCard('\u{1F517}', '\u0E04\u0E32\u0E25\u0E25\u0E2D\u0E07\u0E25\u0E34\u0E07\u0E40\u0E01\u0E47\u0E1A\u0E41\u0E25\u0E49\u0E27', '\u0E19\u0E33\u0E19\u0E33\u0E21\u0E32\u0E25\u0E48\u0E32\u0E25\u0E4C\u0E43\u0E2B\u0E21\u0E48\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19 LINE / Messenger \u0E44\u0E21\u0E48\u0E44\u0E14\u0E49');
             } catch(e) {
                 // Fallback สุดท้าย: แสดง prompt
                 prompt('คัดลอกลิงก์นี้ไปแชร์:', SHARE_URL);
