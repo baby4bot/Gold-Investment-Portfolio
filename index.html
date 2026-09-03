@@ -1133,9 +1133,6 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
     /* Floating scroll-to-top button */
     [data-theme="light"] #btn-scroll-top { color: #ffffff !important; }
 
-    /* Prediction section in light mode */
-    [data-theme="light"] #prediction-section > div { background: #ffffff !important; border-color: #e5e5e5 !important; }
-
     /* Custom scrollbar in light mode */
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-track { background: #f0f0f0; }
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; }
@@ -1670,7 +1667,7 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
     </div>
     
     <div id="view-dashboard" class="view-section active">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
             <div id="gold-dashboard-card" class="gold-dashboard-card md:col-span-2 lg:col-span-3">
                 <div class="gold-action-bar" aria-label="เครื่องมือราคาทอง" style="justify-content: space-between;">
                     <div style="flex:1;text-align:center;">
@@ -1759,6 +1756,60 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                     </div>
                 </div>
 
+                <!-- ========== AI PRICE PREDICTION ========== -->
+                <div class="px-4 pt-5 pb-3" id="prediction-section">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-magic-wand"></i> ทำนายราคาทอง (AI Prediction)</span>
+                            <span id="prediction-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1" style="background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(245,158,11,0.15)); color: #d4a017; border: 1px solid rgba(212,160,23,0.3);"><i class="ph ph-magic-wand" style="font-size:11px;"></i> วิเคราะห์ AI</span>
+                        </div>
+                        <div id="prediction-content">
+                            <div class="flex items-center justify-center py-6">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--accent-gold);"></div>
+                                <span class="ml-2 text-xs" style="color: var(--text-secondary);">กำลังวิเคราะห์...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== FEAR & GREED INDEX ========== -->
+                <div class="px-4 pt-1 pb-3">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-compass"></i> ดัชนีความกลัว & ความโลภ</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="fear-greed-ring" id="fg-ring">
+                                <svg width="120" height="120"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/><circle id="fg-arc" cx="60" cy="60" r="52" fill="none" stroke="#22c55e" stroke-width="10" stroke-dasharray="327" stroke-dashoffset="163" stroke-linecap="round"/></svg>
+                                <div style="text-align:center;"><div class="fg-value" id="fg-value">50</div><div class="fg-label" id="fg-label" style="color:var(--text-secondary);">เป็นกลาง</div></div>
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <div class="flex justify-between text-[11px]" style="color:var(--text-secondary);"><span>😭 กลัวมาก</span><span>🤑 โลภมาก</span></div>
+                                <div style="height:6px;border-radius:3px;background:linear-gradient(90deg,#22c55e,#eab308,#ef4444);position:relative;"><div id="fg-marker" style="position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--accent-gold);left:50%;transform:translateX(-50%);transition:left 0.5s ease;"></div></div>
+                                <p class="text-[10px]" id="fg-desc" style="color:var(--text-muted);"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== GOLDEN HOUR TIMER ========== -->
+                <div class="px-4 pb-3">
+                    <div class="gold-dashboard-card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-clock"></i> จับเวลาทอง (Golden Hour)</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="golden-hour-ring" id="gh-ring" style="--pct:75%;">
+                                <span class="gh-time" id="gh-time">02:30</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold mb-1" style="color:var(--text-primary);">เวลาที่ทองมักเปลี่ยนมาก</p>
+                                <p class="text-[11px]" style="color:var(--text-secondary);">ช่วง 09:00-11:00 และ 14:00-16:00</p>
+                                <p class="text-[10px] mt-1" style="color:var(--text-muted);">⏱ เวลาที่เหลือ: <span id="gh-countdown" class="font-bold" style="color:#d4a017;">--:--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Toggles: เสียงเตือน / เสียงพูด / LINE -->
                 <style>
@@ -1785,28 +1836,10 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                         </div>
                     </div>
                 </div>
-                </div>
-                <!-- ========== AI PRICE PREDICTION ========== -->
-                <div id="prediction-section" style="width:100%;">
-                    <div class="px-4 py-3" style="background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 16px;">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-magic-wand"></i> ทำนายราคาทอง (AI Prediction)</span>
-                            <span id="prediction-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1" style="background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(245,158,11,0.15)); color: #d4a017; border: 1px solid rgba(212,160,23,0.3);"><i class="ph ph-magic-wand" style="font-size:11px;"></i> วิเคราะห์ AI</span>
-                        </div>
-                        <div id="prediction-content">
-                            <div class="flex items-center justify-center py-6">
-                                <div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--accent-gold);"></div>
-                                <span class="ml-2 text-xs" style="color: var(--text-secondary);">กำลังวิเคราะห์...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                    </div>
-                </div>
             </div>
         </div>
         <!-- News Section -->
-        <div id="news-section" class="mb-0" style="display:none;">
+        <div id="news-section" class="mb-4" style="display:none;">
             <div class="rounded-2xl p-4" style="background: var(--bg-card); border: 1px solid var(--border-primary);">
                 <div class="flex items-center gap-2 mb-3">
                     <i class="ph ph-newspaper" style="color: var(--accent-gold); font-size: 18px;"></i>
@@ -1815,7 +1848,7 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                 <div id="news-list" class="flex flex-col gap-2"></div>
             </div>
         </div>
-        <div class="flex justify-between items-center mb-0 px-1" id="portfolio-title-sec">
+        <div class="flex justify-between items-center mb-4 px-1" id="portfolio-title-sec">
             <div class="flex items-center gap-2">
                 <h3 class="text-xl font-black text-white flex items-center gap-2">รายการลงทุน <span id="current-user-title"></span>
                     <button id="btn-hide-admin" onclick="toggleAdminPort()" class="gold-action-btn text-gray-400 hidden" title="ซ่อนพอร์ต Admin">
@@ -1834,7 +1867,7 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
         </div>
         
         <div id="sim-alert-container"></div>
-        <div id="guest-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-4"></div>
+        <div id="guest-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
         <div id="overall-summary-container" class="mt-12 relative z-0"></div>
         <div id="half-half-summary-container"></div>
     </div>
