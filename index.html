@@ -1196,9 +1196,6 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
     [data-theme="light"] .gold-stat-value { color: #1a1a1a !important; }
     [data-theme="light"] .gold-stat-item[style*="rgba(255,255,255,0.03)"] { background: #ffffff !important; border-color: #e5e5e5 !important; }
     [data-theme="light"] .gold-stat-item[style*="rgba(26,26,36"] { background: #ffffff !important; border-color: #e5e5e5 !important; }
-    /* Analysis Tabs Light Theme */
-    [data-theme="light"] .analysis-tab { color: #666 !important; border: 1px solid #e5e5e5 !important; background: #f5f5f5 !important; }
-    [data-theme="light"] .analysis-tab.active { background: linear-gradient(135deg,#d4a017,#b8941f) !important; color: #0c0e14 !important; border: none !important; }
     [data-theme="light"] #view-dashboard { background: #f8f8f8 !important; }
     /* Capture Layout Modal Light Theme */
     [data-theme="light"] #capture-layout-modal { background: rgba(255,255,255,0.98) !important; }
@@ -1758,147 +1755,21 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
                         </button>
                     </div>
                 </div>
-                    </div>
-                <!-- ========== ANALYSIS TABS ========== -->
-                <div class="px-4 pt-3 pb-2" id="analysis-tabs-section">
+
+                <!-- ========== AI PRICE PREDICTION ========== -->
+                <div class="px-4 pt-5 pb-3" id="prediction-section">
                     <div class="gold-dashboard-card p-4">
-                        <!-- Tab Buttons -->
-                        <div class="flex gap-2 mb-4 overflow-x-auto pb-2" style="scrollbar-width:none;">
-                            <button onclick="switchAnalysisTab(0)" class="analysis-tab active flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;">
-                                <i class="ph ph-arrows-left-right" style="font-size:12px;"></i> เปรียบเทียบ
-                            </button>
-                            <button onclick="switchAnalysisTab(1)" class="analysis-tab flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border-primary);">
-                                <i class="ph ph-calendar-blank" style="font-size:12px;"></i> ตามฤดูกาล
-                            </button>
-                            <button onclick="switchAnalysisTab(2)" class="analysis-tab flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border-primary);">
-                                <i class="ph ph-newspaper" style="font-size:12px;"></i> คะแนนข่าว
-                            </button>
-                            <button onclick="switchAnalysisTab(3)" class="analysis-tab flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border-primary);">
-                                <i class="ph ph-magic-wand" style="font-size:12px;"></i> ทำนาย AI
-                            </button>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold" style="color:var(--text-secondary);"><i class="ph ph-magic-wand"></i> ทำนายราคาทอง (AI Prediction)</span>
+                            <span id="prediction-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1" style="background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(245,158,11,0.15)); color: #d4a017; border: 1px solid rgba(212,160,23,0.3);"><i class="ph ph-magic-wand" style="font-size:11px;"></i> วิเคราะห์ AI</span>
                         </div>
-                        <!-- Tab Contents -->
-                        <div id="analysis-tab-0" class="analysis-tab-content">
-                            <div id="asset-compare-content" class="grid grid-cols-3 gap-2">
-                                <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
-                                    <div style="font-size:20px;">₿</div>
-                                    <div class="text-[10px] font-bold" style="color:var(--text-secondary);">Bitcoin</div>
-                                    <div id="btc-price" class="text-xs font-bold" style="color:var(--text-primary);">-</div>
-                                    <div id="btc-change" class="text-[10px] font-bold">-</div>
-                                </div>
-                                <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
-                                    <div style="font-size:20px;">💵</div>
-                                    <div class="text-[10px] font-bold" style="color:var(--text-secondary);">USD/THB</div>
-                                    <div id="usd-price" class="text-xs font-bold" style="color:var(--text-primary);">-</div>
-                                    <div id="usd-change" class="text-[10px] font-bold">-</div>
-                                </div>
-                                <div class="text-center p-2 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid var(--border-primary);">
-                                    <div style="font-size:20px;">📈</div>
-                                    <div class="text-[10px] font-bold" style="color:var(--text-secondary);">SET Index</div>
-                                    <div id="set-price" class="text-xs font-bold" style="color:var(--text-primary);">-</div>
-                                    <div id="set-change" class="text-[10px] font-bold">-</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="analysis-tab-1" class="analysis-tab-content" style="display:none;">
-                            <div id="seasonal-content" class="space-y-2">
-                                <div class="flex items-center justify-between p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
-                                    <span class="text-xs" style="color:var(--text-secondary);">📅 เดือนนี้ (กันยายน)</span>
-                                    <span class="text-xs font-bold" style="color:#22c55e;">📈 ทองมักขึ้น +2.3%</span>
-                                </div>
-                                <div class="flex items-center justify-between p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
-                                    <span class="text-xs" style="color:var(--text-secondary);">🎯 ช่วงสงกรานต์</span>
-                                    <span class="text-xs font-bold" style="color:#22c55e;">📈 ทองมักขึ้น +5.1%</span>
-                                </div>
-                                <div class="flex items-center justify-between p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
-                                    <span class="text-xs" style="color:var(--text-secondary);">❄️ ปลายปี (ธันวาคม)</span>
-                                    <span class="text-xs font-bold" style="color:#ef4444;">📉 ทองมักลง -1.8%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="analysis-tab-2" class="analysis-tab-content" style="display:none;">
-                            <div id="news-content" class="space-y-2">
-                                <div class="flex items-center gap-3 p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background:rgba(239,68,68,0.2);color:#ef4444;">3</div>
-                                    <div class="flex-1">
-                                        <div class="text-xs font-bold" style="color:var(--text-primary);">Fed คงอัตราดอกเบี้ย</div>
-                                        <div class="text-[10px]" style="color:var(--text-secondary);">ผลกระทบ: สูง • ทิศทาง: ทองขึ้น</div>
-                                    </div>
-                                    <div class="text-xs font-bold" style="color:#22c55e;">+1.8%</div>
-                                </div>
-                                <div class="flex items-center gap-3 p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background:rgba(251,191,36,0.2);color:#fbbf24;">2</div>
-                                    <div class="flex-1">
-                                        <div class="text-xs font-bold" style="color:var(--text-primary);">เงินเฟ้อสหรัฐต่ำกว่าคาด</div>
-                                        <div class="text-[10px]" style="color:var(--text-secondary);">ผลกระทบ: ปานกลาง • ทิศทาง: ทองขึ้น</div>
-                                    </div>
-                                    <div class="text-xs font-bold" style="color:#22c55e;">+0.9%</div>
-                                </div>
-                                <div class="flex items-center gap-3 p-2 rounded-lg" style="background:rgba(255,255,255,0.03);">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background:rgba(34,197,94,0.2);color:#22c55e;">1</div>
-                                    <div class="flex-1">
-                                        <div class="text-xs font-bold" style="color:var(--text-primary);">ค่าเงิน USD อ่อนค่า</div>
-                                        <div class="text-[10px]" style="color:var(--text-secondary);">ผลกระทบ: ต่ำ • ทิศทาง: ทองขึ้น</div>
-                                    </div>
-                                    <div class="text-xs font-bold" style="color:#22c55e;">+0.4%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="analysis-tab-3" class="analysis-tab-content" style="display:none;">
-                            <div id="prediction-content">
-                                <div class="flex items-center justify-center py-6">
-                                    <div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--accent-gold);"></div>
-                                    <span class="ml-2 text-xs" style="color: var(--text-secondary);">กำลังวิเคราะห์...</span>
-                                </div>
+                        <div id="prediction-content">
+                            <div class="flex items-center justify-center py-6">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--accent-gold);"></div>
+                                <span class="ml-2 text-xs" style="color: var(--text-secondary);">กำลังวิเคราะห์...</span>
                             </div>
                         </div>
                     </div>
-                </div>
-                <script>
-                // Tab Switching
-                function switchAnalysisTab(idx) {
-                    document.querySelectorAll('.analysis-tab-content').forEach((el,i) => {
-                        el.style.display = i === idx ? 'block' : 'none';
-                    });
-                    document.querySelectorAll('.analysis-tab').forEach((btn,i) => {
-                        if (i === idx) {
-                            btn.style.background = 'linear-gradient(135deg,#d4a017,#b8941f)';
-                            btn.style.color = '#0c0e14';
-                            btn.style.border = 'none';
-                        } else {
-                            btn.style.background = 'rgba(255,255,255,0.05)';
-                            btn.style.color = 'var(--text-secondary)';
-                            btn.style.border = '1px solid var(--border-primary)';
-                        }
-                    });
-                    // Load data for tab 0 (asset comparison)
-                    if (idx === 0 && typeof loadAssetComparison === 'function') loadAssetComparison();
-                }
-                // Multi-Asset Comparison
-                async function loadAssetComparison(){
-                    try{
-                        const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
-                        const btcData = await btcRes.json();
-                        if(btcData.bitcoin){
-                            document.getElementById('btc-price').textContent = '$' + btcData.bitcoin.usd.toLocaleString();
-                            const btcChg = btcData.bitcoin.usd_24h_change;
-                            const btcEl = document.getElementById('btc-change');
-                            btcEl.textContent = (btcChg>=0?'+':'') + btcChg.toFixed(2) + '%';
-                            btcEl.style.color = btcChg>=0 ? '#22c55e' : '#ef4444';
-                        }
-                        if(typeof goldPriceBuy !== 'undefined' && goldPriceBuy > 0){
-                            document.getElementById('usd-price').textContent = '฿' + (goldPriceBuy / 42.5).toFixed(2);
-                            document.getElementById('usd-change').textContent = '-';
-                            document.getElementById('usd-change').style.color = 'var(--text-secondary)';
-                        }
-                        document.getElementById('set-price').textContent = '1,420';
-                        document.getElementById('set-change').textContent = '+0.35%';
-                        document.getElementById('set-change').style.color = '#22c55e';
-                    }catch(e){console.log('Asset compare error:',e);}
-                }
-                loadAssetComparison();
-                setInterval(loadAssetComparison, 300000);
-                </script>
                 </div>
 
                 <!-- ========== FEAR & GREED INDEX ========== -->
@@ -5000,7 +4871,7 @@ function convertToThaiDate(dateStr) {
                 }
             }, 500);
         } else {
-            loadTheme(); loadPinEnabledSetting(); loadDailyRewards("admin");
+            loadTheme(); loadPinEnabledSetting();
         }
         updateUIRole(); loadAdminSettings(); loadVersionFromFirebase(); loadChangelogFromFirebase(); loadUsers(); loadProfiles(); _skipPresenceNotif = true; setupOnlineStatusListener(); setTimeout(() => { _skipPresenceNotif = false; }, 3000);
         // Firebase listener สำหรับ PIN ban — ต้อง setup เสมอ (ไม่ว่าจะ login หรือยัง)
@@ -5702,11 +5573,11 @@ function convertToThaiDate(dateStr) {
         const hashedInput = await hashPassword(passStr);
         if (userStr.toLowerCase() === 'admin' && (passStr === adminPass || hashedInput === adminPass)) {
             if (passStr === adminPass && db) { db.ref('admin_settings/adminPass').set(hashedInput); adminPass = hashedInput; }
-            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); loadDailyRewards('admin'); setTimeout(() => { showToggleCard('👑', 'ยินดีต้อนรับ!', adminDisplayName, { avatar: userProfiles[adminDisplayName] || undefined, role: 'Admin', duration: 2500 }); }, 500); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
+            currentRole = 'admin'; currentUser = { username: 'admin', name: adminDisplayName, role: 'admin' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence('admin'); logUserLogin('admin'); playLoginSound(); setTimeout(() => { showToggleCard('👑', 'ยินดีต้อนรับ!', adminDisplayName, { avatar: userProfiles[adminDisplayName] || undefined, role: 'Admin', duration: 2500 }); }, 500); if(currentRole === 'admin') { setupAdminNotifListener(); loadPinEnabledSetting(); updatePinBadge(); } if(db) { db.ref('admin_settings/theme').once('value', function(snap) { var t = snap.val() || 'dark'; localStorage.setItem('theme', t); setTheme(t); }); } 
         } else if (appUsers[userStr] && (appUsers[userStr].password === passStr || appUsers[userStr].password === hashedInput)) {
             if (appUsers[userStr].password === passStr && db) { db.ref('users/' + userStr + '/password').set(hashedInput); appUsers[userStr].password = hashedInput; }
             if (appUsers[userStr].isBanned) { document.getElementById('login-error').innerText = 'บัญชีนี้ถูกแบน! ไม่สามารถเข้าสู่ระบบได้'; document.getElementById('login-error').classList.remove('hidden'); return; }
-            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); loadDailyRewards(userStr); setTimeout(() => { showToggleCard('👋', 'ยินดีต้อนรับ!', appUsers[userStr].name, { avatar: userProfiles[appUsers[userStr].name] || undefined, role: 'ผู้ใช้งาน', duration: 2500 }); }, 500); notifyAdminLogin(userStr); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
+            currentRole = 'user'; currentUser = { username: userStr, name: appUsers[userStr].name, role: 'user' }; localStorage.setItem('goldAppSession', JSON.stringify(currentUser)); localStorage.removeItem('goldAppManualLogout'); closeLoginModal(); updateUIRole(); renderData(); setupPresence(userStr); logUserLogin(userStr); playLoginSound(); setTimeout(() => { showToggleCard('👋', 'ยินดีต้อนรับ!', appUsers[userStr].name, { avatar: userProfiles[appUsers[userStr].name] || undefined, role: 'ผู้ใช้งาน', duration: 2500 }); }, 500); notifyAdminLogin(userStr); if(db) { db.ref('user_themes/' + userStr).once('value', function(snap) { var ud = snap.val(); if(ud && ud.theme) { localStorage.setItem('theme', ud.theme); setTheme(ud.theme); } }); } 
         } else { 
             document.getElementById('login-error').innerText = 'ข้อมูลไม่ถูกต้อง!'; document.getElementById('login-error').classList.remove('hidden'); 
         } 
@@ -7781,45 +7652,30 @@ function convertToThaiDate(dateStr) {
         setTimeout(() => el.classList.remove('tick-up', 'tick-down'), 600);
     }
 
-    // ---------- DAILY LOGIN REWARDS SYSTEM ----------
-    let _userCoins = 0, _userStreak = 0;
-    const DAILY_REWARDS_CFG = {
-        1:{coins:10,title:'วันแรก',icon:'🌟'},2:{coins:15,title:'2 วันติด',icon:'🔥'},3:{coins:20,title:'3 วันติด',icon:'💪'},
-        4:{coins:25,title:'4 วันติด',icon:'⚡'},5:{coins:30,title:'5 วันติด',icon:'🎯'},6:{coins:40,title:'6 วันติด',icon:'🏆'},7:{coins:100,title:'7 วันติด! สัปดาห์ทอง!',icon:'👑'}
-    };
-    async function loadDailyRewards(username) {
-        if(!db||!username) return;
-        const snap = await db.ref('user_rewards/'+username).once('value');
-        const d = snap.val()||{}; _userCoins=d.coins||0; _userStreak=d.streak||0;
-        const today=new Date().toDateString();
-        if(d.lastLoginDate===today) return;
-        const yesterday=new Date(Date.now()-86400000).toDateString();
-        let ns = (d.lastLoginDate===yesterday) ? (_userStreak||0)+1 : 1;
-        if(ns>7) ns=7;
-        let earned = DAILY_REWARDS_CFG[ns]?.coins||10;
-        let bonus='';
-        if(ns===7){ earned+=50; bonus=' + โบนัสพิเศษ!'; }
-        _userStreak=ns; _userCoins+=earned;
-        await db.ref('user_rewards/'+username).set({coins:_userCoins,streak:_userStreak,lastLoginDate:today,totalLogins:(d.totalLogins||0)+1});
-        showDailyRewardModal(ns,earned,bonus);
+    // ---------- STREAK COUNTER ----------
+    function getStreak() {
+        try {
+            const data = JSON.parse(localStorage.getItem('login_streak') || '{}');
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            if (data.lastDate === today) return data.count || 1;
+            if (data.lastDate === yesterday) return (data.count || 0);
+            return 0;
+        } catch(e) { return 0; }
     }
-    function showDailyRewardModal(streak,earned,bonus){
-        const r=DAILY_REWARDS_CFG[streak]||DAILY_REWARDS_CFG[1];
-        const isL=document.documentElement.getAttribute('data-theme')==='light';
-        const m=document.createElement('div');
-        m.id='daily-reward-modal';
-        m.style.cssText='position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);';
-        m.innerHTML=`<div style="background:${isL?'#fff':'linear-gradient(180deg,#1c1c24,#141418)'};border:1px solid ${isL?'#e5e5e5':'rgba(212,160,23,0.3)'};border-radius:24px;padding:32px 24px;max-width:300px;width:90%;text-align:center;animation:rewardPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);"><div style="font-size:64px;margin-bottom:16px;">${r.icon}</div><h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:8px;">${r.title}</h3><p style="color:${isL?'#333':'#fff'};font-size:13px;margin-bottom:12px;">ล็อกอินต่อเนื่อง ${streak} วัน</p><div style="background:rgba(212,160,23,0.1);border:1px solid rgba(212,160,23,0.3);border-radius:12px;padding:12px;margin-bottom:12px;"><div style="color:#d4a017;font-size:28px;font-weight:900;">+${earned}</div><div style="color:${isL?'#333':'#fff'};font-size:11px;">เหรียญทอง</div></div>${bonus?`<p style="color:#22c55e;font-size:11px;font-weight:bold;margin-bottom:8px;">${bonus}</p>`:''}<p style="color:${isL?'#888':'#94a3b8'};font-size:10px;margin-bottom:16px;">เหรียญคงเหลือ: <b style="color:#d4a017;">${_userCoins}</b></p><button onclick="this.closest('#daily-reward-modal').remove()" style="background:linear-gradient(135deg,#d4a017,#b8941f);color:#0c0e14;border:none;border-radius:12px;padding:10px 28px;font-weight:bold;font-size:13px;cursor:pointer;">รับรางวัล</button></div>`;
-        const s=document.createElement('style');s.textContent='@keyframes rewardPop{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}';m.appendChild(s);
-        document.body.appendChild(m);
+    function updateStreak() {
+        try {
+            const data = JSON.parse(localStorage.getItem('login_streak') || '{}');
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            if (data.lastDate === today) return data.count || 1;
+            if (data.lastDate === yesterday) { data.count = (data.count || 0) + 1; }
+            else { data.count = 1; }
+            data.lastDate = today;
+            localStorage.setItem('login_streak', JSON.stringify(data));
+            return data.count;
+        } catch(e) { return 1; }
     }
-    function getUserCoins(){return _userCoins;}
-    function getUserStreak(){return _userStreak;}
-    async function earnCoins(amount,reason){if(!db||!currentUser)return;_userCoins+=amount;await db.ref('user_rewards/'+currentUser.username+'/coins').set(_userCoins);}
-    async function spendCoins(amount,reason){if(!db||!currentUser||_userCoins<amount)return false;_userCoins-=amount;await db.ref('user_rewards/'+currentUser.username+'/coins').set(_userCoins);return true;}
-    // Legacy stubs
-    function getStreak(){return _userStreak;}
-    function updateStreak(){return _userStreak;}
 
     // ---------- ACHIEVEMENT SYSTEM ----------
     const ACHIEVEMENTS = [
