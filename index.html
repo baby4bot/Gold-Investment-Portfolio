@@ -1137,6 +1137,12 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-track { background: #f0f0f0; }
     [data-theme="light"] .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; }
 
+    /* ========== LIGHT THEME: Close Button Fix ========== */
+    [data-theme="light"] .sticky-close-wrap { background: transparent !important; }
+    [data-theme="light"] .modal-close-btn { background: #ef4444 !important; color: #ffffff !important; box-shadow: 0 2px 8px rgba(239,68,68,0.3); }
+    [data-theme="light"] .modal-close-btn:hover { background: #dc2626 !important; }
+    [data-theme="light"] #admin-settings-modal .sticky-close-wrap { background: transparent !important; }
+
     /* ========== GOLDEN PARTICLE SYSTEM ========== */
     #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99998; }
     .gold-particle { position: fixed; pointer-events: none; z-index: 99998; font-size: 14px; animation: particleFloat 2s ease-out forwards; }
