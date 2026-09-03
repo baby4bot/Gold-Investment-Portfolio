@@ -1142,6 +1142,8 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
     [data-theme="light"] .modal-close-btn { background: #ef4444 !important; color: #ffffff !important; box-shadow: 0 2px 8px rgba(239,68,68,0.3); }
     [data-theme="light"] .modal-close-btn:hover { background: #dc2626 !important; }
     [data-theme="light"] #admin-settings-modal .sticky-close-wrap { background: transparent !important; }
+    [data-theme="light"] #user-form-modal [style*="position:sticky"] { background: transparent !important; }
+    [data-theme="light"] #user-form-modal [style*="position: sticky"] { background: transparent !important; }
 
     /* ========== GOLDEN PARTICLE SYSTEM ========== */
     #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99998; }
@@ -2156,7 +2158,7 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
 <div id="profile-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); padding: 8px;">
     <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-md relative max-h-[92vh] overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative;">
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
-        <div style="position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;margin:-24px -20px 8px 0;pointer-events:none;padding:4px 8px 12px 0;"><button type="button" onclick="document.getElementById('profile-modal').style.display='none';document.getElementById('profile-modal').classList.add('hidden');" style="pointer-events:all;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button></div>
+        <div style="position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;margin:-24px -20px 8px 0;pointer-events:none;padding:4px 8px 12px 0;background:transparent !important;"><button type="button" onclick="document.getElementById('profile-modal').style.display='none';document.getElementById('profile-modal').classList.add('hidden');" style="pointer-events:all;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button></div>
         <h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:24px;display:flex;align-items:center;gap:8px;"><i class="ph ph-user-circle" style="font-size:22px;"></i> โปรไฟล์ของฉัน</h3>
         <!-- Profile Picture -->
         <div class="text-center mb-6">
@@ -2202,7 +2204,7 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
 <div id="user-form-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); padding: 8px;">
     <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-md relative max-h-[92vh] overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative;">
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
-        <div style="position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;margin:-24px -20px 8px 0;pointer-events:none;padding:4px 8px 12px 0;"><button type="button" onclick="closeUserModal()" style="pointer-events:all;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button></div>
+        <div style="position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;margin:-24px -20px 8px 0;pointer-events:none;padding:4px 8px 12px 0;background:transparent !important;"><button type="button" onclick="closeUserModal()" style="pointer-events:all;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button></div>
         <h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:24px;text-align:center;" id="user-modal-title">เพิ่มผู้ใช้งานใหม่</h3>
         <form onsubmit="saveUser(event)" class="flex flex-col gap-4">
             <input type="hidden" id="u_original_username" />
@@ -2228,7 +2230,7 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
 <div id="admin-settings-modal" class="fixed inset-0 z-[900] justify-center items-center hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); padding: 8px;">
     <div class="p-6 rounded-[1.75rem] shadow-2xl w-full max-w-sm relative overflow-y-auto overflow-x-hidden custom-scrollbar modal-enter" style="background: linear-gradient(180deg, #1c1c24 0%, #141418 100%); border: 1px solid rgba(212,160,23,0.25); position: relative; max-height: min(92vh, 680px);">
         <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:0 0 4px 4px;"></div>
-        <div style="position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;margin:-24px -20px 8px 0;pointer-events:none;padding:4px 8px 12px 0;"><button onclick="closeAdminSettingsModal()" style="pointer-events:all;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button></div>
+        <div style="position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;margin:-24px -20px 8px 0;pointer-events:none;padding:4px 8px 12px 0;background:transparent !important;"><button onclick="closeAdminSettingsModal()" style="pointer-events:all;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:none;cursor:pointer;z-index:10;">✕</button></div>
         <h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:16px;text-align:center;"><i class="ph ph-gear"></i> ตั้งค่า</h3>
         <div id="settings-profile-header" style="display:none;"><h3 style="color:#d4a017;font-size:18px;font-weight:900;margin-bottom:16px;text-align:left;"><i class="ph ph-user-circle"></i> โปรไฟล์ของฉัน</h3></div>
         
