@@ -487,7 +487,7 @@ const GOLD_TEMPLATE_B64 = 'data:image/jpeg;base64,/9j/4QEIRXhpZgAATU0AKgAAAAgABQ
     [data-theme="light"] input:focus { background-color: #ffffff !important; }    /* === Light Theme: Admin Port / badges === */
     [data-theme="light"] [class*="Admin Port"], [data-theme="light"] .admin-port-badge { background: #fef3c7 !important; color: #92400e !important; }
 
-    body { font-family: 'Sarabun', sans-serif; background: var(--bg-primary); color: var(--text-primary); overflow-x: clip; -webkit-tap-highlight-color: transparent; touch-action: manipulation; overscroll-behavior-y: none; min-height: 100vh; }
+    body { font-family: 'Sarabun', sans-serif; background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; -webkit-tap-highlight-color: transparent; touch-action: pan-y pinch-zoom; overscroll-behavior-y: none; min-height: 100vh; }
     .glass-panel { background: var(--bg-glass); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--border-primary); }
     .emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "Segoe UI Symbol", sans-serif !important; }
     input[type="text"], input[type="number"], input[type="date"], input[type="password"], input[type="tel"], select { background-color: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 0.875rem; padding: 0.75rem 1rem; width: 100%; outline: none; transition: all 0.25s ease; }
@@ -5121,8 +5121,15 @@ function convertToThaiDate(dateStr) {
         document.getElementById('view-' + viewName).classList.add('active');
         currentView = viewName; closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' });
         // Pull-to-refresh is globally disabled via CSS overscroll-behavior-y: none
-        document.body.style.overflow = (viewName === 'manage-tx' || viewName === 'manage-users') ? 'hidden' : '';
-        document.documentElement.style.overflow = (viewName === 'manage-tx' || viewName === 'manage-users') ? 'hidden' : '';
+        if (viewName === 'manage-tx' || viewName === 'manage-users') {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.overflowY = 'auto';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.overflowY = 'auto';
+        }
 
         if(viewName === 'dashboard') renderData();
         if(viewName === 'manage-tx') toggleAddTxForm(false);        if(viewName === 'manage-users') { renderUsersCards(); updateBannedCount(); }
